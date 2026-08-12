@@ -1,58 +1,50 @@
-# olisite — fase de maquetas
+# olisite — second concept round
 
-Tres direcciones visuales para el sitio personal, solo modo oscuro. En `/` está
-el comparador con miniaturas; cada dirección vive en su ruta.
+Three restrained directions for a personal site. The work is the main content;
+availability and contact are deliberately secondary. The comparison lives at
+`/`, with one complete concept on each route.
 
-| Ruta | Dirección | Hero | Tarjeta de proyecto |
+| Route | Direction | Layout | Signature interaction |
 |---|---|---|---|
-| `/a` | **Control Room** — consola de telemetría | Logotipo largo + franja de latencias por PoP | Fila de rack con medidores LED segmentados |
-| `/b` | **Monograph** — catálogo editorial nocturno | Titular en serif + retrato como lámina duotono | Ficha de catálogo con tabla de valoraciones |
-| `/c` | **Soft Machine** — producto táctil | Icono en una superficie que sigue al cursor | Tarjeta con dial de puntuación y reordenado animado |
+| `/a` | **Sidecar** | Fixed personal sidebar and dark project index | Project rows make room for their logo on hover |
+| `/b` | **Plainspoken** | Open, single-column personal note | Project logos follow the pointer on desktop |
+| `/c` | **Shelf** | Monochrome technical personal index | Compact All / Active filter and an open grid |
+| `/c1` | **Balanced profile** | Two-column project cards | Four equally weighted one-to-five ratings |
+| `/c2` | **Impact first** | Horizontal project ranking | Large impact stars with three supporting ratings |
+| `/c3` | **Comparison matrix** | Shared project-and-rating grid | Direct column-by-column star comparison |
+| `/a1` | **Ratings under the description** | Sidecar `/a`, unchanged | The four ratings sit in a row below each blurb |
+| `/a2` | **Ratings in the margin** | Sidecar `/a`, unchanged | The right-hand column carries the ratings, the blurb stays clear |
+| `/a3` | **Ratings as a column** | Sidecar `/a`, unchanged | Ratings get their own column, so the row reads like a spec sheet |
 
-## Stack
+## The A round
 
-- **Astro 7** en modo estático durante las maquetas. Al elegir dirección se
-  vuelve a `output: 'server'` con `@astrojs/cloudflare` y el binding D1.
-- **React 19** solo como isla para los filtros. Es lo único interactivo.
-- **Tailwind 4** (`@tailwindcss/vite`) para el comparador; las tres maquetas van
-  con CSS propio y tokens por diseño, que es lo que permite que no se parezcan.
-- **Fontsource** para servir las tipografías desde el mismo dominio: nada de
-  peticiones a Google Fonts.
+`/a1`, `/a2` and `/a3` are the same page as `/a` — same palette, type, layout,
+copy and logo-on-hover row — with three additions and nothing else:
 
-Pendiente para producción: cambiar React por Preact o por islas sin framework.
-El runtime de React son ~57 kB comprimidos y esta interfaz no los necesita.
+- **Ratings.** The same one-to-five stars as `/c1`, for craft, depth, utility and
+  impact. The three variants only differ in where those stars live.
+- **Filter and order.** All / Active, and eight orders: newest, oldest, A–Z,
+  overall and each of the four ratings. Identical controls in the three, so the
+  comparison is only about the ratings.
+- **Status instead of the running number.** The `01`, `02`… slot now shows a dot
+  and Active / Archived, which is information the number never carried.
 
-## Datos
+The list is rendered on the server; `src/scripts/a-controls.ts` only reorders and
+hides rows, so every project is still listed without JavaScript.
 
-Los proyectos, fechas y descripciones salen de la D1 real (`oliweb`, tabla
-`projects`). Lo inventado para probar la maqueta está marcado en
-`src/data/projects.ts`:
+## Shared decisions
 
-- **Tipo** (`ecommerce`, `marketplace`, `app`, `tool`, `brand`).
-- **Stack** por proyecto.
-- **Cuatro valoraciones** de 0 a 100 y las **horas invertidas**:
-  - `craft` — acabado de la interfaz: composición, detalle e interacción.
-  - `depth` — complejidad técnica: arquitectura, integraciones y casos límite.
-  - `utility` — cuánto resuelve de verdad a quien lo usa a diario.
-  - `impact` — resultados medibles: ventas, tráfico y adopción.
-  - `hours` — tiempo invertido, en horas.
+- **Geist Variable** and **Geist Mono Variable** are self-hosted with Fontsource.
+- All visible copy is in English.
+- Scores are shown as one-to-five ratings; the raw numbers and hours stay hidden.
+- Project cards link to live projects when a URL exists.
+- Every direction has a dedicated mobile layout and respects reduced-motion preferences.
+- React is only used for the small filter island in direction C; the A round uses
+  a plain shared module instead.
 
-La puntuación global de la tarjeta es la media de las cuatro.
+## Still needed for production
 
-## Filtros y orden
-
-Compartidos en `src/data/sorting.ts`, con una interfaz distinta en cada
-dirección: nueve criterios de orden (fecha en ambos sentidos, alfabético,
-global, cada métrica por separado y horas), estado (todos / en activo /
-archivados) y tipo en selección múltiple.
-
-## Lo que falta
-
-- `/projects/[slug]`: las tarjetas ya enlazan ahí, pero la vista de detalle no
-  existe. Ahí van la historia larga, capturas, el stack completo y el enlace al
-  proyecto vivo.
-- El formulario de contacto no envía: falta el endpoint.
-- Los logos de proyecto son cuadrados opacos con su propio fondo, así que cada
-  dirección los monta de una forma distinta. Con marcas en PNG transparente o
-  SVG quedarían bastante mejor.
-- El retrato es una foto de stock de Unsplash.
+- Confirm the final biography and contact address.
+- Replace any project logos that only exist as low-resolution raster files.
+- Add project detail pages if the final site should tell the longer story behind each project.
+- Connect the final project data to D1 once a direction is selected.

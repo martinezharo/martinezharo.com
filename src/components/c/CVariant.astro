@@ -1,0 +1,112 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '../../styles/c.css';
+import '../../styles/c-variants.css';
+import Work, { type WorkVariant } from './Work.tsx';
+
+interface Props {
+  variant: Exclude<WorkVariant, 'base'>;
+}
+
+const { variant } = Astro.props;
+
+const copy = {
+  c1: {
+    label: 'C1 · Balanced profile',
+    title: 'Four signals behind every project.',
+    intro: 'A one-to-five reading of how each project was made, how deep it goes, how useful it is and how far it has travelled.',
+    section: 'Project profiles.',
+    note: 'All four ratings remain visible and carry equal weight.',
+  },
+  c2: {
+    label: 'C2 · Impact first',
+    title: 'Some projects travel further than others.',
+    intro: 'Impact leads the hierarchy here. Craft, depth and utility stay close enough to explain what kind of project produced that reach.',
+    section: 'Ordered by impact.',
+    note: 'The clearest split between flagship work and personal tools, without false precision.',
+  },
+  c3: {
+    label: 'C3 · Comparison matrix',
+    title: 'A project archive you can compare.',
+    intro: 'The card metaphor disappears. Every project shares the same four columns, making different strengths easy to compare at a glance.',
+    section: 'Eight projects, four readings.',
+    note: 'A compact matrix for people who want the whole picture quickly.',
+  },
+}[variant];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{copy.label} — Oliver Martínez Haro</title>
+    <meta name="description" content={copy.intro} />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <meta name="color-scheme" content="dark" />
+  </head>
+  <body class={`c-variant c-variant--${variant}`}>
+    <header class="c-nav">
+      <a class="c-brand" href={`/${variant}`}>
+        <img src="/icon.svg" alt="" width="28" height="28" />
+        <span>Oliver Martínez Haro</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="https://github.com/martinezharo" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="c-hero c-variant-hero">
+        <p class="c-kicker">{copy.label} · Personal index</p>
+        <h1>{copy.title}</h1>
+        <p class="c-hero-copy">{copy.intro}</p>
+        <div class="c-facts" aria-label="How to read the project ratings">
+          <span><b>Craft</b> Finish</span>
+          <span><b>Depth</b> Complexity</span>
+          <span><b>Utility</b> Usefulness</span>
+          <span><b>Impact</b> Reach</span>
+        </div>
+      </section>
+
+      <section class="c-projects" id="projects">
+        <header class="c-section-head">
+          <h2>{copy.section}</h2>
+          <p>{copy.note}</p>
+        </header>
+        <Work client:load variant={variant} />
+      </section>
+
+      <section class="c-about" id="about">
+        <p class="c-kicker">About the ratings</p>
+        <div class="c-about-grid">
+          <h2>A profile, not a verdict.</h2>
+          <div>
+            <p>
+              These are my own impressions of the projects, not objective quality scores. Their job is
+              to show what each project represents and make unlike things easier to compare.
+            </p>
+            <p>
+              The detailed project pages can eventually explain the evidence behind each number:
+              users, revenue, technical constraints, time invested and what I would change now.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        <img src="/icon.svg" alt="" width="26" height="26" />
+        <span>© 2026 Oliver Martínez Haro</span>
+      </div>
+      <p>
+        I sometimes take on outside projects. If yours sounds interesting,
+        <a href="mailto:hola@olivermartinezharo.com">tell me about it.</a>
+      </p>
+    </footer>
+  </body>
+</html>

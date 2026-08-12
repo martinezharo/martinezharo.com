@@ -1,130 +1,93 @@
 ---
-import '../styles/tw.css';
-import '@fontsource-variable/inter';
+import '@fontsource-variable/geist';
 
 const directions = [
   {
     id: 'a',
-    name: 'Control Room',
-    tag: 'Consola de telemetría',
-    hero: 'Logotipo largo + franja de latencias en vivo',
-    cards: 'Filas de rack con medidores LED',
-    idea:
-      'La página se comporta como el panel de monitorización de tu propio trabajo. Denso, técnico y ordenado: apoya la especialidad en Cloudflare sin decir «Cloudflare» cada dos líneas.',
-    accent: '#ffb43d',
-    bg: '#05070b',
+    name: 'Sidecar',
+    tag: 'Dark · anchored profile',
+    idea: 'A calm desktop sidebar and a project list that opens up on hover. On mobile, the profile becomes a generous introduction and every project keeps its context.',
   },
   {
     id: 'b',
-    name: 'Monograph',
-    tag: 'Catálogo editorial nocturno',
-    hero: 'Titular en serif enorme + retrato como lámina duotono',
-    cards: 'Fichas de catálogo con tabla de valoraciones',
-    idea:
-      'Tu obra tratada como una monografía impresa. Tipografía grande y con carácter, mucho aire y un rojo que solo aparece donde importa. Es el que más te posiciona como diseñador.',
-    accent: '#ff4b26',
-    bg: '#15111b',
+    name: 'Plainspoken',
+    tag: 'Light · personal note',
+    idea: 'The most minimal direction: one honest introduction, an open project directory and small logo previews that follow the cursor without turning into cards.',
   },
   {
     id: 'c',
-    name: 'Soft Machine',
-    tag: 'Producto táctil',
-    hero: 'Icono en una superficie que responde al cursor',
-    cards: 'Tarjetas con dial de puntuación y reordenado animado',
-    idea:
-      'La interfaz es la demostración: profundidad, muelles y transiciones de vista al filtrar. El que mejor vende «me dedico a UI/UX» porque lo enseña en vez de contarlo.',
-    accent: '#7a5cff',
-    bg: '#0b0a12',
+    name: 'Shelf',
+    tag: 'Black · technical personal index',
+    idea: 'A compact Geist-led direction with a mono utility layer, personal metadata and the status filter set into a spacious monochrome project shelf.',
   },
 ];
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tres direcciones para oliweb</title>
+    <title>Three personal-site directions for Oliver</title>
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light" />
   </head>
-  <body class="min-h-dvh bg-neutral-950 text-neutral-400 antialiased [font-family:'Inter_Variable',system-ui,sans-serif]">
-    <main class="mx-auto max-w-6xl px-6 py-16 sm:py-24">
-      <header class="max-w-2xl">
-        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-500">
-          Maquetas — agosto 2026
-        </p>
-        <h1 class="mt-5 text-4xl font-semibold tracking-tight text-neutral-100 sm:text-5xl">
-          Tres direcciones para tu sitio
-        </h1>
-        <p class="mt-5 text-[17px] leading-relaxed">
-          Mismo contenido y misma estructura en las tres; cambia el punto de vista. Todas en modo
-          oscuro, con los proyectos reales de la base de datos y puntuaciones inventadas para
-          probar la densidad de la tarjeta.
+  <body>
+    <main>
+      <header>
+        <p class="kicker">Round two · August 2026</p>
+        <h1>Three quieter directions.</h1>
+        <p class="lede">
+          These are personal sites first and portfolios second. They share the same projects and
+          Geist typeface, but each one has a different rhythm, interaction and point of view.
         </p>
       </header>
 
-      <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          directions.map((d) => (
-            <li>
-              <a
-                href={`/${d.id}`}
-                class="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/60 transition hover:-translate-y-1 hover:border-white/20 hover:bg-neutral-900"
-              >
-                <span
-                  class="relative block aspect-[16/10] overflow-hidden border-b border-white/10"
-                  style={`background:${d.bg}`}
-                >
-                  <img
-                    src={`/imgs/preview-${d.id}.jpg`}
-                    alt={`Vista previa de la dirección ${d.name}`}
-                    width="1280"
-                    height="800"
-                    loading="lazy"
-                    class="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.03]"
-                  />
+      <ol>
+        {directions.map((direction, index) => (
+          <li>
+            <a href={`/${direction.id}`}>
+              <span class="preview">
+                <img src={`/imgs/preview-${direction.id}.png`} alt={`Preview of ${direction.name}`} width="1440" height="900" />
+              </span>
+              <span class="card-copy">
+                <span class="number">{String(index + 1).padStart(2, '0')}</span>
+                <span>
+                  <b>{direction.name}</b>
+                  <em>{direction.tag}</em>
                 </span>
-
-                <span class="flex flex-1 flex-col p-6">
-                  <span class="flex flex-col gap-1">
-                    <span
-                      class="text-xl font-semibold tracking-tight text-neutral-100"
-                      style={`color:${d.accent}`}
-                    >
-                      {d.name}
-                    </span>
-                    <span class="text-xs uppercase tracking-widest text-neutral-500">{d.tag}</span>
-                  </span>
-
-                  <span class="mt-4 block text-sm leading-relaxed">{d.idea}</span>
-
-                  <dl class="mt-5 space-y-2 border-t border-white/10 pt-5 text-[13px]">
-                    <div class="flex gap-3">
-                      <dt class="w-14 shrink-0 text-neutral-600">Hero</dt>
-                      <dd class="text-neutral-400">{d.hero}</dd>
-                    </div>
-                    <div class="flex gap-3">
-                      <dt class="w-14 shrink-0 text-neutral-600">Cards</dt>
-                      <dd class="text-neutral-400">{d.cards}</dd>
-                    </div>
-                  </dl>
-
-                  <span class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-neutral-300">
-                    Abrir la maqueta
-                    <span class="transition group-hover:translate-x-1">→</span>
-                  </span>
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-
-      <p class="mt-14 max-w-2xl text-sm text-neutral-500">
-        Los enlaces de las tarjetas de proyecto apuntan a <code class="text-neutral-400">/projects/[slug]</code>,
-        que todavía no existe: la vista de detalle es el siguiente paso, cuando elijas dirección.
-      </p>
+                <span class="arrow">Open ↗</span>
+              </span>
+              <span class="idea">{direction.idea}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </main>
+
+    <style>
+      :global(*) { box-sizing: border-box; }
+      :global(body) { margin: 0; min-width: 320px; background: #f2f3f4; color: #17191c; font-family: 'Geist Variable', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+      :global(a) { color: inherit; text-decoration: none; }
+      :global(img) { display: block; width: 100%; }
+      main { max-width: 1380px; margin: 0 auto; padding: clamp(60px, 8vw, 120px) clamp(20px, 5vw, 72px); }
+      header { max-width: 750px; margin-bottom: clamp(70px, 10vw, 130px); }
+      .kicker { margin: 0 0 26px; color: #315ee8; font-size: 11px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
+      h1 { margin: 0; font-size: clamp(48px, 7vw, 96px); line-height: .94; letter-spacing: -.065em; font-weight: 570; }
+      .lede { max-width: 620px; margin: 34px 0 0; color: #676c74; font-size: 16px; line-height: 1.65; }
+      ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: clamp(26px, 3vw, 48px); }
+      li a { display: block; }
+      .preview { display: block; aspect-ratio: 16/10; overflow: hidden; background: #d9dce1; }
+      .preview img { height: 100%; object-fit: cover; object-position: top; transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+      li a:hover .preview img { transform: scale(1.025); }
+      .card-copy { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; padding: 22px 0 18px; border-bottom: 1px solid #cdd0d5; }
+      .number { color: #92969d; font-size: 11px; }
+      .card-copy b { display: block; font-size: 19px; letter-spacing: -.03em; }
+      .card-copy em { display: block; margin-top: 4px; color: #777c84; font-size: 11px; font-style: normal; }
+      .arrow { font-size: 11px; }
+      .idea { display: block; padding-top: 18px; color: #676c74; font-size: 13px; line-height: 1.55; }
+      @media (max-width: 850px) { ol { grid-template-columns: 1fr; gap: 72px; } .preview { aspect-ratio: 16/9; } }
+      @media (prefers-reduced-motion: reduce) { .preview img { transition: none; } }
+    </style>
   </body>
 </html>

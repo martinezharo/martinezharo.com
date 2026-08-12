@@ -14,21 +14,21 @@ export type SortKey =
 export type Status = 'all' | 'active' | 'archived';
 
 export const SORTS: { key: SortKey; label: string }[] = [
-  { key: 'recent', label: 'Más reciente' },
-  { key: 'oldest', label: 'Más antiguo' },
-  { key: 'alpha', label: 'Alfabético' },
-  { key: 'overall', label: 'Puntuación global' },
+  { key: 'recent', label: 'Newest' },
+  { key: 'oldest', label: 'Oldest' },
+  { key: 'alpha', label: 'A–Z' },
+  { key: 'overall', label: 'Overall' },
   { key: 'craft', label: 'Craft' },
   { key: 'depth', label: 'Depth' },
   { key: 'utility', label: 'Utility' },
   { key: 'impact', label: 'Impact' },
-  { key: 'hours', label: 'Horas invertidas' },
+  { key: 'hours', label: 'Time spent' },
 ];
 
 export const STATUSES: { key: Status; label: string }[] = [
-  { key: 'all', label: 'Todos' },
-  { key: 'active', label: 'En activo' },
-  { key: 'archived', label: 'Archivados' },
+  { key: 'all', label: 'All' },
+  { key: 'active', label: 'Active' },
+  { key: 'archived', label: 'Archive' },
 ];
 
 export function arrange(

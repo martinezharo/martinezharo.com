@@ -1,304 +1,219 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
-import {
-  KIND_LABEL,
-  SCORE_META,
-  overall,
-  projects,
-  range,
-  type Project,
-  type ProjectKind,
-} from '../../data/projects';
-import { SORTS, STATUSES, arrange, type SortKey, type Status } from '../../data/sorting';
+import { useMemo, useState, type ReactNode } from 'react';
+import { KIND_LABEL, SCORE_META, projects, range, type Project } from '../../data/projects';
 
-const KINDS = [...new Set(projects.map((p) => p.kind))] as ProjectKind[];
+type Filter = 'all' | 'active';
+export type WorkVariant = 'base' | 'c1' | 'c2' | 'c3';
 
-const reduced = () =>
-  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ratingFor = (value: number) => Math.max(1, Math.min(5, Math.round(value / 20)));
 
-/**
- * Las tarjetas se recolocan con View Transitions, así el reordenado se sigue
- * con la vista en vez de aparecer de golpe. Sin soporte, cambia y ya está.
- */
-function animate(update: () => void) {
-  const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
-  if (!doc.startViewTransition || reduced()) return update();
-  doc.startViewTransition(() => flushSync(update));
-}
-
-/** Control segmentado con pastilla deslizante medida sobre el DOM real. */
-function Segmented<T extends string>({
-  options,
-  value,
-  onChange,
-  label,
-}: {
-  options: { key: T; label: string }[];
-  value: T;
-  onChange: (k: T) => void;
-  label: string;
-}) {
-  const wrap = useRef<HTMLDivElement>(null);
-  const [pill, setPill] = useState({ x: 0, w: 0, ready: false });
-
-  useLayoutEffect(() => {
-    const place = () => {
-      const host = wrap.current;
-      const active = host?.querySelector<HTMLButtonElement>('[data-on="true"]');
-      if (!host || !active) return;
-      setPill({
-        x: active.offsetLeft,
-        w: active.offsetWidth,
-        ready: true,
-      });
-    };
-    place();
-    const ro = new ResizeObserver(place);
-    if (wrap.current) ro.observe(wrap.current);
-    return () => ro.disconnect();
-  }, [value, options]);
-
+function Stars({ value, emphasis = false }: { value: number; emphasis?: boolean }) {
+  const rating = ratingFor(value);
   return (
-    <div className="c-seg" role="group" aria-label={label} ref={wrap}>
-      <span
-        className="c-seg-pill"
-        aria-hidden="true"
-        style={{
-          transform: `translateX(${pill.x}px)`,
-          width: `${pill.w}px`,
-          opacity: pill.ready ? 1 : 0,
-        }}
-      />
-      {options.map((o) => (
-        <button
-          key={o.key}
-          type="button"
-          data-on={o.key === value}
-          aria-pressed={o.key === value}
-          onClick={() => animate(() => onChange(o.key))}
-        >
-          {o.label}
-        </button>
+    <span className={`c-stars ${emphasis ? 'c-stars--large' : ''}`} aria-label={`${rating} out of 5`}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <i key={index} data-on={index < rating} aria-hidden="true">★</i>
       ))}
-    </div>
-  );
-}
-
-function SortPop({ value, onChange }: { value: SortKey; onChange: (k: SortKey) => void }) {
-  const [open, setOpen] = useState(false);
-  const host = useRef<HTMLDivElement>(null);
-  const current = SORTS.find((s) => s.key === value)!;
-
-  useEffect(() => {
-    if (!open) return;
-    const away = (e: MouseEvent) => !host.current?.contains(e.target as Node) && setOpen(false);
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    document.addEventListener('mousedown', away);
-    document.addEventListener('keydown', esc);
-    return () => {
-      document.removeEventListener('mousedown', away);
-      document.removeEventListener('keydown', esc);
-    };
-  }, [open]);
-
-  return (
-    <div className="c-sort" ref={host}>
-      <button
-        type="button"
-        className="c-sort-trigger"
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        onClick={() => setOpen((o) => !o)}
-      >
-        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
-          <path
-            d="M2.5 4.5h11M4.5 8h7M7 11.5h2"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            fill="none"
-          />
-        </svg>
-        {current.label}
-      </button>
-      <div className={`c-pop ${open ? 'is-open' : ''}`} role="listbox" aria-label="Ordenar por">
-        {SORTS.map((s) => (
-          <button
-            key={s.key}
-            type="button"
-            role="option"
-            aria-selected={s.key === value}
-            className={s.key === value ? 'is-on' : ''}
-            onClick={() => {
-              animate(() => onChange(s.key));
-              setOpen(false);
-            }}
-          >
-            {s.label}
-            {s.key === value && (
-              <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
-                <path
-                  d="M3 8.5l3.5 3.5L13 5"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Dial({ value }: { value: number }) {
-  const r = 26;
-  const c = 2 * Math.PI * r;
-  return (
-    <span className="c-dial">
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="32" cy="32" r={r} className="c-dial-track" />
-        <circle
-          cx="32"
-          cy="32"
-          r={r}
-          className="c-dial-arc"
-          style={{ strokeDasharray: c, strokeDashoffset: c - (value / 100) * c }}
-        />
-      </svg>
-      <b>{value}</b>
     </span>
   );
 }
 
-function Card({ p }: { p: Project }) {
-  return (
-    <a
-      className="c-card"
-      href={`/projects/${p.slug}`}
-      data-tilt
-      style={{ viewTransitionName: `card-${p.slug}` }}
-    >
-      <span className="c-card-sheen" aria-hidden="true" />
-      <span className="c-card-top">
-        <span className="c-card-logo">
-          <img src={p.logo} alt="" loading="lazy" />
-        </span>
-        <span className="c-card-state" data-live={p.active}>
-          <i></i>
-          {p.active ? 'En activo' : 'Archivado'}
-        </span>
-      </span>
-
-      <h3 className="c-card-name">{p.name}</h3>
-      <p className="c-card-kind">
-        <span className="c-tag">{KIND_LABEL[p.kind]}</span>
-        <span>{range(p)}</span>
-      </p>
-      <p className="c-card-blurb">{p.blurb}</p>
-
-      <span className="c-card-scores">
-        <Dial value={overall(p)} />
-        <span className="c-bars">
-          {SCORE_META.map((m) => (
-            <span className="c-bar" key={m.key} title={m.hint}>
-              <span className="c-bar-key">{m.label}</span>
-              <span className="c-bar-rail">
-                <i style={{ width: `${p.scores[m.key]}%` }} />
-              </span>
-              <span className="c-bar-val">{p.scores[m.key]}</span>
-            </span>
-          ))}
-        </span>
-      </span>
-
-      <span className="c-card-foot">
-        <span>{p.hours.toLocaleString('es-ES')} h invertidas</span>
-        <span className="c-card-go">
-          Ver ficha
-          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-            <path
-              d="M3 8h9.5M8.5 4l4 4-4 4"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
-      </span>
+function ProjectShell({
+  project,
+  className,
+  children,
+}: {
+  project: Project;
+  className: string;
+  children: ReactNode;
+}) {
+  return project.url ? (
+    <a className={className} href={project.url} target="_blank" rel="noopener noreferrer">
+      {children}
     </a>
+  ) : (
+    <article className={`${className} is-static`}>{children}</article>
   );
 }
 
-export default function Work() {
-  const [sort, setSort] = useState<SortKey>('recent');
-  const [status, setStatus] = useState<Status>('all');
-  const [kinds, setKinds] = useState<ProjectKind[]>([]);
+function State({ project }: { project: Project }) {
+  return (
+    <span className="c-card-state" data-active={project.active}>
+      <i aria-hidden="true" /> {project.active ? 'Active' : 'Archived'}
+    </span>
+  );
+}
 
-  const list = useMemo(() => arrange(projects, { sort, status, kinds }), [sort, status, kinds]);
+function Metric({ project, metric }: { project: Project; metric: (typeof SCORE_META)[number] }) {
+  const value = project.scores[metric.key];
+  return (
+    <span className="c-metric" data-metric={metric.key} title={metric.hint}>
+      <span className="c-metric-head">
+        <b>{metric.label}</b>
+      </span>
+      <Stars value={value} />
+    </span>
+  );
+}
 
-  // Tilt hacia el cursor: dos variables CSS, el resto lo hace la hoja de estilos.
-  useEffect(() => {
-    if (reduced()) return;
-    const move = (e: PointerEvent) => {
-      const card = (e.target as HTMLElement).closest<HTMLElement>('[data-tilt]');
-      if (!card) return;
-      const b = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${((e.clientX - b.left) / b.width) * 100}%`);
-      card.style.setProperty('--my', `${((e.clientY - b.top) / b.height) * 100}%`);
-      card.style.setProperty('--tx', `${((e.clientX - b.left) / b.width - 0.5) * 2}`);
-      card.style.setProperty('--ty', `${((e.clientY - b.top) / b.height - 0.5) * 2}`);
-    };
-    document.addEventListener('pointermove', move, { passive: true });
-    return () => document.removeEventListener('pointermove', move);
-  }, []);
+function BaseCard({ project, index }: { project: Project; index: number }) {
+  return (
+    <ProjectShell project={project} className="c-card">
+      <span className="c-card-top">
+        <span className="c-card-number">{String(index + 1).padStart(2, '0')}</span>
+        <span className="c-card-logo"><img src={project.logo} alt="" loading="lazy" /></span>
+      </span>
+      <span className="c-card-title">
+        <span>{project.name}</span>
+        {project.url && <span className="c-card-arrow" aria-hidden="true">↗</span>}
+      </span>
+      <span className="c-card-blurb">{project.blurb}</span>
+      <span className="c-card-foot">
+        <span>{KIND_LABEL[project.kind]}</span>
+        <span>{range(project)}</span>
+        <State project={project} />
+      </span>
+    </ProjectShell>
+  );
+}
 
-  const toggleKind = (k: ProjectKind) =>
-    animate(() =>
-      setKinds((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k])),
-    );
+function ProfileCard({ project, index }: { project: Project; index: number }) {
+  return (
+    <ProjectShell project={project} className="c-card c1-card">
+      <span className="c-card-top">
+        <span className="c-card-number">{String(index + 1).padStart(2, '0')}</span>
+        <span className="c-card-logo"><img src={project.logo} alt="" loading="lazy" /></span>
+      </span>
+      <span className="c-card-title">
+        <span>{project.name}</span>
+        {project.url && <span className="c-card-arrow" aria-hidden="true">↗</span>}
+      </span>
+      <span className="c-card-blurb">{project.blurb}</span>
+      <span className="c-profile" aria-label={`${project.name} project profile`}>
+        {SCORE_META.map((metric) => <Metric key={metric.key} project={project} metric={metric} />)}
+      </span>
+      <span className="c-card-foot">
+        <span>{KIND_LABEL[project.kind]}</span>
+        <span>{range(project)}</span>
+        <State project={project} />
+      </span>
+    </ProjectShell>
+  );
+}
+
+function ImpactRow({ project, index }: { project: Project; index: number }) {
+  return (
+    <ProjectShell project={project} className="c2-row">
+      <span className="c2-ident">
+        <span className="c-card-number">{String(index + 1).padStart(2, '0')}</span>
+        <span className="c-card-logo"><img src={project.logo} alt="" loading="lazy" /></span>
+      </span>
+      <span className="c2-copy">
+        <span className="c2-name">
+          {project.name}
+          {project.url && <span aria-hidden="true">↗</span>}
+        </span>
+        <span className="c-card-blurb">{project.blurb}</span>
+        <span className="c2-meta">
+          {KIND_LABEL[project.kind]} · {range(project)} <State project={project} />
+        </span>
+      </span>
+      <span className="c2-scores">
+        <span className="c2-impact" title={SCORE_META[3].hint}>
+          <span><Stars value={project.scores.impact} emphasis /><em>Impact</em></span>
+        </span>
+        <span className="c2-secondary">
+          {SCORE_META.slice(0, 3).map((metric) => <Metric key={metric.key} project={project} metric={metric} />)}
+        </span>
+      </span>
+    </ProjectShell>
+  );
+}
+
+function MatrixRow({ project, index }: { project: Project; index: number }) {
+  return (
+    <ProjectShell project={project} className="c3-row">
+      <span className="c3-project">
+        <span className="c-card-number">{String(index + 1).padStart(2, '0')}</span>
+        <span className="c-card-logo"><img src={project.logo} alt="" loading="lazy" /></span>
+        <span>
+          <b>{project.name}{project.url && <i aria-hidden="true">↗</i>}</b>
+          <em>{KIND_LABEL[project.kind]} · {range(project)} · {project.active ? 'Active' : 'Archived'}</em>
+          <small>{project.blurb}</small>
+        </span>
+      </span>
+      <span className="c3-metrics">
+        {SCORE_META.map((metric) => <Metric key={metric.key} project={project} metric={metric} />)}
+      </span>
+    </ProjectShell>
+  );
+}
+
+function FilterBar({
+  filter,
+  setFilter,
+  count,
+  ordered,
+}: {
+  filter: Filter;
+  setFilter: (filter: Filter) => void;
+  count: number;
+  ordered: boolean;
+}) {
+  return (
+    <div className="c-filterbar">
+      <div className="c-segmented" role="group" aria-label="Filter projects">
+        {([['all', 'All projects'], ['active', 'Active now']] as const).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={filter === value}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <p aria-live="polite">
+        {ordered && 'Ordered by impact rating · '}Showing {count} of {projects.length}
+      </p>
+    </div>
+  );
+}
+
+export default function Work({ variant = 'base' }: { variant?: WorkVariant }) {
+  const [filter, setFilter] = useState<Filter>('all');
+  const ordered = variant === 'c2' || variant === 'c3';
+  const list = useMemo(() => {
+    const filtered = filter === 'active' ? projects.filter((project) => project.active) : projects;
+    return ordered
+      ? [...filtered].sort((a, b) => ratingFor(b.scores.impact) - ratingFor(a.scores.impact))
+      : filtered;
+  }, [filter, ordered]);
 
   return (
     <>
-      <div className="c-controls">
-        <Segmented options={STATUSES} value={status} onChange={setStatus} label="Estado" />
+      <FilterBar filter={filter} setFilter={setFilter} count={list.length} ordered={ordered} />
 
-        <div className="c-chips" role="group" aria-label="Tipo de proyecto">
-          {KINDS.map((k) => (
-            <button
-              key={k}
-              type="button"
-              aria-pressed={kinds.includes(k)}
-              className={kinds.includes(k) ? 'is-on' : ''}
-              onClick={() => toggleKind(k)}
-            >
-              {KIND_LABEL[k]}
-            </button>
-          ))}
+      {variant === 'c2' ? (
+        <div className="c2-list">
+          {list.map((project, index) => <ImpactRow key={project.slug} project={project} index={index} />)}
         </div>
-
-        <SortPop value={sort} onChange={setSort} />
-      </div>
-
-      <p className="c-tally" aria-live="polite">
-        Mostrando <b>{list.length}</b> de {projects.length} proyectos
-      </p>
-
-      <div className="c-grid">
-        {list.map((p) => (
-          <Card key={p.slug} p={p} />
-        ))}
-      </div>
-
-      {list.length === 0 && (
-        <p className="c-empty">
-          Nada encaja con esa combinación. Prueba a quitar un tipo o a mostrar todos.
-        </p>
+      ) : variant === 'c3' ? (
+        <div className="c3-matrix">
+          <div className="c3-head" aria-hidden="true">
+            <span>Project</span>
+            <span>Craft</span><span>Depth</span><span>Utility</span><span>Impact</span>
+          </div>
+          {list.map((project, index) => <MatrixRow key={project.slug} project={project} index={index} />)}
+        </div>
+      ) : (
+        <div className="c-grid">
+          {list.map((project, index) =>
+            variant === 'c1'
+              ? <ProfileCard key={project.slug} project={project} index={index} />
+              : <BaseCard key={project.slug} project={project} index={index} />,
+          )}
+        </div>
       )}
     </>
   );

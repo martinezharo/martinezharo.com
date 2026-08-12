@@ -1,884 +1,242 @@
 ---
-import '@fontsource/instrument-serif/400.css';
-import '@fontsource/instrument-serif/400-italic.css';
-import '@fontsource-variable/inter-tight';
-import '@fontsource/space-mono/400.css';
-import Index from '../components/b/Index.tsx';
+import '@fontsource-variable/geist';
+import { KIND_LABEL, projects, range } from '../data/projects';
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Oliver Martínez Haro — Diseño y desarrollo web</title>
-    <meta
-      name="description"
-      content="Interfaces que se entienden a la primera, desplegadas en la red de Cloudflare."
-    />
+    <title>Oliver Martínez Haro — Maker on the internet</title>
+    <meta name="description" content="A personal corner of the internet for Oliver Martínez Haro and the things he makes." />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light" />
   </head>
-  <body class="d-b">
-    <a class="b-skip" href="#obra">Saltar a la obra</a>
-
-    <header class="b-runhead">
-      <a class="b-runhead-name" href="/b">
-        Oliver Martínez&nbsp;Haro
-        <span>Diseño de producto y desarrollo web</span>
-      </a>
-      <nav class="b-runhead-nav" aria-label="Secciones">
-        <a href="#obra">Obra</a>
-        <a href="#oficio">Oficio</a>
-        <a href="#contacto">Contacto</a>
-        <a href="https://github.com/martinezharo" target="_blank" rel="noopener">GitHub ↗</a>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="/b">OMH</a>
+      <nav aria-label="Primary navigation">
+        <a href="#work">Things I’ve made</a>
+        <a href="#notes">About</a>
       </nav>
+      <a class="github" href="https://github.com/martinezharo" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </header>
 
     <main>
-      <section class="b-hero">
-        <div class="b-hero-type">
-          <p class="b-kicker">Portafolio — Edición 2026</p>
-          <h1>
-            Diseño interfaces que se entienden<br />
-            <em>a la primera</em><br />
-            y las despliego en el edge.
-          </h1>
-          <p class="b-hero-lede">
-            Trabajo solo y de principio a fin: la investigación, la pantalla, el código y el
-            despliegue. Ocho productos en producción, todos mantenidos por la misma mano que los
-            dibujó.
-          </p>
-          <div class="b-hero-cta">
-            <a class="b-btn" href="#contacto">Escríbeme</a>
-            <a class="b-quiet" href="#obra">o mira la obra primero</a>
-          </div>
-        </div>
-
-        <figure class="b-portrait">
-          <div class="b-portrait-frame">
-            <img src="/imgs/portrait.jpg" alt="Retrato de Oliver Martínez Haro" width="900" height="1350" />
-          </div>
-          <figcaption>
-            <b>Fig. 1</b> — Oliver Martínez Haro. Alicante, 2026.
-          </figcaption>
-        </figure>
-
-        <aside class="b-margin">
-          <dl>
-            <div><dt>Autónomo desde</dt><dd>2023</dd></div>
-            <div><dt>Productos en producción</dt><dd>Ocho</dd></div>
-            <div><dt>Base</dt><dd>Alicante, España</dd></div>
-            <div><dt>Runtime</dt><dd>Cloudflare Workers</dd></div>
-          </dl>
-        </aside>
+      <section class="intro">
+        <p class="hello"><span aria-hidden="true">✳</span> Hello, I’m Oliver.</p>
+        <h1>
+          I run small internet businesses and build the software they need.
+          <span>&nbsp;Sometimes I make things just because they should exist.</span>
+        </h1>
+        <p class="intro-note">Based in Spain · building on the web since 2020</p>
       </section>
 
-      <section class="b-section" id="obra">
-        <div class="b-sechead">
-          <h2>Índice de obra</h2>
-          <p>
-            Ocho fichas con la misma estructura: cuatro valoraciones de 0 a 100 y las horas que
-            costó. La ficha completa se abre al pulsar.
-          </p>
-        </div>
-        <Index client:load />
-      </section>
+      <section class="work" id="work">
+        <header class="section-title">
+          <h2>Things I’ve made</h2>
+          <p>Some are businesses, some are tools, and some were useful mistakes.</p>
+        </header>
 
-      <section class="b-section b-craft" id="oficio">
-        <div class="b-sechead">
-          <h2>El oficio</h2>
-        </div>
-        <div class="b-craft-grid">
-          <article>
-            <h3>Se dibuja con el texto real</h3>
-            <p>
-              Ninguna pantalla se aprueba con contenido de relleno. El título que mide tres líneas
-              en vez de una cambia la composición entera, y eso hay que verlo antes de escribir el
-              componente.
-            </p>
-          </article>
-          <article>
-            <h3>Una sola plataforma</h3>
-            <p>
-              Workers, D1, R2 y Durable Objects. Menos piezas móviles significa menos cosas que se
-              rompen un domingo por la noche, y una factura que se entiende sin hoja de cálculo.
-            </p>
-          </article>
-          <article>
-            <h3>Se entrega mantenido</h3>
-            <p>
-              El proyecto no acaba en el despliegue. Todo lo que hay en este índice sigue en pie
-              porque lo sigo tocando, y eso condiciona cómo lo escribo desde el primer día.
-            </p>
-          </article>
+        <ol class="directory">
+          {projects.map((project, index) => (
+            <li>
+              <a
+                class="project-row"
+                href={project.url ?? undefined}
+                target={project.url ? '_blank' : undefined}
+                rel={project.url ? 'noopener noreferrer' : undefined}
+                aria-disabled={!project.url ? 'true' : undefined}
+                data-preview={project.logo}
+                data-name={project.name}
+              >
+                <span class="mobile-logo"><img src={project.logo} alt="" loading="lazy" /></span>
+                <span class="number">{String(index + 1).padStart(2, '0')}</span>
+                <span class="name">{project.name}</span>
+                <span class="description">{project.blurb}</span>
+                <span class="kind">{KIND_LABEL[project.kind]}</span>
+                <span class="year">{range(project)}</span>
+                <span class="out" aria-hidden="true">{project.url ? '↗' : '—'}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+
+        <div class="preview" aria-hidden="true">
+          <img src="/icon.svg" alt="" />
+          <span></span>
         </div>
       </section>
 
-      <section class="b-section b-colophon" id="contacto">
-        <div class="b-colophon-lead">
-          <p class="b-kicker">Colofón</p>
-          <h2>Cuéntame qué quieres construir.</h2>
-          <p class="b-colophon-note">
-            Contesto en menos de 24 horas con una estimación honesta o con un no. Si el encargo no
-            encaja, te digo con quién sí encajaría.
-          </p>
-          <a class="b-mail" href="mailto:hola@olivermartinezharo.com">hola@olivermartinezharo.com</a>
-          <a class="b-gh" href="https://github.com/martinezharo" target="_blank" rel="noopener">
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
-              <path
-                fill="currentColor"
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
-              ></path>
-            </svg>
-            github.com/martinezharo
-          </a>
+      <section class="notes" id="notes">
+        <header class="section-title">
+          <h2>A few things about me</h2>
+        </header>
+        <div class="notes-grid">
+          <p>I enjoy taking a vague problem all the way to a real, deployed thing.</p>
+          <p>I care about speed, clear interfaces and software that remains easy to understand.</p>
+          <p>Running my own projects means I get to live with every decision I make.</p>
         </div>
-
-        <form class="b-form" onsubmit="event.preventDefault()">
-          <div class="b-field">
-            <label for="b-name">Nombre</label>
-            <input id="b-name" type="text" placeholder="Cómo te llamas" required />
-          </div>
-          <div class="b-field">
-            <label for="b-mail">Email</label>
-            <input id="b-mail" type="email" placeholder="Dónde te contesto" required />
-          </div>
-          <div class="b-field">
-            <label for="b-msg">Mensaje</label>
-            <textarea id="b-msg" rows="4" placeholder="Qué quieres construir y para cuándo" required></textarea>
-          </div>
-          <button class="b-btn" type="submit">Enviar</button>
-        </form>
       </section>
-
-      <footer class="b-foot">
-        <span>© 2026 Oliver Martínez Haro</span>
-        <span>Compuesto en Instrument Serif e Inter Tight</span>
-        <a href="https://github.com/martinezharo" target="_blank" rel="noopener">GitHub</a>
-      </footer>
     </main>
 
-    <style is:global>
-      .d-b {
-        --night: #15111b;
-        --night-2: #1c1724;
-        --night-3: #221c2b;
-        --paper: #f0eae1;
-        --paper-dim: #b3a9b8;
-        --dust: #7b7085;
-        --rule: #2e2739;
-        --flare: #ff4b26;
-        --chalk: #a9beff;
+    <footer>
+      <p>This is my personal site. No funnel, no newsletter.</p>
+      <p>
+        If you would still like to work together,
+        <a href="mailto:hola@olivermartinezharo.com">send me an email.</a>
+      </p>
+      <span>© 2026</span>
+    </footer>
 
-        --serif: 'Instrument Serif', Georgia, serif;
-        --sans: 'Inter Tight Variable', system-ui, sans-serif;
-        --mono: 'Space Mono', ui-monospace, monospace;
+    <script>
+      const preview = document.querySelector<HTMLElement>('.preview');
+      const previewImage = preview?.querySelector<HTMLImageElement>('img');
+      const previewName = preview?.querySelector<HTMLSpanElement>('span');
+      const rows = document.querySelectorAll<HTMLElement>('.project-row');
 
-        --gut: clamp(20px, 5vw, 76px);
+      if (preview && previewImage && previewName && matchMedia('(hover: hover)').matches) {
+        rows.forEach((row) => {
+          row.addEventListener('pointerenter', () => {
+            previewImage.src = row.dataset.preview ?? '';
+            previewName.textContent = row.dataset.name ?? '';
+            preview.dataset.visible = 'true';
+          });
+          row.addEventListener('pointermove', (event) => {
+            preview.style.setProperty('--x', `${event.clientX + 24}px`);
+            preview.style.setProperty('--y', `${event.clientY - 86}px`);
+          });
+          row.addEventListener('pointerleave', () => delete preview.dataset.visible);
+        });
+      }
+    </script>
 
+    <style>
+      :global(*) { box-sizing: border-box; }
+      :global(html) { scroll-behavior: smooth; }
+      :global(body) {
+        --paper: #fbfbfa;
+        --ink: #151716;
+        --soft: #737973;
+        --rule: #dfe2de;
+        --green: #276247;
         margin: 0;
-        background: var(--night);
-        color: var(--paper-dim);
-        font-family: var(--sans);
+        min-width: 320px;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: 'Geist Variable', system-ui, sans-serif;
         font-size: 16px;
-        line-height: 1.6;
+        line-height: 1.5;
         -webkit-font-smoothing: antialiased;
       }
-      .d-b *,
-      .d-b *::before,
-      .d-b *::after {
-        box-sizing: border-box;
-      }
-      .d-b h1,
-      .d-b h2,
-      .d-b h3,
-      .d-b p,
-      .d-b dl,
-      .d-b dd,
-      .d-b figure,
-      .d-b figcaption {
-        margin: 0;
-      }
-      .d-b ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-      /* :where() deja el reset en especificidad cero, así los componentes que
-         vienen después pueden fijar su propio color sin pelear. */
-      .d-b :where(a) {
-        color: inherit;
-        text-decoration: none;
-      }
-      .d-b :where(img) {
-        display: block;
-        max-width: 100%;
-      }
-      .d-b :focus-visible {
-        outline: 2px solid var(--flare);
-        outline-offset: 3px;
-      }
-      .b-skip {
-        position: absolute;
-        left: -9999px;
-      }
-      .b-skip:focus {
-        left: 12px;
-        top: 12px;
-        z-index: 40;
-        background: var(--flare);
-        color: #fff;
-        padding: 10px 16px;
-      }
-
-      .b-kicker {
-        font: 400 10.5px/1 var(--mono);
-        letter-spacing: 0.28em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-
-      /* ── Cabecera corrida ─────────────────────────────────────── */
-      .b-runhead {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px 28px;
-        align-items: baseline;
-        justify-content: space-between;
-        padding: 20px var(--gut);
-        border-bottom: 1px solid var(--rule);
-      }
-      .b-runhead-name {
-        font-family: var(--serif);
-        font-size: 19px;
-        letter-spacing: 0.01em;
-        color: var(--paper);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: 14px;
-      }
-      .b-runhead-name span {
-        font: 400 10px/1 var(--mono);
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-runhead-nav {
-        display: flex;
-        gap: 26px;
-        font: 400 10.5px/1 var(--mono);
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-runhead-nav a {
-        padding-bottom: 3px;
-        border-bottom: 1px solid transparent;
-        transition: color 0.2s, border-color 0.2s;
-      }
-      .b-runhead-nav a:hover {
-        color: var(--paper);
-        border-color: var(--flare);
-      }
-
-      /* ── Portada ──────────────────────────────────────────────── */
-      .b-hero {
-        display: grid;
-        gap: 44px;
-        padding: clamp(44px, 7vw, 92px) var(--gut) clamp(52px, 7vw, 96px);
-        border-bottom: 1px solid var(--rule);
-      }
-      @media (min-width: 1000px) {
-        .b-hero {
-          grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.75fr);
-          grid-template-areas:
-            'type portrait'
-            'margin portrait';
-          align-items: start;
-          column-gap: clamp(40px, 5vw, 88px);
-          row-gap: 56px;
-        }
-        .b-hero-type {
-          grid-area: type;
-        }
-        .b-portrait {
-          grid-area: portrait;
-        }
-        .b-margin {
-          grid-area: margin;
-        }
-      }
-      .b-hero h1 {
-        margin-top: 26px;
-        font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(40px, 6.4vw, 92px);
-        line-height: 1.02;
-        letter-spacing: -0.015em;
-        color: var(--paper);
-        text-wrap: balance;
-      }
-      .b-hero h1 em {
-        font-style: italic;
-        color: var(--flare);
+      :global(a) { color: inherit; text-decoration: none; }
+      :global(img) { display: block; max-width: 100%; }
+      :global(:focus-visible) { outline: 2px solid var(--green); outline-offset: 4px; }
+      .topbar {
         position: relative;
-      }
-      .b-hero-lede {
-        margin-top: 46px;
-        max-width: 46ch;
-        font-size: clamp(15.5px, 1.3vw, 17.5px);
-        color: var(--paper-dim);
-        text-wrap: pretty;
-      }
-      .b-hero-cta {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 22px;
-        margin-top: 34px;
-      }
-      .b-btn {
-        display: inline-flex;
-        align-items: center;
-        height: 46px;
-        padding: 0 26px;
-        background: var(--flare);
-        color: #180b06;
-        border: 0;
-        font: 500 13px/1 var(--sans);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: background 0.2s, transform 0.2s;
-      }
-      .b-btn:hover {
-        background: #ff6644;
-        transform: translateY(-1px);
-      }
-      .b-quiet {
-        font-size: 14px;
-        color: var(--dust);
-        border-bottom: 1px solid var(--rule);
-        padding-bottom: 2px;
-      }
-      .b-quiet:hover {
-        color: var(--paper);
-        border-color: var(--dust);
-      }
-
-      /* Lámina: el retrato entra como plancha revelada al pasar por encima. */
-      .b-portrait-frame {
-        position: relative;
-        overflow: hidden;
-        background: var(--night-2);
-      }
-      .b-portrait-frame img {
-        width: 100%;
-        height: 100%;
-        aspect-ratio: 4 / 5;
-        object-fit: cover;
-        object-position: 50% 24%;
-        filter: grayscale(1) contrast(1.14) brightness(0.86);
-        transition: filter 0.8s ease;
-      }
-      .b-portrait-frame::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(190deg, rgba(255, 75, 38, 0.42), rgba(169, 190, 255, 0.32));
-        mix-blend-mode: color;
-        transition: opacity 0.8s ease;
-      }
-      .b-portrait:hover .b-portrait-frame img {
-        filter: grayscale(0.15) contrast(1.02) brightness(1);
-      }
-      .b-portrait:hover .b-portrait-frame::after {
-        opacity: 0;
-      }
-      .b-portrait figcaption {
-        margin-top: 12px;
-        font: 400 10.5px/1.5 var(--mono);
-        letter-spacing: 0.06em;
-        color: var(--dust);
-      }
-      .b-portrait figcaption b {
-        color: var(--paper-dim);
-        font-weight: 400;
-      }
-
-      .b-margin dl {
+        z-index: 2;
+        height: 78px;
+        padding: 0 clamp(22px, 4.5vw, 72px);
         display: grid;
-        gap: 0;
-        border-top: 1px solid var(--rule);
-        max-width: 420px;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        border-bottom: 1px solid var(--rule);
+        font-size: 13px;
       }
-      .b-margin dl > div {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
+      .wordmark { width: fit-content; font-weight: 720; letter-spacing: -.04em; }
+      .topbar nav { display: flex; gap: 32px; color: var(--soft); }
+      .topbar nav a:hover, .github:hover { color: var(--green); }
+      .github { justify-self: end; }
+      main { padding: 0 clamp(22px, 4.5vw, 72px); }
+      .intro { min-height: min(760px, 82vh); max-width: 1260px; margin: 0 auto; padding: clamp(90px, 12vw, 176px) 0 100px; display: flex; flex-direction: column; }
+      .hello { margin: 0 0 52px; font-size: 14px; font-weight: 560; }
+      .hello span { display: inline-block; margin-right: 8px; color: var(--green); transform: translateY(-1px); }
+      h1 { max-width: 1130px; margin: 0; font-size: clamp(42px, 6.5vw, 92px); line-height: .99; letter-spacing: -.065em; font-weight: 510; }
+      h1 span { color: #a1a69f; }
+      .intro-note { margin: auto 0 0; padding-top: 70px; color: var(--soft); font-size: 12px; }
+      .work, .notes { max-width: 1260px; margin: 0 auto; padding-top: 34px; border-top: 1px solid var(--ink); }
+      .section-title { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-bottom: 68px; }
+      .section-title h2 { margin: 0; font-size: 14px; font-weight: 640; }
+      .section-title p { margin: 0; max-width: 440px; color: var(--soft); font-size: 14px; }
+      .directory { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+      .directory > li { border-bottom: 1px solid var(--rule); }
+      .project-row {
+        display: grid;
+        grid-template-columns: 45px minmax(150px, .8fr) minmax(260px, 1.5fr) 110px 86px 20px;
         gap: 20px;
-        padding: 11px 0;
-        border-bottom: 1px solid var(--rule);
-      }
-      .b-margin dt {
-        font: 400 10px/1.4 var(--mono);
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-margin dd {
-        font-family: var(--serif);
-        font-size: 19px;
-        color: var(--paper);
-      }
-
-      /* ── Secciones ────────────────────────────────────────────── */
-      .b-section {
-        padding: clamp(56px, 7vw, 100px) var(--gut);
-        border-bottom: 1px solid var(--rule);
-      }
-      .b-sechead {
-        display: grid;
-        gap: 14px;
-        padding-bottom: 22px;
-        margin-bottom: 34px;
-        border-bottom: 1px solid var(--rule);
-      }
-      @media (min-width: 900px) {
-        .b-sechead {
-          grid-template-columns: 1fr minmax(0, 46ch);
-          align-items: end;
-          gap: 40px;
-        }
-      }
-      .b-sechead h2 {
-        font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(32px, 4.4vw, 58px);
-        line-height: 1;
-        letter-spacing: -0.01em;
-        color: var(--paper);
-      }
-      .b-sechead p {
-        font-size: 15px;
-        color: var(--dust);
-        text-wrap: pretty;
-      }
-
-      /* ── Controles del índice ─────────────────────────────────── */
-      .b-controls {
-        display: grid;
-        gap: 0;
-        margin-bottom: 44px;
-        border-top: 1px solid var(--rule);
-      }
-      .b-row {
-        display: grid;
-        gap: 6px 26px;
-        padding: 13px 0;
-        border-bottom: 1px solid var(--rule);
-      }
-      @media (min-width: 720px) {
-        .b-row {
-          grid-template-columns: 118px 1fr;
-          align-items: baseline;
-        }
-      }
-      .b-row-label {
-        font: 400 10px/1.6 var(--mono);
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-row-opts {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px 22px;
-      }
-      .b-row-opts button {
-        border: 0;
-        background: none;
-        padding: 2px 0;
-        cursor: pointer;
-        font-family: var(--serif);
-        font-size: 19px;
-        line-height: 1.25;
-        color: var(--dust);
-        border-bottom: 1.5px solid transparent;
-        transition: color 0.18s, border-color 0.18s;
-      }
-      .b-row-opts button:hover {
-        color: var(--paper);
-      }
-      .b-row-opts button.is-on {
-        color: var(--paper);
-        border-bottom-color: var(--flare);
-      }
-      .b-tally {
-        display: flex;
-        flex-wrap: wrap;
         align-items: baseline;
-        gap: 18px;
-        padding: 13px 0;
-        font: 400 10.5px/1 var(--mono);
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--dust);
+        padding: 25px 0;
+        transition: color .18s, padding-left .24s;
       }
-      .b-reset {
-        border: 0;
-        background: none;
-        padding: 0;
-        cursor: pointer;
-        font: inherit;
-        color: var(--flare);
-        border-bottom: 1px solid currentColor;
-      }
-
-      /* ── Láminas ──────────────────────────────────────────────── */
-      .b-plates {
-        display: grid;
-        gap: 1px;
-        background: var(--rule);
-        border: 1px solid var(--rule);
-      }
-      @media (min-width: 760px) {
-        .b-plates {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (min-width: 1400px) {
-        .b-plates {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-      .b-plate {
-        display: grid;
-        grid-template-rows: auto auto auto auto 1fr auto auto;
-        gap: 0;
-        height: 100%;
-        padding: 0 0 20px;
-        background: var(--night);
-        transition: background 0.25s;
-      }
-      .b-plate:hover {
-        background: var(--night-2);
-      }
-      /* Lámina: el logo se monta entero y centrado, no recortado, para que
-         los ocho se lean como una serie. */
-      .b-plate-img {
-        position: relative;
-        display: grid;
-        place-items: center;
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
-        background: var(--night-3);
-        margin-bottom: 20px;
-      }
-      .b-plate-img img {
-        width: 42%;
-        max-width: 128px;
-        aspect-ratio: 1;
-        object-fit: contain;
-        filter: grayscale(1) contrast(1.06) brightness(0.88);
-        transition: filter 0.6s ease, transform 0.6s ease;
-      }
-      .b-plate:hover .b-plate-img img {
-        transform: scale(1.04);
-      }
-      .b-plate-img::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(200deg, rgba(255, 75, 38, 0.34), rgba(169, 190, 255, 0.26));
-        mix-blend-mode: color;
-        transition: opacity 0.6s ease;
-      }
-      .b-plate:hover .b-plate-img img {
-        filter: grayscale(0) contrast(1) brightness(1);
-      }
-      .b-plate:hover .b-plate-img::after {
+      .project-row:hover, .project-row:focus-visible { color: var(--green); padding-left: 10px; }
+      .project-row[aria-disabled='true'] { cursor: default; }
+      .number, .kind, .year { color: var(--soft); font-size: 12px; }
+      .number { font-variant-numeric: tabular-nums; }
+      .name { font-size: 17px; font-weight: 590; letter-spacing: -.025em; }
+      .description { max-width: 560px; color: var(--soft); font-size: 13px; line-height: 1.5; }
+      .year, .out { text-align: right; }
+      .out { color: var(--soft); }
+      .mobile-logo { display: none; }
+      .preview {
+        --x: 0px;
+        --y: 0px;
+        pointer-events: none;
+        position: fixed;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        width: 142px;
+        padding: 9px;
+        background: var(--ink);
+        color: white;
         opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(.94);
+        transition: opacity .14s, transform .18s;
       }
-
-      .b-plate-head,
-      .b-plate-name,
-      .b-plate-kind,
-      .b-plate-blurb,
-      .b-specs,
-      .b-plate-foot {
-        padding-inline: 20px;
-      }
-      .b-plate-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        font: 400 10px/1 var(--mono);
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-plate-state[data-live='true'] {
-        color: var(--chalk);
-      }
-      .b-plate-name {
-        margin-top: 10px;
-        font-family: var(--serif);
-        font-weight: 400;
-        font-size: 30px;
-        line-height: 1.08;
-        letter-spacing: -0.005em;
-        color: var(--paper);
-      }
-      .b-plate-kind {
-        margin-top: 4px;
-        font-size: 12.5px;
-        color: var(--dust);
-      }
-      .b-plate-blurb {
-        margin-top: 12px;
-        font-size: 14px;
-        line-height: 1.55;
-        color: var(--paper-dim);
-        text-wrap: pretty;
-      }
-
-      /* Tabla de valoraciones con puntos guía, como un sumario impreso. */
-      .b-specs {
-        margin-top: 22px;
+      .preview[data-visible='true'] { opacity: 1; transform: translate(var(--x), var(--y)) scale(1); }
+      .preview img { width: 124px; height: 124px; object-fit: cover; }
+      .preview span { display: block; padding: 8px 2px 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+      .notes { margin-top: clamp(140px, 18vw, 260px); padding-bottom: clamp(150px, 18vw, 250px); }
+      .notes-grid { width: 66.666%; margin-left: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(28px, 5vw, 72px); }
+      .notes-grid p { margin: 0; font-size: clamp(18px, 2vw, 26px); line-height: 1.35; letter-spacing: -.03em; }
+      footer {
+        min-height: 140px;
+        padding: 32px clamp(22px, 4.5vw, 72px);
         display: grid;
-        gap: 3px;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 40px;
+        align-items: start;
+        border-top: 1px solid var(--ink);
+        color: var(--soft);
+        font-size: 12px;
       }
-      .b-specs > div {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: baseline;
-        gap: 8px;
-        cursor: help;
+      footer p { margin: 0; }
+      footer a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+      @media (max-width: 820px) {
+        .topbar { height: 70px; grid-template-columns: 1fr auto; }
+        .topbar nav { display: none; }
+        .intro { min-height: calc(100svh - 70px); padding: 82px 0 48px; }
+        .hello { margin-bottom: 36px; }
+        h1 { font-size: clamp(43px, 13vw, 68px); }
+        .section-title { grid-template-columns: 1fr; gap: 16px; margin-bottom: 42px; }
+        .project-row { grid-template-columns: 46px 1fr auto; gap: 4px 16px; align-items: center; padding: 24px 0; }
+        .project-row:hover, .project-row:focus-visible { padding-left: 0; }
+        .mobile-logo { display: block; grid-row: 1 / span 2; width: 46px; height: 46px; overflow: hidden; border-radius: 8px; }
+        .mobile-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .number { display: none; }
+        .name { grid-column: 2; font-size: 17px; }
+        .description { grid-column: 2 / 4; margin-top: 8px; font-size: 12px; }
+        .kind { grid-column: 2; grid-row: 2; }
+        .year { grid-column: 3; grid-row: 1; align-self: start; }
+        .out { display: none; }
+        .preview { display: none; }
+        .notes { margin-top: 120px; }
+        .notes-grid { width: 100%; grid-template-columns: 1fr; gap: 42px; }
+        .notes-grid p { max-width: 500px; font-size: 24px; }
+        footer { grid-template-columns: 1fr; gap: 18px; }
       }
-      .b-specs > div::after {
-        content: '';
-        grid-column: 2;
-        height: 1px;
-        border-bottom: 1px dotted var(--rule);
-        transform: translateY(-3px);
-      }
-      .b-specs dt {
-        order: 1;
-        font: 400 10.5px/1.7 var(--mono);
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-specs dd {
-        order: 3;
-        font-family: var(--serif);
-        font-size: 17px;
-        color: var(--paper);
-        font-variant-numeric: tabular-nums;
-      }
-      .b-specs > div::after {
-        order: 2;
-      }
-
-      .b-plate-foot {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 14px;
-        margin-top: 20px;
-        padding-top: 14px;
-        border-top: 1px solid var(--rule);
-      }
-      .b-plate-hours {
-        font: 400 10.5px/1 var(--mono);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-plate-overall {
-        display: flex;
-        align-items: baseline;
-        gap: 6px;
-        font-family: var(--serif);
-        font-size: 30px;
-        line-height: 1;
-        color: var(--flare);
-        font-variant-numeric: tabular-nums;
-      }
-      .b-plate-overall em {
-        font: 400 9.5px/1 var(--mono);
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        font-style: normal;
-        color: var(--dust);
-      }
-      .b-plate-go {
-        font: 400 10.5px/1 var(--mono);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--dust);
-        transition: color 0.2s;
-      }
-      .b-plate:hover .b-plate-go {
-        color: var(--flare);
-      }
-      .b-empty {
-        margin-top: 26px;
-        font-family: var(--serif);
-        font-size: 22px;
-        color: var(--dust);
-      }
-
-      /* ── Oficio ───────────────────────────────────────────────── */
-      .b-craft-grid {
-        display: grid;
-        gap: 34px;
-      }
-      @media (min-width: 880px) {
-        .b-craft-grid {
-          grid-template-columns: repeat(3, 1fr);
-          gap: clamp(30px, 4vw, 64px);
-        }
-      }
-      .b-craft-grid article {
-        padding-top: 18px;
-        border-top: 2px solid var(--flare);
-      }
-      .b-craft-grid h3 {
-        font-family: var(--serif);
-        font-weight: 400;
-        font-size: 25px;
-        line-height: 1.15;
-        color: var(--paper);
-        margin-bottom: 12px;
-      }
-      .b-craft-grid p {
-        font-size: 14.5px;
-        color: var(--dust);
-        text-wrap: pretty;
-      }
-
-      /* ── Colofón ──────────────────────────────────────────────── */
-      .b-colophon {
-        display: grid;
-        gap: 46px;
-      }
-      @media (min-width: 940px) {
-        .b-colophon {
-          grid-template-columns: 1.15fr 0.85fr;
-          gap: clamp(48px, 6vw, 96px);
-          align-items: start;
-        }
-      }
-      .b-colophon h2 {
-        margin-top: 20px;
-        font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(34px, 4.6vw, 62px);
-        line-height: 1.02;
-        letter-spacing: -0.015em;
-        color: var(--paper);
-        text-wrap: balance;
-      }
-      .b-colophon-note {
-        margin-top: 20px;
-        max-width: 44ch;
-        font-size: 15.5px;
-      }
-      .b-mail {
-        display: inline-block;
-        margin-top: 28px;
-        font-family: var(--serif);
-        font-size: clamp(21px, 2.3vw, 30px);
-        color: var(--flare);
-        border-bottom: 1px solid rgba(255, 75, 38, 0.4);
-      }
-      .b-mail:hover {
-        border-color: var(--flare);
-      }
-      .b-gh {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 26px;
-        font: 400 11.5px/1 var(--mono);
-        letter-spacing: 0.1em;
-        color: var(--dust);
-        width: fit-content;
-        padding-bottom: 4px;
-        border-bottom: 1px solid var(--rule);
-      }
-      .b-gh:hover {
-        color: var(--paper);
-        border-color: var(--dust);
-      }
-
-      .b-form {
-        display: grid;
-        gap: 20px;
-        align-content: start;
-      }
-      .b-field {
-        display: grid;
-        gap: 6px;
-      }
-      .b-field label {
-        font: 400 10px/1 var(--mono);
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-field input,
-      .b-field textarea {
-        width: 100%;
-        background: transparent;
-        border: 0;
-        border-bottom: 1px solid var(--rule);
-        color: var(--paper);
-        padding: 9px 0;
-        font-family: var(--serif);
-        font-size: 21px;
-        resize: vertical;
-      }
-      .b-field input::placeholder,
-      .b-field textarea::placeholder {
-        color: #4d4557;
-      }
-      .b-field input:focus,
-      .b-field textarea:focus {
-        outline: none;
-        border-bottom-color: var(--flare);
-      }
-      .b-form .b-btn {
-        justify-self: start;
-      }
-
-      .b-foot {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px 30px;
-        justify-content: space-between;
-        padding: 26px var(--gut) 34px;
-        font: 400 10.5px/1.6 var(--mono);
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--dust);
-      }
-      .b-foot a:hover {
-        color: var(--flare);
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .d-b *,
-        .d-b *::before,
-        .d-b *::after {
-          transition-duration: 0.001ms !important;
-          animation-duration: 0.001ms !important;
-        }
-      }
+      @media (prefers-reduced-motion: reduce) { :global(html) { scroll-behavior: auto; } .project-row, .preview { transition: none; } }
     </style>
   </body>
 </html>
