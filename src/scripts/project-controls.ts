@@ -1,6 +1,6 @@
-// Client behaviour shared by the three A directions. The list is rendered on the
-// server; this only reorders and hides the rows that are already there, so the
-// page still shows every project without JavaScript.
+// Client behaviour for the project list. The list is rendered on the server;
+// this only reorders and hides the rows that are already there, so the page
+// still shows every project without JavaScript.
 
 export type SortKey =
   | 'recent'
