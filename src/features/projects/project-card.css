@@ -139,6 +139,11 @@
   color: currentcolor;
 }
 
+.rating-value {
+  display: none;
+  font-weight: 600;
+}
+
 .rating-label,
 .stars {
   transition: color 0.25s;
@@ -265,8 +270,28 @@
     font-size: 12px;
   }
 
+  /* One star plus the number keeps the four metrics on a single line. */
   .ratings {
-    gap: 4px 14px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 0 8px;
+  }
+
+  .rating {
+    gap: 3px;
+  }
+
+  .rating-label,
+  .stars {
+    font-size: 10px;
+  }
+
+  .stars i:nth-child(n + 2) {
+    display: none;
+  }
+
+  .rating-value {
+    display: inline;
   }
 
   .project-meta {

@@ -48,6 +48,7 @@ const { project } = Astro.props;
                   {Array.from({ length: 5 }, (_, index) => (
                     <i data-on={String(index < stars)} aria-hidden="true">★</i>
                   ))}
+                  <b class="rating-value">{stars}</b>
                 </span>
               </span>
             );
