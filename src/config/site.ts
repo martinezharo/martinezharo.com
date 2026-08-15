@@ -6,7 +6,7 @@ export const site = {
   githubUrl: 'https://github.com/martinezharo',
   intro: {
     eyebrow: 'Independent maker · Spain',
-    heading: 'I build useful things for the internet.',
+    heading: 'I need it,\nI build it.',
     body: 'Mostly software for my own businesses, plus side projects that begin with a question I cannot leave alone.',
   },
   availability: 'Around for interesting work',
