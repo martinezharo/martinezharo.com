@@ -82,23 +82,25 @@ const { fields } = Astro.props;
     </div>
   </div>
 
-  {
-    FILTER_CLAUSES.map((clause) => (
-      <span class="clause" data-chip={clause.key} hidden>
-        <button type="button" class="clause-open" data-facets-open={clause.facet}>
-          <span class="clause-field">{clause.label}</span>
-          <span class="clause-is">is</span>
-          <span class="clause-value" data-echo={clause.key}></span>
-        </button>
-        <button
-          type="button"
-          class="clause-clear"
-          data-clear={clause.key}
-          aria-label={`Remove the ${clause.label.toLowerCase()} condition`}
-        >
-          <Icon name="clear" />
-        </button>
-      </span>
-    ))
-  }
+  <div class="clauses">
+    {
+      FILTER_CLAUSES.map((clause) => (
+        <span class="clause" data-chip={clause.key} hidden>
+          <button type="button" class="clause-open" data-facets-open={clause.facet}>
+            <span class="clause-field">{clause.label}</span>
+            <span class="clause-is">is</span>
+            <span class="clause-value" data-echo={clause.key}></span>
+          </button>
+          <button
+            type="button"
+            class="clause-clear"
+            data-clear={clause.key}
+            aria-label={`Remove the ${clause.label.toLowerCase()} condition`}
+          >
+            <Icon name="clear" />
+          </button>
+        </span>
+      ))
+    }
+  </div>
 </div>

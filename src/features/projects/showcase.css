@@ -29,19 +29,34 @@
   gap: 6px;
 }
 
+/* The clauses ride along with the button in one right-aligned run. */
+.clauses {
+  display: contents;
+}
+
 @media (--compact) {
+  /* The builder's children join the header grid, so the button keeps the
+     title's row and the clauses get a full-width row below it. */
   .section-head {
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
     margin-bottom: 14px;
   }
 
-  .section-head h2 {
-    flex: 1 1 100%;
+  .builder {
+    display: contents;
   }
 
-  .builder {
-    flex: 1 1 100%;
-    justify-content: flex-start;
-    margin-top: 12px;
+  .clauses {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    gap: 6px;
+  }
+
+  /* With every clause hidden the row is empty, but its grid gap is not. */
+  .clauses:not(:has(.clause:not([hidden]))) {
+    display: none;
   }
 }
