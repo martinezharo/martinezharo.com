@@ -5,8 +5,8 @@ footer {
   justify-content: space-between;
   gap: 28px;
   max-width: var(--content-max);
-  margin: 0 auto;
-  padding-top: 28px;
+  margin: clamp(72px, 9vw, 128px) auto 0;
+  padding: 32px 0 clamp(24px, 4vw, 48px);
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 12px;
