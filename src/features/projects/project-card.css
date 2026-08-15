@@ -147,10 +147,10 @@
   margin-top: 2px;
 }
 
-/* --star and --label carry the highlight, so the rule that marks the metric
+/* --mark and --label carry the highlight, so the rule that marks the metric
    behind the current order is a single selector list instead of one per part. */
 .rating {
-  --star: var(--text);
+  --mark: var(--text);
   --label: var(--muted);
 
   display: flex;
@@ -165,27 +165,23 @@
   transition: color 0.25s;
 }
 
-.stars {
-  display: inline-flex;
+/* Five segments rather than five stars: the empty part of the scale stays
+   visible, so two projects can be compared without reading the numbers. */
+.meter {
+  display: flex;
   gap: 2px;
-  color: var(--star);
-  font-size: 11px;
-  line-height: 1;
-  transition: color 0.25s;
 }
 
-.stars i {
-  color: var(--star-off);
-  font-style: normal;
+.meter i {
+  width: 7px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--track);
+  transition: background 0.25s;
 }
 
-.stars i[data-on='true'] {
-  color: currentcolor;
-}
-
-.rating-value {
-  display: none;
-  font-weight: 600;
+.meter i[data-on='true'] {
+  background: var(--mark);
 }
 
 .projects:is(
@@ -201,7 +197,7 @@
 .projects[data-state-field='depth'] .rating[data-metric='depth'],
 .projects[data-state-field='utility'] .rating[data-metric='utility'],
 .projects[data-state-field='impact'] .rating[data-metric='impact'] {
-  --star: var(--accent);
+  --mark: var(--accent);
   --label: var(--text);
 
   opacity: 1;
@@ -264,11 +260,15 @@
 }
 
 @media (--compact) {
+  /* Only the name needs to sit beside the logo. The blurb and the meters run
+     the full width underneath it, which is where the desktop gutter would
+     otherwise eat a sixth of a phone screen. Column 2 is the state, column 3
+     the rest of the metadata, and the two share one line. */
   .project {
-    grid-template-columns: 48px minmax(0, 1fr) 20px;
+    grid-template-columns: 40px auto minmax(0, 1fr) 20px;
     gap: 0 12px;
     min-height: 0;
-    padding: 24px 0;
+    padding: 20px 0;
   }
 
   /* The compact rows start at the edge, where the marker would land on top of
@@ -277,81 +277,114 @@
     content: none;
   }
 
-  .state {
-    grid-column: 2;
-    grid-row: 1;
-    padding-top: 0;
+  .project:active {
+    opacity: 0.65;
   }
 
   .project-logo {
     grid-column: 1;
     grid-row: 1 / span 2;
-    align-self: start;
-    width: 48px;
-    height: 48px;
+    align-self: center;
+    width: 40px;
+    height: 40px;
     opacity: 1;
     transform: none;
   }
 
+  /* The three parts stop being one block and become grid items of the row, so
+     each can be placed on its own line. */
   .project-copy {
-    grid-column: 2;
-    grid-row: 2;
-    gap: 6px;
-    padding: 8px 0 0;
+    display: contents;
   }
 
   .project-name {
-    font-size: 19px;
+    grid-column: 2 / 4;
+    grid-row: 1;
+    font-size: 20px;
+  }
+
+  /* One metadata line: state, kind and years, told apart by middots. */
+  .state {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 2px;
+    padding-top: 0;
+    gap: 6px;
+  }
+
+  /* The line reads as one run of metadata, so only the dot carries the state. */
+  .state,
+  .state[data-on='true'] {
+    color: var(--muted);
+  }
+
+  .state i {
+    width: 5px;
+    height: 5px;
   }
 
   .project-blurb {
-    font-size: 12px;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.5;
   }
 
-  /* One star plus the number keeps the four metrics on a single line. */
+  /* Four equal columns: the meter takes the width it is given and the label
+     drops underneath it, which fits the whole scale on a phone. */
   .ratings {
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    gap: 0 8px;
+    grid-column: 1 / -1;
+    grid-row: 4;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 10px;
+    margin-top: 14px;
   }
 
   .rating {
-    gap: 3px;
+    display: grid;
+    gap: 6px;
   }
 
-  .rating-label,
-  .stars {
+  .meter i {
+    width: auto;
+    height: 3px;
+    flex: 1;
+  }
+
+  .rating-label {
     font-size: 10px;
   }
 
-  .stars i:nth-child(n + 2) {
-    display: none;
-  }
-
-  .rating-value {
-    display: inline;
-  }
-
   .project-meta {
-    grid-column: 2;
-    grid-row: 3;
+    grid-column: 3;
+    grid-row: 2;
     display: flex;
-    gap: 8px;
-    padding-top: 10px;
+    gap: 0;
+    align-self: center;
+    margin-top: 2px;
     text-align: left;
   }
 
+  .project-meta::before,
+  .project-meta span + span::before {
+    content: '·';
+    margin: 0 6px;
+    color: var(--line-strong);
+  }
+
   .arrow {
-    grid-column: 3;
+    grid-column: 4;
     grid-row: 1;
-    align-self: start;
+    align-self: center;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .rating,
   .rating-label,
-  .stars,
+  .meter i,
   .project::before,
   .project-name,
   .project-logo,

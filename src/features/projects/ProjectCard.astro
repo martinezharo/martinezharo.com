@@ -1,6 +1,6 @@
 ---
 import type { Project } from './model';
-import { formatProjectRange, getOverallScore, KIND_LABEL, SCORE_META, toStarRating } from './model';
+import { formatProjectRange, getOverallScore, KIND_LABEL, SCORE_META, toRating } from './model';
 import './project-card.css';
 
 interface Props {
@@ -39,16 +39,15 @@ const { project } = Astro.props;
       <span class="ratings">
         {
           SCORE_META.map((metric) => {
-            const stars = toStarRating(project.scores[metric.key]);
+            const rating = toRating(project.scores[metric.key]);
 
             return (
               <span class="rating" data-metric={metric.key} title={metric.hint}>
                 <span class="rating-label">{metric.label}</span>
-                <span class="stars" aria-label={`${metric.label}: ${stars} out of 5`}>
+                <span class="meter" aria-label={`${metric.label}: ${rating} out of 5`}>
                   {Array.from({ length: 5 }, (_, index) => (
-                    <i data-on={String(index < stars)} aria-hidden="true">★</i>
+                    <i data-on={String(index < rating)} aria-hidden="true" />
                   ))}
-                  <b class="rating-value">{stars}</b>
                 </span>
               </span>
             );

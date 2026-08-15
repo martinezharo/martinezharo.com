@@ -14,7 +14,7 @@
   /* Lines and marks. With no filled surfaces these carry the whole layout. */
   --line: #1a1a1a;
   --line-strong: #2b2b2b;
-  --star-off: #232323;
+  --track: #232323;
 
   /* Accent. Kept as channels so the halos below follow the colour. It lands on
      11px labels, so it stays well clear of the 4.5:1 floor: this violet is at

@@ -90,6 +90,6 @@ export function formatProjectRange(project: Project): string {
   return project.end === project.start ? `${project.start}` : `${project.start}–${project.end}`;
 }
 
-export function toStarRating(score: number): number {
+export function toRating(score: number): number {
   return Math.max(1, Math.min(5, Math.round(score / 20)));
 }
