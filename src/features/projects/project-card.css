@@ -12,18 +12,56 @@
 }
 
 .project {
+  position: relative;
   display: grid;
   grid-template-columns: 76px 60px minmax(0, 1fr) 118px 18px;
   align-items: center;
   gap: 0;
   min-height: 116px;
   padding: 18px 14px;
-  transition: background-color 0.2s;
 }
 
-.project:hover,
-.project:focus-visible {
-  background: var(--panel);
+/* Nothing fills on hover. Instead a marker grows from the middle of the row,
+   just outside it in the gutter, so it annotates the line rather than belonging
+   to it: solid and lit for a live project, a short dotted stub for an archived
+   one, which puts the state in view before the eye reaches the label. */
+.project::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  width: 2px;
+  height: 0;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
+}
+
+.project:hover::before,
+.project:focus-visible::before {
+  height: 58%;
+  opacity: 1;
+}
+
+.project:hover .project-name,
+.project:focus-visible .project-name {
+  color: var(--accent);
+}
+
+[data-active='false'] .project::before {
+  background: repeating-linear-gradient(var(--faint) 0 3px, transparent 3px 6px);
+}
+
+[data-active='false'] .project:hover::before,
+[data-active='false'] .project:focus-visible::before {
+  height: 30%;
+}
+
+[data-active='false'] .project:hover .project-name,
+[data-active='false'] .project:focus-visible .project-name {
+  color: var(--text);
 }
 
 .project[aria-disabled='true'] {
@@ -60,7 +98,7 @@
   width: 44px;
   height: 44px;
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 6px;
   opacity: 0;
   transform: scale(0.8);
   transition: opacity 0.2s, transform 0.35s;
@@ -88,6 +126,7 @@
   font-size: clamp(19px, 2vw, 25px);
   font-weight: 570;
   letter-spacing: -0.035em;
+  transition: color 0.2s;
 }
 
 .project-blurb {
@@ -232,9 +271,10 @@
     padding: 24px 0;
   }
 
-  .project:hover,
-  .project:focus-visible {
-    background: transparent;
+  /* The compact rows start at the edge, where the marker would land on top of
+     the logo. Nothing hovers on a touch screen anyway. */
+  .project::before {
+    content: none;
   }
 
   .state {
@@ -312,7 +352,8 @@
   .rating,
   .rating-label,
   .stars,
-  .project,
+  .project::before,
+  .project-name,
   .project-logo,
   .arrow {
     transition: none;

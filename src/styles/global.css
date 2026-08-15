@@ -1,28 +1,32 @@
 :root {
-  /* Surfaces */
-  --bg: #111210;
-  --panel: #181916;
-  --panel-raised: #1c1d19;
+  /* Surfaces. The page is a single black plane: the sidebar and the menus sit
+     on the same ground as everything else and are told apart by their hairline,
+     not by a fill. Only the popovers lift, and barely. */
+  --bg: #000;
+  --panel: #000;
+  --panel-raised: #070707;
 
   /* Text */
-  --text: #f1f2ec;
-  --muted: #9b9e96;
-  --faint: #6c7067;
+  --text: #f2f2f2;
+  --muted: #8f8f8f;
+  --faint: #5c5c5c;
 
-  /* Lines and marks */
-  --line: #30312d;
-  --line-strong: #43443e;
-  --star-off: #35362f;
+  /* Lines and marks. With no filled surfaces these carry the whole layout. */
+  --line: #1a1a1a;
+  --line-strong: #2b2b2b;
+  --star-off: #232323;
 
-  /* Accent. Kept as channels so the halos below follow the colour. */
-  --accent-rgb: 169 193 255;
+  /* Accent. Kept as channels so the halos below follow the colour. It lands on
+     11px labels, so it stays well clear of the 4.5:1 floor: this violet is at
+     9.1:1 against the background. */
+  --accent-rgb: 180 155 255;
   --accent: rgb(var(--accent-rgb));
   --halo-soft: 0 0 0 4px rgb(var(--accent-rgb) / 9%);
   --halo-tight: 0 0 0 3px rgb(var(--accent-rgb) / 12%);
 
   /* Effects */
-  --hover: rgb(255 255 255 / 5%);
-  --shadow-menu: 0 18px 38px -20px rgb(0 0 0 / 85%);
+  --hover: rgb(255 255 255 / 3%);
+  --shadow-menu: 0 18px 38px -20px rgb(0 0 0 / 95%);
 
   /* Layout. The sidebar width doubles as the main content offset. */
   --sidebar-w: clamp(280px, 27vw, 390px);
@@ -101,7 +105,7 @@ button {
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
