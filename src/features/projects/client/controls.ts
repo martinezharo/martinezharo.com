@@ -1,3 +1,4 @@
+import { FILTER_CLAUSES } from '../filter-options';
 import {
   DIRECTION_LABEL,
   SORT_FIELDS,
@@ -19,8 +20,9 @@ import {
 // Nothing here draws a control. Anything on the page can drive the state by
 // carrying an attribute: [data-set-*] applies a value, [data-clear] puts a
 // dimension back to its default, [data-echo] prints a piece of the state in
-// words and [data-chip] hides itself while its dimension is untouched. The
-// menu those attributes hang off lives in the facets module.
+// words, [data-chip] hides itself while its dimension is untouched and
+// [data-announce] receives the sentence a screen reader hears after a change.
+// The menu those attributes hang off lives in the facets module.
 
 const num = (el: HTMLElement, key: string) => Number(el.dataset[key] ?? 0);
 const name = (el: HTMLElement) => el.dataset.name ?? '';
@@ -48,10 +50,8 @@ export function initProjectControls(root: HTMLElement): void {
   const echoes = Array.from(root.querySelectorAll<HTMLElement>('[data-echo]'));
   const chips = Array.from(root.querySelectorAll<HTMLElement>('[data-chip]'));
   const dirNames = Array.from(root.querySelectorAll<HTMLElement>('[data-dir-name]'));
-  // Counters can appear more than once, so every matching node is kept in sync.
-  const shown = Array.from(root.querySelectorAll<HTMLElement>('[data-count-shown]'));
-  const total = Array.from(root.querySelectorAll<HTMLElement>('[data-count-total]'));
   const empty = Array.from(root.querySelectorAll<HTMLElement>('[data-empty]'));
+  const announcers = Array.from(root.querySelectorAll<HTMLElement>('[data-announce]'));
 
   const still = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -59,8 +59,6 @@ export function initProjectControls(root: HTMLElement): void {
   let dir = (root.dataset.stateDir as SortDirection) ?? 'desc';
   let kind = root.dataset.stateKind ?? 'all';
   let status = (root.dataset.stateStatus as ProjectStatus) ?? 'all';
-
-  for (const node of total) node.textContent = String(items.length);
 
   function check(node: HTMLElement, on: boolean) {
     node.dataset.picked = String(on);
@@ -86,6 +84,12 @@ export function initProjectControls(root: HTMLElement): void {
     return '';
   }
 
+  /** Whether a dimension still holds the value it starts on. */
+  function untouched(which: string | undefined) {
+    if (which === 'order') return field === 'date' && dir === 'desc';
+    return (which === 'kind' ? kind : status) === 'all';
+  }
+
   function visible(item: HTMLElement) {
     if (kind !== 'all' && item.dataset.kind !== kind) return false;
     if (status === 'active' && item.dataset.active !== 'true') return false;
@@ -93,7 +97,39 @@ export function initProjectControls(root: HTMLElement): void {
     return true;
   }
 
-  function apply({ animate = true } = {}) {
+  /**
+   * What a screen reader hears once the list has settled. It says the same
+   * things the chips say, so the announcement and the visible state cannot
+   * describe the list differently. Naming the order as well as the filters is
+   * what makes reordering audible: the count alone does not move when the list
+   * is only resorted, and an unchanged live region stays silent.
+   */
+  function announcement(count: number) {
+    // The empty case borrows the wording the page itself shows, so the two
+    // cannot drift apart.
+    if (count === 0) return empty[0]?.textContent?.trim() ?? 'Nothing matches those filters.';
+
+    const clauses = [
+      count === items.length
+        ? `Showing all ${items.length} projects`
+        : `Showing ${count} of ${items.length} projects`,
+    ];
+
+    for (const clause of FILTER_CLAUSES) {
+      if (untouched(clause.key)) continue;
+      // "Order is date, newest first" is how the chip reads, but spoken aloud
+      // it wants a verb.
+      clauses.push(
+        clause.key === 'order'
+          ? `sorted by ${echo('order').toLowerCase()}`
+          : `${clause.label.toLowerCase()} is ${echo(clause.key).toLowerCase()}`,
+      );
+    }
+
+    return `${clauses.join(', ')}.`;
+  }
+
+  function apply({ animate = true, announce = true } = {}) {
     const before = new Map(items.map((item) => [item, item.getBoundingClientRect().top]));
     const sign = dir === 'asc' ? 1 : -1;
 
@@ -118,13 +154,11 @@ export function initProjectControls(root: HTMLElement): void {
     for (const node of echoes) node.textContent = echo(node.dataset.echo ?? '');
     // A clause is only worth printing once its dimension has been moved off the
     // value it holds by default.
-    for (const node of chips) {
-      const which = node.dataset.chip;
-      node.hidden =
-        which === 'order' ? field === 'date' && dir === 'desc' : (which === 'kind' ? kind : status) === 'all';
-    }
-    for (const node of shown) node.textContent = String(ordered.length);
+    for (const node of chips) node.hidden = untouched(node.dataset.chip);
     for (const node of empty) node.hidden = ordered.length > 0;
+    // The first pass only mirrors what the page already shows, so it has
+    // nothing to report; announcing there would talk over the page load.
+    if (announce) for (const node of announcers) node.textContent = announcement(ordered.length);
 
     if (!animate || still.matches) return;
 
@@ -183,5 +217,5 @@ export function initProjectControls(root: HTMLElement): void {
     });
 
   root.dataset.ready = 'true';
-  apply({ animate: false });
+  apply({ animate: false, announce: false });
 }

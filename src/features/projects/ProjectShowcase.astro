@@ -19,15 +19,14 @@ const fields = createFilterFields(projects);
   data-state-status={DEFAULT_PROJECT_STATE.status}
 >
   <header class="section-head">
-    <div class="section-title">
-      <h2>Selected projects</h2>
-      <span aria-live="polite">
-        <b data-count-shown>{projects.length}</b> of <span data-count-total>{projects.length}</span> shown
-      </span>
-    </div>
+    <h2>Selected projects</h2>
 
     <ProjectFilters fields={fields} />
   </header>
+
+  <!-- The list reorders and hides rows in place, which is silent to a screen
+       reader; this says what changed. It stays empty until the first filter. -->
+  <p class="for-screen-readers" aria-live="polite" data-announce></p>
 
   <ul class="project-list" data-list>
     {projects.map((project) => <ProjectCard project={project} />)}

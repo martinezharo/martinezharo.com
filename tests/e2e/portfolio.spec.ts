@@ -12,7 +12,9 @@ test('filters and sorts the project list', async ({ page }) => {
   await page.getByRole('menuitemradio', { name: /^Active/ }).click();
 
   await expect(page.locator('[data-item]:visible')).toHaveCount(5);
-  await expect(page.locator('[data-count-shown]')).toHaveText('5');
+  await expect(page.locator('[data-announce]')).toHaveText(
+    'Showing 5 of 8 projects, status is active.',
+  );
   await expect(page.locator('[data-chip="status"]')).toBeVisible();
 
   await page.getByRole('button', { name: 'Filter and sort' }).click();
@@ -20,6 +22,10 @@ test('filters and sorts the project list', async ({ page }) => {
   await page.getByRole('menuitemradio', { name: 'Name' }).click();
 
   await expect(page.locator('[data-work]')).toHaveAttribute('data-state-dir', 'asc');
+  // Reordering keeps the count, so the order clause is what makes it audible.
+  await expect(page.locator('[data-announce]')).toHaveText(
+    'Showing 5 of 8 projects, status is active, sorted by name, a to z.',
+  );
   await expect(page.locator('[data-item]:visible').first().locator('.project-name')).toHaveText('Fewya');
 });
 

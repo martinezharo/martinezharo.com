@@ -57,6 +57,19 @@ body {
   display: none !important;
 }
 
+/* Off screen but still announced: text meant only for assistive technology. */
+.for-screen-readers {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 h1,
 h2,
 p {
