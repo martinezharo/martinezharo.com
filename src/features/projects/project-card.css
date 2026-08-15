@@ -1,3 +1,5 @@
+@import '../../styles/breakpoints.css';
+
 .project-list {
   margin: 0;
   padding: 0;
@@ -191,7 +193,7 @@
   font-size: 13px;
 }
 
-@media (min-width: 781px) {
+@media (--roomy) {
   .state,
   .project-copy,
   .project-meta,
@@ -222,7 +224,7 @@
   }
 }
 
-@media (max-width: 780px) {
+@media (--compact) {
   .project {
     grid-template-columns: 48px minmax(0, 1fr) 20px;
     gap: 0 12px;

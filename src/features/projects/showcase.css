@@ -1,3 +1,5 @@
+@import '../../styles/breakpoints.css';
+
 .projects {
   max-width: var(--content-max);
   margin: 0 auto;
@@ -44,7 +46,7 @@
   gap: 6px;
 }
 
-@media (max-width: 780px) {
+@media (--compact) {
   .section-head {
     align-items: flex-start;
     margin-bottom: 14px;

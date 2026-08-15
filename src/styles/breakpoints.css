@@ -1,0 +1,5 @@
+/* The single definition of the layout's one breakpoint. Import it from any
+   stylesheet that needs @media (--compact) or (--roomy); Lightning CSS
+   resolves the queries at build time and the file itself emits nothing. */
+@custom-media --compact (width <= 780px);
+@custom-media --roomy (width > 780px);

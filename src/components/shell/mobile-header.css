@@ -1,8 +1,10 @@
+@import '../../styles/breakpoints.css';
+
 .mobile-head {
   display: none;
 }
 
-@media (max-width: 780px) {
+@media (--compact) {
   .mobile-head {
     height: 76px;
     display: flex;

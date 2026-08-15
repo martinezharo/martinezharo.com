@@ -1,3 +1,5 @@
+@import '../../styles/breakpoints.css';
+
 .about {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -25,7 +27,7 @@
   color: var(--muted);
 }
 
-@media (max-width: 780px) {
+@media (--compact) {
   .about {
     grid-template-columns: 1fr;
     gap: 38px;
