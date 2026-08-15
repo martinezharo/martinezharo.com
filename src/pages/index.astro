@@ -260,7 +260,7 @@ const clauses = [
                   <span class="project-blurb">{project.blurb}</span>
                   <span class="ratings">
                     {SCORE_META.map((metric) => (
-                      <span class="rating" title={metric.hint}>
+                      <span class="rating" data-metric={metric.key} title={metric.hint}>
                         <span class="rating-label">{metric.label}</span>
                         <span class="stars" aria-label={`${metric.label}: ${rating(project.scores[metric.key])} out of 5`}>
                           {Array.from({ length: 5 }, (_, index) => (
@@ -568,10 +568,37 @@ const clauses = [
          state. */
       .ratings { display: flex; flex-wrap: wrap; gap: 6px 15px; margin-top: 2px; }
       .rating { display: flex; align-items: center; gap: 6px; }
-      .rating-label { color: #6c7067; font-size: 11px; }
+      .rating-label { color: var(--muted); font-size: 11px; }
       .stars { display: inline-flex; gap: 2px; color: var(--text); font-size: 11px; line-height: 1; }
       .stars i { color: #35362f; font-style: normal; }
       .stars i[data-on='true'] { color: currentColor; }
+
+      /* Ordering by one of the four metrics makes that metric the reason the
+         list looks the way it does, so the other three step back and let it
+         read first. "Overall" and the non-rating fields have no rule here:
+         nothing is singled out, so nothing is dimmed.
+
+         The blue carries the emphasis, which means the other three only have to
+         step back, not disappear: 0.8 is the floor at which their label still
+         clears 4.5:1 on this background, so nothing readable becomes unreadable
+         to make a point. */
+      .rating { transition: opacity .25s; }
+      .rating-label, .stars { transition: color .25s; }
+      .projects[data-state-field='craft'] .rating:not([data-metric='craft']),
+      .projects[data-state-field='depth'] .rating:not([data-metric='depth']),
+      .projects[data-state-field='utility'] .rating:not([data-metric='utility']),
+      .projects[data-state-field='impact'] .rating:not([data-metric='impact']) { opacity: .8; }
+      /* So the metric doing the ordering is the one that moves the furthest:
+         accent stars and a label at full text colour. */
+      .projects[data-state-field='craft'] .rating[data-metric='craft'] .stars,
+      .projects[data-state-field='depth'] .rating[data-metric='depth'] .stars,
+      .projects[data-state-field='utility'] .rating[data-metric='utility'] .stars,
+      .projects[data-state-field='impact'] .rating[data-metric='impact'] .stars { color: var(--accent); }
+      .projects[data-state-field='craft'] .rating[data-metric='craft'] .rating-label,
+      .projects[data-state-field='depth'] .rating[data-metric='depth'] .rating-label,
+      .projects[data-state-field='utility'] .rating[data-metric='utility'] .rating-label,
+      .projects[data-state-field='impact'] .rating[data-metric='impact'] .rating-label { color: var(--text); }
+      @media (prefers-reduced-motion: reduce) { .rating, .rating-label, .stars { transition: none; } }
 
       .project-meta { display: grid; gap: 5px; color: var(--muted); font-size: 11px; text-align: right; }
       .arrow { color: var(--muted); text-align: right; transition: color .2s, transform .2s; }
