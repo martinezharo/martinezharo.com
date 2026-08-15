@@ -20,23 +20,22 @@
 }
 
 .facet-button[aria-expanded='true'] {
-  border-color: #43443e;
+  border-color: var(--line-strong);
 }
 
-.facet-menu {
+/* Both popovers are the same surface; only where they sit differs. */
+.facet-menu,
+.facet-sub {
   position: absolute;
-  z-index: 14;
-  top: calc(100% + 7px);
-  right: 0;
-  width: 232px;
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #1c1d19;
-  box-shadow: 0 18px 38px -20px rgb(0 0 0 / 85%);
-  animation: facets-drop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: var(--panel-raised);
+  box-shadow: var(--shadow-menu);
 }
 
+/* Kept as two literal keyframes: a var() inside the transform would keep the
+   animation off the compositor and shift how the panel rasterises. */
 @keyframes facets-drop {
   from {
     opacity: 0;
@@ -44,8 +43,29 @@
   }
 }
 
-.facet-menu[hidden] {
-  display: none;
+@keyframes facets-flyout {
+  from {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+}
+
+.facet-menu {
+  z-index: 14;
+  top: calc(100% + 7px);
+  right: 0;
+  width: 232px;
+  animation: facets-drop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.facet-sub {
+  z-index: 15;
+  top: -5px;
+  right: calc(100% + 5px);
+  min-width: 176px;
+  margin: 0;
+  list-style: none;
+  animation: facets-flyout 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .facet-search {
@@ -54,7 +74,7 @@
   gap: 8px;
   padding: 6px 8px 8px;
   border-bottom: 1px solid var(--line);
-  color: #6c7067;
+  color: var(--faint);
 }
 
 .facet-search input {
@@ -70,7 +90,7 @@
 }
 
 .facet-search input::placeholder {
-  color: #6c7067;
+  color: var(--faint);
 }
 
 .facet-search input:focus {
@@ -91,18 +111,12 @@
   position: relative;
 }
 
-.facet[hidden],
-.facet-hit[hidden] {
-  display: none;
-}
-
-.facet-row {
+/* Field rows and option rows are the same control at two levels. */
+.facet-row,
+.facet-sub button {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 2px 8px;
   width: 100%;
-  padding: 7px 8px;
   border-radius: 5px;
   color: var(--muted);
   font-size: 13px;
@@ -110,9 +124,22 @@
   transition: background-color 0.18s, color 0.18s;
 }
 
+.facet-row {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 2px 8px;
+  padding: 7px 8px;
+}
+
+.facet-sub button {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  padding: 7px 9px;
+}
+
 .facet-row:hover,
-.facet-row[aria-expanded='true'] {
-  background: rgb(255 255 255 / 5%);
+.facet-row[aria-expanded='true'],
+.facet-sub button:hover {
+  background: var(--hover);
   color: var(--text);
 }
 
@@ -125,7 +152,7 @@
 
 .facet-now,
 .facet-chevron {
-  color: #6c7067;
+  color: var(--faint);
 }
 
 .facet-now {
@@ -141,59 +168,13 @@
 .facet-empty {
   margin: 0;
   padding: 8px 9px 9px;
-  color: #6c7067;
+  color: var(--faint);
   font-size: 12px;
-}
-
-.facet-sub {
-  position: absolute;
-  z-index: 15;
-  top: -5px;
-  right: calc(100% + 5px);
-  min-width: 176px;
-  margin: 0;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #1c1d19;
-  box-shadow: 0 18px 38px -20px rgb(0 0 0 / 85%);
-  list-style: none;
-  animation: facets-flyout 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-@keyframes facets-flyout {
-  from {
-    opacity: 0;
-    transform: translateX(4px);
-  }
-}
-
-.facet-sub[hidden] {
-  display: none;
-}
-
-.facet-sub button {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 2px 10px;
-  width: 100%;
-  padding: 7px 9px;
-  border-radius: 5px;
-  color: var(--muted);
-  font-size: 13px;
-  text-align: left;
-  transition: background-color 0.18s, color 0.18s;
-}
-
-.facet-sub button:hover {
-  background: rgb(255 255 255 / 5%);
-  color: var(--text);
 }
 
 .facet-hint {
   grid-column: 1;
-  color: #6c7067;
+  color: var(--faint);
   font-size: 11px;
 }
 
@@ -220,10 +201,6 @@
   border-radius: 6px;
 }
 
-.clause[hidden] {
-  display: none;
-}
-
 .clause-open {
   display: inline-flex;
   align-items: center;
@@ -243,7 +220,7 @@
 }
 
 .clause-is {
-  color: #6c7067;
+  color: var(--faint);
   font-size: 11px;
 }
 
@@ -256,7 +233,7 @@
   place-items: center;
   width: 26px;
   border-left: 1px solid var(--line);
-  color: #6c7067;
+  color: var(--faint);
   transition: background-color 0.18s, color 0.18s;
 }
 
@@ -285,6 +262,7 @@
     transform: rotate(90deg);
   }
 
+  /* The flyout unfolds in place, indented under its field. */
   .facet-sub {
     position: static;
     min-width: 0;

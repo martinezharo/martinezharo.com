@@ -1,5 +1,5 @@
 .projects {
-  max-width: 1080px;
+  max-width: var(--content-max);
   margin: 0 auto;
 }
 

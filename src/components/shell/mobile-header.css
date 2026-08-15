@@ -1,3 +1,7 @@
+.mobile-head {
+  display: none;
+}
+
 @media (max-width: 780px) {
   .mobile-head {
     height: 76px;

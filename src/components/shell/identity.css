@@ -1,0 +1,14 @@
+/* The name-and-mark lockup, shared by the sidebar and the mobile header. */
+.identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  width: fit-content;
+  font-weight: 590;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.identity img {
+  border-radius: 8px;
+}
