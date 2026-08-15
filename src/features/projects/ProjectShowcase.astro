@@ -1,0 +1,43 @@
+---
+import { projects } from '../../data/projects';
+import { createFilterFields } from './filter-options';
+import { DEFAULT_PROJECT_STATE } from './model';
+import ProjectCard from './ProjectCard.astro';
+import ProjectFilters from './ProjectFilters.astro';
+import './showcase.css';
+
+const fields = createFilterFields(projects);
+---
+
+<section
+  class="projects"
+  id="projects"
+  data-work
+  data-state-field={DEFAULT_PROJECT_STATE.field}
+  data-state-dir={DEFAULT_PROJECT_STATE.direction}
+  data-state-kind={DEFAULT_PROJECT_STATE.kind}
+  data-state-status={DEFAULT_PROJECT_STATE.status}
+>
+  <header class="section-head">
+    <div class="section-title">
+      <h2>Selected projects</h2>
+      <span aria-live="polite">
+        <b data-count-shown>{projects.length}</b> of <span data-count-total>{projects.length}</span> shown
+      </span>
+    </div>
+
+    <ProjectFilters fields={fields} />
+  </header>
+
+  <ul class="project-list" data-list>
+    {projects.map((project) => <ProjectCard project={project} />)}
+  </ul>
+
+  <p class="empty" data-empty hidden>No projects match that combination.</p>
+</section>
+
+<script>
+  import { initProjectShowcase } from './client';
+
+  initProjectShowcase(document.querySelector<HTMLElement>('[data-work]'));
+</script>

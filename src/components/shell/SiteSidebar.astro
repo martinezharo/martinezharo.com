@@ -1,0 +1,27 @@
+---
+import { mailto, site } from '../../config/site';
+import './sidebar.css';
+---
+
+<aside class="side">
+  <a class="identity" href="/" aria-label="Home">
+    <img src="/icon.svg" alt="" width="34" height="34" />
+    <span>Oliver<br />Martínez Haro</span>
+  </a>
+
+  <div class="side-copy">
+    <p class="eyebrow">{site.intro.eyebrow}</p>
+    <h1>{site.intro.heading}</h1>
+    <p class="intro-description">{site.intro.body}</p>
+  </div>
+
+  <nav aria-label="Primary navigation">
+    {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
+    <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </nav>
+
+  <div class="side-foot">
+    <span class="availability"><i aria-hidden="true"></i>{site.availability}</span>
+    <a href={mailto}>{site.email}</a>
+  </div>
+</aside>

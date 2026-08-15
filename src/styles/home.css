@@ -1,0 +1,91 @@
+.skip {
+  position: fixed;
+  z-index: 20;
+  top: -60px;
+  left: 20px;
+  padding: 10px 14px;
+  background: var(--text);
+  color: var(--bg);
+  transition: top 0.2s;
+}
+
+.skip:focus {
+  top: 18px;
+}
+
+.identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  width: fit-content;
+  font-weight: 590;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.identity img {
+  border-radius: 8px;
+}
+
+.eyebrow {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 24px;
+  font-size: clamp(34px, 3.4vw, 52px);
+  font-weight: 560;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+main {
+  min-height: 100vh;
+  margin-left: clamp(280px, 27vw, 390px);
+  padding: clamp(54px, 7vw, 108px) clamp(30px, 7vw, 108px) 42px;
+}
+
+.mobile-head,
+.mobile-intro {
+  display: none;
+}
+
+.intro-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+@media (max-width: 780px) {
+  main {
+    margin-left: 0;
+    padding: 0 20px 30px;
+  }
+
+  .mobile-intro {
+    display: block;
+    padding: 76px 0 92px;
+  }
+
+  .mobile-intro h1 {
+    max-width: 520px;
+    font-size: clamp(40px, 12vw, 62px);
+  }
+
+  .mobile-intro .intro-description {
+    max-width: 480px;
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,14 @@
+---
+import { mailto, site } from '../../config/site';
+import './footer.css';
+
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <span>© {year} {site.name}</span>
+  <p>
+    Have something interesting in mind?
+    <a href={mailto}>Say hello.</a>
+  </p>
+</footer>

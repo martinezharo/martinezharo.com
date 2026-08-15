@@ -1,7 +1,6 @@
 // The menu behind the filter button on the project list. Only the menu: what a
-// value does once it is picked still belongs to initControls in
-// project-controls.ts, which reads the [data-set-*] attributes on the items in
-// here.
+// value does once it is picked still belongs to the controls module, which
+// reads the [data-set-*] attributes on the items in here.
 //
 // It is one list of fields, each opening a list of its values, with a search
 // over both — so "act" finds Status and says it was Active that matched. Every
@@ -17,9 +16,7 @@ interface Facet {
   hit: HTMLElement | null;
 }
 
-export function initFacets(root: HTMLElement | null) {
-  if (!root) return;
-
+export function initProjectFacets(root: HTMLElement): void {
   const wrap = root.querySelector<HTMLElement>('[data-facets]');
   const button = root.querySelector<HTMLButtonElement>('[data-facets-button]');
   const menu = root.querySelector<HTMLElement>('[data-facets-menu]');
@@ -27,7 +24,11 @@ export function initFacets(root: HTMLElement | null) {
   const empty = root.querySelector<HTMLElement>('[data-facets-empty]');
   if (!wrap || !button || !menu) return;
 
-  const facets: Facet[] = Array.from(menu.querySelectorAll<HTMLElement>('[data-facet]')).map((node) => {
+  // Keep non-null aliases for callbacks that run after this initializer exits.
+  const toggle = button;
+  const panel = menu;
+
+  const facets: Facet[] = Array.from(panel.querySelectorAll<HTMLElement>('[data-facet]')).map((node) => {
     const row = node.querySelector<HTMLButtonElement>('[data-facet-row]')!;
     const sub = node.querySelector<HTMLElement>('[data-facet-sub]')!;
     const items = Array.from(sub.querySelectorAll<HTMLButtonElement>('button'));
@@ -66,23 +67,23 @@ export function initFacets(root: HTMLElement | null) {
   }
 
   function open(facet?: string) {
-    menu.hidden = false;
-    button.setAttribute('aria-expanded', 'true');
+    panel.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
     const wanted = facet ? facets.find((item) => item.root.dataset.facet === facet) : undefined;
     if (wanted) openSub(wanted);
     else search?.focus();
   }
 
   function close({ restore = true } = {}) {
-    if (menu.hidden) return;
+    if (panel.hidden) return;
     closeSubs();
-    menu.hidden = true;
-    button.setAttribute('aria-expanded', 'false');
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
     if (search) {
       search.value = '';
       filter('');
     }
-    if (restore) button.focus();
+    if (restore) toggle.focus();
   }
 
   /** Rows survive on their own name or on any of their values; a row kept by a
@@ -108,8 +109,8 @@ export function initFacets(root: HTMLElement | null) {
     next?.row.focus();
   }
 
-  button.addEventListener('click', () => (menu.hidden ? open() : close()));
-  button.addEventListener('keydown', (event) => {
+  toggle.addEventListener('click', () => (panel.hidden ? open() : close()));
+  toggle.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       open();

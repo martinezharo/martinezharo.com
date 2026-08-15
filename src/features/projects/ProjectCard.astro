@@ -1,0 +1,64 @@
+---
+import type { Project } from './model';
+import { formatProjectRange, getOverallScore, KIND_LABEL, SCORE_META, toStarRating } from './model';
+import './project-card.css';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<li
+  data-item
+  data-name={project.name.toLowerCase()}
+  data-active={String(project.active)}
+  data-kind={project.kind}
+  data-start={project.start}
+  data-overall={getOverallScore(project)}
+  data-craft={project.scores.craft}
+  data-depth={project.scores.depth}
+  data-utility={project.scores.utility}
+  data-impact={project.scores.impact}
+>
+  <a
+    class="project"
+    href={project.url ?? undefined}
+    target={project.url ? '_blank' : undefined}
+    rel={project.url ? 'noopener noreferrer' : undefined}
+    aria-disabled={!project.url ? 'true' : undefined}
+  >
+    <span class="state" data-on={String(project.active)}>
+      <i aria-hidden="true"></i>{project.active ? 'Active' : 'Archived'}
+    </span>
+    <span class="project-logo"><img src={project.logo} alt="" loading="lazy" /></span>
+    <span class="project-copy">
+      <span class="project-name">{project.name}</span>
+      <span class="project-blurb">{project.blurb}</span>
+      <span class="ratings">
+        {
+          SCORE_META.map((metric) => {
+            const stars = toStarRating(project.scores[metric.key]);
+
+            return (
+              <span class="rating" data-metric={metric.key} title={metric.hint}>
+                <span class="rating-label">{metric.label}</span>
+                <span class="stars" aria-label={`${metric.label}: ${stars} out of 5`}>
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <i data-on={String(index < stars)} aria-hidden="true">★</i>
+                  ))}
+                </span>
+              </span>
+            );
+          })
+        }
+      </span>
+    </span>
+    <span class="project-meta">
+      <span>{KIND_LABEL[project.kind]}</span>
+      <span>{formatProjectRange(project)}</span>
+    </span>
+    <span class="arrow" aria-hidden="true">{project.url ? '↗' : '—'}</span>
+  </a>
+</li>

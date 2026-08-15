@@ -1,0 +1,14 @@
+@media (max-width: 780px) {
+  .mobile-head {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+  }
+
+  .mobile-head .identity {
+    font-size: 13px;
+  }
+}

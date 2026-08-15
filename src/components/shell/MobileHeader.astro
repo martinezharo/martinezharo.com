@@ -1,0 +1,12 @@
+---
+import { site } from '../../config/site';
+import './mobile-header.css';
+---
+
+<header class="mobile-head">
+  <a class="identity" href="/">
+    <img src="/icon.svg" alt="" width="30" height="30" />
+    <span>{site.name}</span>
+  </a>
+  <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+</header>

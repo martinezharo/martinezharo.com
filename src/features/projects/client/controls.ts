@@ -1,3 +1,12 @@
+import {
+  DIRECTION_LABEL,
+  SORT_FIELDS,
+  STATUS_LABEL,
+  type ProjectStatus,
+  type SortDirection,
+  type SortField,
+} from '../model';
+
 // Client behaviour for the project list. The list is rendered on the server;
 // this only reorders and hides the rows that are already there, so the page
 // still shows every project without JavaScript.
@@ -11,39 +20,7 @@
 // carrying an attribute: [data-set-*] applies a value, [data-clear] puts a
 // dimension back to its default, [data-echo] prints a piece of the state in
 // words and [data-chip] hides itself while its dimension is untouched. The
-// menu those attributes hang off lives in project-facets.ts.
-
-export type SortField = 'date' | 'name' | 'overall' | 'craft' | 'depth' | 'utility' | 'impact';
-export type Dir = 'desc' | 'asc';
-export type Status = 'all' | 'active' | 'archived';
-
-export const SORT_FIELDS: { key: SortField; label: string }[] = [
-  { key: 'date', label: 'Date' },
-  { key: 'name', label: 'Name' },
-  { key: 'overall', label: 'Overall rating' },
-  { key: 'craft', label: 'Craft' },
-  { key: 'depth', label: 'Depth' },
-  { key: 'utility', label: 'Utility' },
-  { key: 'impact', label: 'Impact' },
-];
-
-/** The direction names itself after the field, so it always reads as English. */
-export const DIR_LABEL: Record<SortField, Record<Dir, string>> = {
-  date: { desc: 'Newest first', asc: 'Oldest first' },
-  name: { desc: 'Z to A', asc: 'A to Z' },
-  overall: { desc: 'Highest first', asc: 'Lowest first' },
-  craft: { desc: 'Highest first', asc: 'Lowest first' },
-  depth: { desc: 'Highest first', asc: 'Lowest first' },
-  utility: { desc: 'Highest first', asc: 'Lowest first' },
-  impact: { desc: 'Highest first', asc: 'Lowest first' },
-};
-
-/** Neutral values name their own dimension, so a lone value still reads. */
-export const STATUS_LABEL: Record<Status, string> = {
-  all: 'Every status',
-  active: 'Active',
-  archived: 'Archived',
-};
+// menu those attributes hang off lives in the facets module.
 
 const num = (el: HTMLElement, key: string) => Number(el.dataset[key] ?? 0);
 const name = (el: HTMLElement) => el.dataset.name ?? '';
@@ -55,13 +32,14 @@ function compare(a: HTMLElement, b: HTMLElement, field: SortField) {
   return num(a, field === 'date' ? 'start' : field) - num(b, field === 'date' ? 'start' : field);
 }
 
-export function initControls(root: HTMLElement | null) {
-  if (!root) return;
-
+export function initProjectControls(root: HTMLElement): void {
   const list = root.querySelector<HTMLElement>('[data-list]');
   if (!list) return;
 
-  const items = Array.from(list.querySelectorAll<HTMLElement>('[data-item]'));
+  // Keep a non-null alias for callbacks that run after this initializer exits.
+  const projectList = list;
+
+  const items = Array.from(projectList.querySelectorAll<HTMLElement>('[data-item]'));
   const setStatus = Array.from(root.querySelectorAll<HTMLElement>('[data-set-status]'));
   const setKind = Array.from(root.querySelectorAll<HTMLElement>('[data-set-kind]'));
   const setSort = Array.from(root.querySelectorAll<HTMLElement>('[data-set-sort]'));
@@ -78,9 +56,9 @@ export function initControls(root: HTMLElement | null) {
   const still = matchMedia('(prefers-reduced-motion: reduce)');
 
   let field = (root.dataset.stateField as SortField) ?? 'date';
-  let dir = (root.dataset.stateDir as Dir) ?? 'desc';
+  let dir = (root.dataset.stateDir as SortDirection) ?? 'desc';
   let kind = root.dataset.stateKind ?? 'all';
-  let status = (root.dataset.stateStatus as Status) ?? 'all';
+  let status = (root.dataset.stateStatus as ProjectStatus) ?? 'all';
 
   for (const node of total) node.textContent = String(items.length);
 
@@ -96,15 +74,15 @@ export function initControls(root: HTMLElement | null) {
     // menu item carries it on [data-label] since its own text holds a count.
     if (which === 'kind') {
       if (kind === 'all') return 'Every type';
-      const source = root!.querySelector<HTMLElement>(`[data-set-kind="${kind}"]`);
+      const source = root.querySelector<HTMLElement>(`[data-set-kind="${kind}"]`);
       return source?.dataset.label ?? kind;
     }
     if (which === 'sort') return SORT_FIELDS.find((sort) => sort.key === field)?.label ?? '';
-    if (which === 'dir') return DIR_LABEL[field][dir];
+    if (which === 'dir') return DIRECTION_LABEL[field][dir];
     // The order is one clause even though it is two pieces of state, because
     // "Date" alone does not say which end of the list you are looking at.
     if (which === 'order')
-      return `${SORT_FIELDS.find((sort) => sort.key === field)?.label ?? ''}, ${DIR_LABEL[field][dir].toLowerCase()}`;
+      return `${SORT_FIELDS.find((sort) => sort.key === field)?.label ?? ''}, ${DIRECTION_LABEL[field][dir].toLowerCase()}`;
     return '';
   }
 
@@ -124,18 +102,19 @@ export function initControls(root: HTMLElement | null) {
       .sort((a, b) => compare(a, b, field) * sign || byName(a, b));
 
     for (const item of items) item.hidden = !visible(item);
-    for (const item of ordered) list!.append(item);
+    for (const item of ordered) projectList.append(item);
 
-    root!.dataset.stateField = field;
-    root!.dataset.stateDir = dir;
-    root!.dataset.stateKind = kind;
-    root!.dataset.stateStatus = status;
+    root.dataset.stateField = field;
+    root.dataset.stateDir = dir;
+    root.dataset.stateKind = kind;
+    root.dataset.stateStatus = status;
 
     for (const node of setStatus) check(node, status === node.dataset.setStatus);
     for (const node of setKind) check(node, kind === node.dataset.setKind);
     for (const node of setSort) check(node, field === node.dataset.setSort);
     for (const node of setDir) check(node, dir === node.dataset.setDir);
-    for (const node of dirNames) node.textContent = DIR_LABEL[field][node.dataset.dirName as Dir];
+    for (const node of dirNames)
+      node.textContent = DIRECTION_LABEL[field][node.dataset.dirName as SortDirection];
     for (const node of echoes) node.textContent = echo(node.dataset.echo ?? '');
     // A clause is only worth printing once its dimension has been moved off the
     // value it holds by default.
@@ -164,7 +143,7 @@ export function initControls(root: HTMLElement | null) {
 
   for (const node of setStatus)
     node.addEventListener('click', () => {
-      status = node.dataset.setStatus as Status;
+      status = node.dataset.setStatus as ProjectStatus;
       apply();
     });
 
@@ -185,7 +164,7 @@ export function initControls(root: HTMLElement | null) {
 
   for (const node of setDir)
     node.addEventListener('click', () => {
-      dir = node.dataset.setDir as Dir;
+      dir = node.dataset.setDir as SortDirection;
       apply();
     });
 

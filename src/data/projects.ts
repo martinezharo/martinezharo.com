@@ -1,53 +1,7 @@
-// Los proyectos y sus fechas/descripciones salen de la D1 real (`oliweb`).
-// Las puntuaciones, el tipo y el stack son inventados para la maqueta: sirven
-// para probar la densidad de la tarjeta y el comportamiento de filtros/orden.
+import type { Project } from '../features/projects/model';
 
-export type ProjectKind = 'ecommerce' | 'marketplace' | 'app' | 'tool' | 'brand';
-
-export interface Project {
-  slug: string;
-  name: string;
-  active: boolean;
-  /** Año de inicio. `end` a null = sigue vivo. */
-  start: number;
-  end: number | null;
-  kind: ProjectKind;
-  url: string | null;
-  logo: string;
-  /** Descripción corta para la tarjeta (la larga vive en la vista de detalle). */
-  blurb: string;
-  scores: {
-    /** Craft — nivel de acabado de la interfaz: composición, detalle, pulido. */
-    craft: number;
-    /** Depth — complejidad técnica: arquitectura, integraciones, casos límite. */
-    depth: number;
-    /** Utility — cuánto resuelve de verdad a quien lo usa. */
-    utility: number;
-    /** Impact — resultados medibles: ventas, tráfico, adopción. */
-    impact: number;
-  };
-  /** Effort — horas invertidas hasta hoy. */
-  hours: number;
-  stack: string[];
-}
-
-export const KIND_LABEL: Record<ProjectKind, string> = {
-  ecommerce: 'E-commerce',
-  marketplace: 'Marketplace',
-  app: 'App',
-  tool: 'Tool',
-  brand: 'Brand',
-};
-
-/** Explicación de cada métrica, para tooltips y leyendas. */
-export const SCORE_META = [
-  { key: 'craft', label: 'Craft', hint: 'Interface finish: composition, detail and interaction.' },
-  { key: 'depth', label: 'Depth', hint: 'Technical complexity: architecture, integrations and edge cases.' },
-  { key: 'utility', label: 'Utility', hint: 'How much the project solves for the people who use it.' },
-  { key: 'impact', label: 'Impact', hint: 'Measurable results: sales, traffic and adoption.' },
-] as const;
-
-export type ScoreKey = (typeof SCORE_META)[number]['key'];
+// Names, dates and descriptions come from the original `oliweb` data. Scores,
+// kinds and stacks are presentation data used by the portfolio filters.
 
 export const projects: Project[] = [
   {
@@ -163,15 +117,3 @@ export const projects: Project[] = [
     stack: ['Contenido', 'Community'],
   },
 ];
-
-/** Media de las cuatro métricas, redondeada. Se usa como puntuación global. */
-export const overall = (p: Project) =>
-  Math.round((p.scores.craft + p.scores.depth + p.scores.utility + p.scores.impact) / 4);
-
-/** «2024 —», «2020–2023» o «2023», según lo que aporte información. */
-export const range = (p: Project) => {
-  if (!p.end) return `${p.start} —`;
-  return p.end === p.start ? `${p.start}` : `${p.start}–${p.end}`;
-};
-
-export const kinds = [...new Set(projects.map((p) => p.kind))] as ProjectKind[];
