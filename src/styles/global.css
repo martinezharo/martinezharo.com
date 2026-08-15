@@ -107,6 +107,13 @@ button {
   cursor: pointer;
 }
 
+/* The selection reads as the accent painted over the text, so it takes the
+   background colour back for the glyphs. */
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 4px;
