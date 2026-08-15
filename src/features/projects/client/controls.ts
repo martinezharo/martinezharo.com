@@ -138,7 +138,7 @@ export function initProjectControls(root: HTMLElement): void {
       .sort((a, b) => compare(a, b, field) * sign || byName(a, b));
 
     for (const item of items) item.hidden = !visible(item);
-    for (const item of ordered) projectList.append(item);
+    for (const item of ordered) projectList.appendChild(item);
 
     root.dataset.stateField = field;
     root.dataset.stateDir = dir;

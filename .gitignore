@@ -2,6 +2,8 @@ node_modules/
 dist/
 .astro/
 .wrangler/
+# Regenerated from wrangler.jsonc by `pnpm check`.
+worker-configuration.d.ts
 .dev.vars
 .env
 .env.production

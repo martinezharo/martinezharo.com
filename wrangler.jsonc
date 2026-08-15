@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "olisite",
+  "compatibility_date": "2026-08-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // The portfolio reads the same database the previous site wrote: only the
+  // `projects` table, and only for reading. `remote` points local dev and
+  // preview at the real database too — a local D1 would start empty, and an
+  // empty portfolio is not worth developing against. It has no effect once
+  // deployed.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "oliweb",
+      "database_id": "1bbfb1cd-32ef-4e71-82f3-1cdf7110d570",
+      "remote": true
+    }
+  ]
+}

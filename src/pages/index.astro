@@ -7,6 +7,9 @@ import SiteFooter from '../components/shell/SiteFooter.astro';
 import SiteSidebar from '../components/shell/SiteSidebar.astro';
 import { site } from '../config/site';
 import ProjectShowcase from '../features/projects/ProjectShowcase.astro';
+import { loadProjects } from '../features/projects/repository';
+
+const projects = await loadProjects();
 ---
 
 <BaseLayout title={site.title} description={site.description}>
@@ -22,7 +25,7 @@ import ProjectShowcase from '../features/projects/ProjectShowcase.astro';
       <p class="intro-description">{site.intro.body}</p>
     </section>
 
-    <ProjectShowcase />
+    <ProjectShowcase projects={projects} />
     <AboutSection />
     <SiteFooter />
   </main>

@@ -1,11 +1,15 @@
 ---
-import { projects } from '../../data/projects';
 import { createFilterFields } from './filter-options';
-import { DEFAULT_PROJECT_STATE } from './model';
+import { DEFAULT_PROJECT_STATE, type Project } from './model';
 import ProjectCard from './ProjectCard.astro';
 import ProjectFilters from './ProjectFilters.astro';
 import './showcase.css';
 
+interface Props {
+  projects: readonly Project[];
+}
+
+const { projects } = Astro.props;
 const fields = createFilterFields(projects);
 ---
 
