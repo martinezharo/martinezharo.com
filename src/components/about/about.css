@@ -5,7 +5,7 @@
   grid-template-columns: 1fr 2fr;
   gap: 40px;
   max-width: var(--content-max);
-  margin: clamp(120px, 16vw, 240px) auto 160px;
+  margin: clamp(100px, 12vw, 160px) auto 160px;
   padding-top: 30px;
   border-top: 1px solid var(--line);
 }
