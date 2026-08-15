@@ -517,7 +517,10 @@ const clauses = [
       .project-list > li[hidden] { display: none; }
       .project {
         display: grid;
-        grid-template-columns: 76px 60px minmax(240px, 1fr) 118px 18px;
+        /* No floor on the text column: between 780px and roughly 950px the
+           sidebar leaves less room than the old 240px minimum, and the meta
+           column was being pushed off the right edge. */
+        grid-template-columns: 76px 60px minmax(0, 1fr) 118px 18px;
         align-items: center;
         gap: 0;
         min-height: 116px;
@@ -558,10 +561,15 @@ const clauses = [
         line-height: 1.55;
       }
 
-      .ratings { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-top: 2px; }
-      .rating { display: flex; align-items: center; gap: 8px; }
+      /* The four metrics are meant to read as one line. They only fit if the
+         whole group stays under the text column, which is 431px at a 1280px
+         window, so the spacing is tuned to that: wrapping is left in as the
+         fallback for the narrow desktop range below it, not as the normal
+         state. */
+      .ratings { display: flex; flex-wrap: wrap; gap: 6px 15px; margin-top: 2px; }
+      .rating { display: flex; align-items: center; gap: 6px; }
       .rating-label { color: #6c7067; font-size: 11px; }
-      .stars { display: inline-flex; gap: 2.5px; color: var(--text); font-size: 12px; line-height: 1; }
+      .stars { display: inline-flex; gap: 2px; color: var(--text); font-size: 11px; line-height: 1; }
       .stars i { color: #35362f; font-style: normal; }
       .stars i[data-on='true'] { color: currentColor; }
 
@@ -617,7 +625,7 @@ const clauses = [
         .project-copy { grid-column: 2; grid-row: 2; padding: 8px 0 0; gap: 6px; }
         .project-name { font-size: 19px; }
         .project-blurb { font-size: 12px; }
-        .ratings { gap: 4px 18px; }
+        .ratings { gap: 4px 14px; }
         .project-meta { grid-column: 2; grid-row: 3; display: flex; gap: 8px; padding-top: 10px; text-align: left; }
         .arrow { grid-column: 3; grid-row: 1; align-self: start; }
         .about { margin: 120px 0; grid-template-columns: 1fr; gap: 38px; }
