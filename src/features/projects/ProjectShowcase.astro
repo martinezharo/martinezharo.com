@@ -19,7 +19,7 @@ const fields = createFilterFields(projects);
   data-state-status={DEFAULT_PROJECT_STATE.status}
 >
   <header class="section-head">
-    <h2>Selected projects</h2>
+    <h2>Things I've built</h2>
 
     <ProjectFilters fields={fields} />
   </header>
@@ -32,7 +32,7 @@ const fields = createFilterFields(projects);
     {projects.map((project) => <ProjectCard project={project} />)}
   </ul>
 
-  <p class="empty" data-empty hidden>No projects match that combination.</p>
+  <p class="empty" data-empty hidden>Nothing here matches those filters.</p>
 </section>
 
 <script>
