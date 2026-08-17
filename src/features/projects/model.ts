@@ -1,11 +1,13 @@
 export type ProjectKind = 'ecommerce' | 'marketplace' | 'app' | 'tool' | 'brand';
 
-export interface ProjectScores {
-  craft: number;
-  depth: number;
-  utility: number;
-  impact: number;
-}
+/**
+ * What a project scores on each metric, or `null` where the metric does not
+ * apply to it — a brand with no interface of its own is not judged on craft.
+ * That is a different statement from a low score, and the list draws, orders
+ * and announces it as one. Every key stays required so that leaving a project
+ * off a scale has to be written down rather than forgotten.
+ */
+export type ProjectScores = Record<ScoreKey, number | null>;
 
 export interface Project {
   slug: string;
@@ -80,9 +82,22 @@ export const DEFAULT_PROJECT_STATE = {
   status: ProjectStatus;
 };
 
-export function getOverallScore(project: Project): number {
-  const values = Object.values(project.scores);
-  return Math.round(values.reduce((total, value) => total + value, 0) / values.length);
+/** The metrics a project is on, in the order the card draws them. */
+function ratedScores(project: Project): number[] {
+  return SCORE_META.map((metric) => project.scores[metric.key]).filter(
+    (score): score is number => score !== null,
+  );
+}
+
+/**
+ * The average of the ratings a project carries, or null when it carries none.
+ * A metric that does not apply is left out of the average rather than counted
+ * as a zero, so a project is never marked down for a scale it was never on.
+ */
+export function getOverallScore(project: Project): number | null {
+  const scores = ratedScores(project);
+  if (scores.length === 0) return null;
+  return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
 }
 
 export function formatProjectRange(project: Project): string {

@@ -184,6 +184,23 @@
   background: var(--mark);
 }
 
+/* A metric that does not apply has no scale to fill, so it is not drawn as one:
+   the five segments give way to a dotted rule of the same length. An unlit
+   meter would say "scored zero"; this says the project was never on that scale.
+
+   The dots are deliberately small and close, at a pitch that has nothing to do
+   with the five segments: counted, they say nothing, so the eye reads a texture
+   where a scale would be instead of a sixth reading. They still sit above the
+   empty track in weight — the mark has to be visible enough to be read as a
+   statement rather than a rendering fault — and the label keeps the contrast
+   every other label has. Nothing here is told apart by being harder to see. */
+.meter.is-void {
+  width: 43px;
+  height: 2px;
+  background-image: radial-gradient(circle at center, var(--faint) 0 0.8px, transparent 0.8px);
+  background-size: 4px 100%;
+}
+
 .projects:is(
   [data-state-field='craft'],
   [data-state-field='depth'],
@@ -193,10 +210,13 @@
   opacity: 0.8;
 }
 
-.projects[data-state-field='craft'] .rating[data-metric='craft'],
-.projects[data-state-field='depth'] .rating[data-metric='depth'],
-.projects[data-state-field='utility'] .rating[data-metric='utility'],
-.projects[data-state-field='impact'] .rating[data-metric='impact'] {
+/* Ordering by a metric lights it up on every project that carries it. A project
+   that does not stays dimmed, which is also the reason it has sunk to the foot
+   of the list. */
+.projects[data-state-field='craft'] .rating[data-metric='craft'][data-rated='true'],
+.projects[data-state-field='depth'] .rating[data-metric='depth'][data-rated='true'],
+.projects[data-state-field='utility'] .rating[data-metric='utility'][data-rated='true'],
+.projects[data-state-field='impact'] .rating[data-metric='impact'][data-rated='true'] {
   --mark: var(--accent);
   --label: var(--text);
 
@@ -351,6 +371,13 @@
     width: auto;
     height: 3px;
     flex: 1;
+  }
+
+  /* The meters take the width of their column here. The dotted rule is a fixed
+     pitch, so it just runs the length it is given. */
+  .meter.is-void {
+    width: auto;
+    height: 3px;
   }
 
   .rating-label {

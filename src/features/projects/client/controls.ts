@@ -24,14 +24,32 @@ import {
 // [data-announce] receives the sentence a screen reader hears after a change.
 // The menu those attributes hang off lives in the facets module.
 
-const num = (el: HTMLElement, key: string) => Number(el.dataset[key] ?? 0);
 const name = (el: HTMLElement) => el.dataset.name ?? '';
 const byName = (a: HTMLElement, b: HTMLElement) => name(a).localeCompare(name(b), 'en');
 
-/** Ascending comparison for the chosen field; the direction flips it later. */
-function compare(a: HTMLElement, b: HTMLElement, field: SortField) {
-  if (field === 'name') return byName(a, b);
-  return num(a, field === 'date' ? 'start' : field) - num(b, field === 'date' ? 'start' : field);
+/** What a row is worth on a field, or null when it does not carry that rating. */
+function value(el: HTMLElement, field: SortField): number | null {
+  const raw = el.dataset[field === 'date' ? 'start' : field];
+  return raw === undefined ? null : Number(raw);
+}
+
+/**
+ * The chosen field, already turned round by the direction.
+ *
+ * A project that is not rated on the field being sorted has no place on that
+ * scale, so it settles below every rated one whichever way the list runs. It
+ * cannot be folded into the numbers: counted as a zero it would be the worst
+ * project going down and the best one coming back up, and "not applicable" is
+ * neither.
+ */
+function compare(a: HTMLElement, b: HTMLElement, field: SortField, sign: number) {
+  if (field === 'name') return byName(a, b) * sign;
+
+  const left = value(a, field);
+  const right = value(b, field);
+  if (left === null || right === null) return left === right ? 0 : left === null ? 1 : -1;
+
+  return (left - right) * sign;
 }
 
 export function initProjectControls(root: HTMLElement): void {
@@ -135,7 +153,7 @@ export function initProjectControls(root: HTMLElement): void {
 
     const ordered = items
       .filter(visible)
-      .sort((a, b) => compare(a, b, field) * sign || byName(a, b));
+      .sort((a, b) => compare(a, b, field, sign) || byName(a, b));
 
     for (const item of items) item.hidden = !visible(item);
     for (const item of ordered) projectList.appendChild(item);

@@ -5,6 +5,10 @@ import type { ProjectKind, ProjectScores } from '../features/projects/model';
 // type, the four ratings, the hours and the stack live here, keyed by the same
 // slug. A project without an entry here cannot be filtered, sorted or rated, so
 // the showcase leaves it out rather than inventing numbers for it.
+//
+// A single rating can be `null` when the metric does not apply to the project —
+// see `ProjectScores`. Reach for it only when the scale itself is wrong for the
+// work, never when a score would simply be low.
 
 export interface ProjectPresentation {
   kind: ProjectKind;
@@ -58,7 +62,9 @@ export const projectPresentation: Record<string, ProjectPresentation> = {
   },
   kenobismo: {
     kind: 'brand',
-    scores: { craft: 58, depth: 22, utility: 60, impact: 77 },
+    // No interface of its own to judge: the work is content and community, so
+    // craft has nothing to measure here.
+    scores: { craft: null, depth: 22, utility: 60, impact: 77 },
     hours: 1500,
     stack: ['Contenido', 'Community'],
   },

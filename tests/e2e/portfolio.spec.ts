@@ -29,6 +29,36 @@ test('filters and sorts the project list', async ({ page }) => {
   await expect(page.locator('[data-item]:visible').first().locator('.project-name')).toHaveText('Fewya');
 });
 
+test('keeps a project off a scale that does not apply to it', async ({ page }) => {
+  await page.goto('/');
+
+  // Kenobismo is a brand with no interface of its own, so it carries no craft.
+  const kenobismo = page.locator('[data-item]').filter({ hasText: 'Kenobismo' });
+  const craft = kenobismo.locator('.rating[data-metric="craft"]');
+
+  await expect(craft.locator('.meter')).toHaveClass(/is-void/);
+  await expect(craft.getByLabel('Craft: does not apply')).toBeAttached();
+  // The other three still have a scale, and craft is left out of the average
+  // rather than counted as a zero.
+  await expect(kenobismo.locator('.meter.is-void')).toHaveCount(1);
+  await expect(kenobismo).toHaveAttribute('data-overall', '53');
+  await expect(kenobismo).not.toHaveAttribute('data-craft');
+
+  const names = page.locator('[data-item]:visible .project-name');
+
+  await page.getByRole('button', { name: 'Filter and sort' }).click();
+  await page.getByRole('menuitem', { name: /^Order/ }).click();
+  await page.getByRole('menuitemradio', { name: 'Craft' }).click();
+  await expect(names.last()).toHaveText('Kenobismo');
+
+  // Turning the order round must not promote "does not apply" to "the best".
+  await page.getByRole('button', { name: 'Filter and sort' }).click();
+  await page.getByRole('menuitem', { name: /^Direction/ }).click();
+  await page.getByRole('menuitemradio', { name: 'Lowest first' }).click();
+  await expect(names.first()).toHaveText('EliteBara');
+  await expect(names.last()).toHaveText('Kenobismo');
+});
+
 test('switches to the compact layout on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');

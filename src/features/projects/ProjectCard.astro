@@ -8,6 +8,10 @@ interface Props {
 }
 
 const { project } = Astro.props;
+
+// A rating the project does not carry leaves its attribute off the row rather
+// than writing a zero, which is what lets the sort tell "unrated" from "worst".
+const attr = (score: number | null) => (score === null ? undefined : score);
 ---
 
 <li
@@ -16,11 +20,11 @@ const { project } = Astro.props;
   data-active={String(project.active)}
   data-kind={project.kind}
   data-start={project.start}
-  data-overall={getOverallScore(project)}
-  data-craft={project.scores.craft}
-  data-depth={project.scores.depth}
-  data-utility={project.scores.utility}
-  data-impact={project.scores.impact}
+  data-overall={attr(getOverallScore(project))}
+  data-craft={attr(project.scores.craft)}
+  data-depth={attr(project.scores.depth)}
+  data-utility={attr(project.scores.utility)}
+  data-impact={attr(project.scores.impact)}
 >
   <a
     class="project"
@@ -39,16 +43,29 @@ const { project } = Astro.props;
       <span class="ratings">
         {
           SCORE_META.map((metric) => {
-            const rating = toRating(project.scores[metric.key]);
+            const score = project.scores[metric.key];
+            const rating = score === null ? null : toRating(score);
 
             return (
-              <span class="rating" data-metric={metric.key} title={metric.hint}>
+              <span
+                class="rating"
+                data-metric={metric.key}
+                data-rated={String(rating !== null)}
+                title={rating === null ? `${metric.label} does not apply to this project.` : metric.hint}
+              >
                 <span class="rating-label">{metric.label}</span>
-                <span class="meter" aria-label={`${metric.label}: ${rating} out of 5`}>
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <i data-on={String(index < rating)} aria-hidden="true" />
-                  ))}
-                </span>
+                {/* A metric the project is not on keeps its place in the row, but
+                    the scale gives way to a dot per segment: an empty meter
+                    would read as a score of zero, and this cannot. */}
+                {rating === null ? (
+                  <span class="meter is-void" role="img" aria-label={`${metric.label}: does not apply`} />
+                ) : (
+                  <span class="meter" role="img" aria-label={`${metric.label}: ${rating} out of 5`}>
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <i data-on={String(index < rating)} aria-hidden="true" />
+                    ))}
+                  </span>
+                )}
               </span>
             );
           })
