@@ -1,5 +1,5 @@
 ---
-import { ICONS, type IconName } from './icons';
+import { ICONS, type IconName, type IconShape } from './icons';
 
 interface Props {
   name: IconName;
@@ -7,7 +7,9 @@ interface Props {
 }
 
 const { name, class: className } = Astro.props;
-const { width, height, paths } = ICONS[name];
+// Read as the shape rather than as the literal the set stores, so an icon that
+// never says `filled` is simply one that is drawn.
+const { width, height, paths, filled }: IconShape = ICONS[name];
 ---
 
 {/* The single place the icon set's stroke is decided. */}
@@ -16,8 +18,8 @@ const { width, height, paths } = ICONS[name];
   viewBox={`0 0 ${width} ${height}`}
   width={width}
   height={height}
-  fill="none"
-  stroke="currentColor"
+  fill={filled ? 'currentColor' : 'none'}
+  stroke={filled ? 'none' : 'currentColor'}
   stroke-width="1.3"
   stroke-linecap="round"
   stroke-linejoin="round"
