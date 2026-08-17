@@ -1,0 +1,35 @@
+@import './breakpoints.css';
+
+/* The frame of any page that carries the fixed rail: the skip link that gets
+   past it, and the content column it holds open. The rail is `position: fixed`,
+   so the offset is what keeps the two from overlapping. */
+
+.skip {
+  position: fixed;
+  z-index: 20;
+  top: -60px;
+  left: 20px;
+  padding: 10px 14px;
+  background: var(--text);
+  color: var(--bg);
+  transition: top 0.2s;
+}
+
+.skip:focus {
+  top: 18px;
+}
+
+main {
+  min-height: 100vh;
+  margin-left: var(--sidebar-w);
+  padding: clamp(54px, 7vw, 108px) clamp(30px, 7vw, 108px) 42px;
+}
+
+@media (--compact) {
+  /* No rail below the breakpoint, so the column takes the whole screen and the
+     mobile header stands in for it. */
+  main {
+    margin-left: 0;
+    padding: 0 20px 30px;
+  }
+}

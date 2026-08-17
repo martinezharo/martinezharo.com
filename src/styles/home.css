@@ -1,36 +1,13 @@
 @import './breakpoints.css';
+@import './rail-page.css';
 
-.skip {
-  position: fixed;
-  z-index: 20;
-  top: -60px;
-  left: 20px;
-  padding: 10px 14px;
-  background: var(--text);
-  color: var(--bg);
-  transition: top 0.2s;
-}
-
-.skip:focus {
-  top: 18px;
-}
-
-main {
-  min-height: 100vh;
-  margin-left: var(--sidebar-w);
-  padding: clamp(54px, 7vw, 108px) clamp(30px, 7vw, 108px) 42px;
-}
-
+/* The rail carries the intro on a wide screen. Below the breakpoint it is gone,
+   so the page opens with the same words instead. */
 .mobile-intro {
   display: none;
 }
 
 @media (--compact) {
-  main {
-    margin-left: 0;
-    padding: 0 20px 30px;
-  }
-
   .mobile-intro {
     display: block;
     padding: 76px 0 92px;
