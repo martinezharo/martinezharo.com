@@ -21,8 +21,12 @@
   color: var(--text);
 }
 
+/* Held open, the button takes the same fill the rows of its own menu take under
+   a pointer: the panel below already says which button opened it, so this only
+   has to be more than the hover it sits next to. */
 .facet-button[aria-expanded='true'] {
   border-color: var(--line-strong);
+  background: var(--hover);
 }
 
 /* Both popovers are the same surface; only where they sit differs. */
