@@ -3,6 +3,7 @@ import { createFilterFields } from './filter-options';
 import { DEFAULT_PROJECT_STATE, type Project } from './model';
 import ProjectCard from './ProjectCard.astro';
 import ProjectFilters from './ProjectFilters.astro';
+import ProjectLegend from './ProjectLegend.astro';
 import './showcase.css';
 
 interface Props {
@@ -37,6 +38,8 @@ const fields = createFilterFields(projects);
   </ul>
 
   <p class="empty" data-empty hidden>Nothing here matches those filters.</p>
+
+  <ProjectLegend />
 </section>
 
 <script>

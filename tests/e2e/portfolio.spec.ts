@@ -59,6 +59,31 @@ test('keeps a project off a scale that does not apply to it', async ({ page }) =
   await expect(names.last()).toHaveText('Kenobismo');
 });
 
+test('explains the ratings in the legend', async ({ page }) => {
+  await page.goto('/');
+
+  const legend = page.getByRole('dialog');
+  await expect(legend).toBeHidden();
+
+  // The opener is inert until the client script wires it, so opening at all is
+  // what this guards; the panel names every metric the cards draw.
+  await page.getByRole('button', { name: 'How the ratings work' }).click();
+  await expect(legend).toBeVisible();
+  await expect(legend.locator('.legend-name')).toHaveText([
+    'Craft',
+    'Depth',
+    'Utility',
+    'Impact',
+  ]);
+
+  await page.getByRole('button', { name: 'Close' }).click();
+  await expect(legend).toBeHidden();
+
+  await page.getByRole('button', { name: 'How the ratings work' }).click();
+  await page.keyboard.press('Escape');
+  await expect(legend).toBeHidden();
+});
+
 test('switches to the compact layout on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');

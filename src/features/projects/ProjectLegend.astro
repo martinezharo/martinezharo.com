@@ -1,0 +1,53 @@
+---
+import Icon from '../../components/ui/Icon.astro';
+import './legend.css';
+import { SCORE_META } from './model';
+---
+
+<div class="legend">
+  <button type="button" class="legend-open" data-legend-open aria-haspopup="dialog">
+    <span class="legend-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+    How the ratings work
+  </button>
+
+  <!-- Padding lives on the body, so a click that lands on the dialog itself can
+       only have come from the backdrop. -->
+  <dialog class="legend-panel" data-legend aria-labelledby="legend-title">
+    <div class="legend-body">
+      <div class="legend-head">
+        <h3 id="legend-title">How the ratings work</h3>
+        <button type="button" class="legend-close" data-legend-close aria-label="Close">
+          <Icon name="clear" />
+        </button>
+      </div>
+
+      <p class="legend-lede">
+        A project carries up to four scores, each drawn as five segments. The lit part is the score
+        and the rest of the track stays visible, so two projects can be compared without reading a
+        number.
+      </p>
+
+      <ul class="legend-list">
+        {
+          SCORE_META.map((metric) => (
+            <li>
+              <span class="legend-name">{metric.label}</span>
+              <span class="legend-hint">{metric.hint}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Shows the mark it is describing, so the reader can match it against
+           the rows behind the panel instead of holding a sentence in mind. -->
+      <p class="legend-note">
+        <span class="legend-void" aria-hidden="true"></span>
+        <span>
+          Dots in place of the scale mean the metric doesn't apply — a brand with no interface of
+          its own isn't rated on craft. It is left out of the overall rating, and when the list is
+          ordered by that metric those projects sit at the end.
+        </span>
+      </p>
+    </div>
+  </dialog>
+</div>

@@ -1,0 +1,206 @@
+@import '../../styles/breakpoints.css';
+
+/* The right edge is where this section keeps what you can press: the filter
+   button opens the list's order at the top, this closes it off at the bottom.
+   The two share a column, and neither interrupts the left margin the rows and
+   the heading are read down. */
+.legend {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* Muted and small, carrying a three-segment meter so what it explains is
+   legible before it is opened. */
+.legend-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+  color: var(--faint);
+  font-size: 12px;
+  transition: color 0.18s;
+}
+
+.legend-open:hover {
+  color: var(--text);
+}
+
+.legend-mark {
+  display: flex;
+  gap: 2px;
+}
+
+.legend-mark i {
+  width: 7px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--track);
+  transition: background 0.18s;
+}
+
+.legend-open:hover .legend-mark i:nth-child(-n + 2) {
+  background: var(--accent);
+}
+
+.legend-panel {
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-raised);
+  color: var(--text);
+  box-shadow: var(--shadow-menu);
+}
+
+/* The page is already black, so the backdrop cannot dim its way to a boundary.
+   The blur is what puts the list behind glass and the panel in front of it. */
+.legend-panel::backdrop {
+  background: rgb(0 0 0 / 55%);
+  backdrop-filter: blur(3px);
+}
+
+@keyframes legend-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+.legend-panel[open] {
+  animation: legend-in 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.legend-body {
+  padding: 16px 18px 18px;
+}
+
+.legend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.legend-head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}
+
+.legend-close {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-right: -6px;
+  border-radius: 6px;
+  color: var(--faint);
+  transition: background-color 0.18s, color 0.18s;
+}
+
+.legend-close:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.legend-lede {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.legend-list {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-list li {
+  display: grid;
+  gap: 3px;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+
+.legend-name {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 560;
+}
+
+.legend-hint {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* A footnote to the four, not a fifth metric: it sits below the list, past its
+   last rule, with the mark it explains held out in the margin. */
+.legend-note {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* The same mark the rows carry, at the same size, so it can be matched against
+   them by eye. */
+.legend-void {
+  flex: none;
+  width: 43px;
+  height: 2px;
+  margin-top: 8px;
+  background-image: radial-gradient(circle at center, var(--faint) 0 0.8px, transparent 0.8px);
+  background-size: 4px 100%;
+}
+
+@media (--compact) {
+  .legend {
+    margin-top: 10px;
+  }
+
+  .legend-open {
+    min-height: 40px;
+  }
+
+  /* A sheet on the bottom edge rather than a card in the middle: it opens where
+     the thumb already is, and the panel is a footnote, not an interruption. */
+  .legend-panel {
+    width: 100%;
+    max-width: none;
+    max-height: 82dvh;
+    margin: auto auto 0;
+    border-width: 1px 0 0;
+    border-radius: 14px 14px 0 0;
+  }
+
+  @keyframes legend-in {
+    from {
+      transform: translateY(14px);
+    }
+  }
+
+  .legend-body {
+    padding: 16px 18px calc(22px + env(safe-area-inset-bottom));
+  }
+
+  .legend-close {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legend-panel[open] {
+    animation: none;
+  }
+}
