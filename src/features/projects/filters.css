@@ -216,12 +216,25 @@
   opacity: 1;
 }
 
+/* A clause enters travelling the short way down from the menu that made it, so
+   the answer to the question and the condition it created read as one move.
+   It plays on the first paint after the script unhides the chip, which is only
+   ever the moment the dimension leaves its default: a clause already on the
+   page and only changing value stays where it is. */
+@keyframes clause-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
 .clause {
   display: inline-flex;
   align-items: stretch;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 6px;
+  animation: clause-enter 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .clause-open {
@@ -361,7 +374,8 @@
 @media (prefers-reduced-motion: reduce) {
   .facet-menu,
   .facet-sub,
-  .facet-sub button {
+  .facet-sub button,
+  .clause {
     animation: none;
   }
 }
