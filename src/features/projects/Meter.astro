@@ -1,0 +1,28 @@
+---
+import './meter.css';
+import { toRating } from './model';
+
+interface Props {
+  /** Named so the mark can announce itself; the visible label is drawn outside. */
+  label: string;
+  score: number | null;
+}
+
+const { label, score } = Astro.props;
+const rating = score === null ? null : toRating(score);
+---
+
+{
+  /* A metric the project is not on keeps its place in the row, but the scale
+     gives way to a dot per segment: an empty meter would read as a score of
+     zero, and this cannot. */
+  rating === null ? (
+    <span class="meter is-void" role="img" aria-label={`${label}: does not apply`} />
+  ) : (
+    <span class="meter" role="img" aria-label={`${label}: ${rating} out of 5`}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <i data-on={String(index < rating)} aria-hidden="true" />
+      ))}
+    </span>
+  )
+}

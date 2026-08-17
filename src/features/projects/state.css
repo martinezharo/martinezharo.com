@@ -1,0 +1,27 @@
+/* Whether a project is still running, drawn as one mark wherever it appears: a
+   dot and a word. Live, it takes the accent and the halo the rail's
+   availability dot carries; archived, it is an empty ring at the quietest text
+   colour. Where the mark sits is left to whatever is placing it. */
+.state {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.state i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--faint);
+}
+
+.state[data-on='true'] {
+  color: var(--accent);
+}
+
+.state[data-on='true'] i {
+  background: var(--accent);
+  box-shadow: var(--halo-tight);
+}

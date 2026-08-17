@@ -1,0 +1,13 @@
+---
+import './state.css';
+
+interface Props {
+  active: boolean;
+}
+
+const { active } = Astro.props;
+---
+
+<span class="state" data-on={String(active)}>
+  <i aria-hidden="true"></i>{active ? 'Active' : 'Archived'}
+</span>

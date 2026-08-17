@@ -1,0 +1,48 @@
+/* The site's one rating mark, drawn the same wherever a score is shown: in the
+   rows of the list and on a project's own page. Only the mark lives here —
+   where the label sits and how wide the scale runs belongs to whatever is
+   laying it out, which is why the two differ between the list and the page. */
+
+/* Five segments rather than five stars: the empty part of the scale stays
+   visible, so two projects can be compared without reading the numbers. */
+.meter {
+  --mark: var(--text);
+
+  display: flex;
+  gap: 2px;
+}
+
+.meter i {
+  width: 7px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--track);
+  transition: background 0.25s;
+}
+
+.meter i[data-on='true'] {
+  background: var(--mark);
+}
+
+/* A metric that does not apply has no scale to fill, so it is not drawn as one:
+   the five segments give way to a dotted rule of the same length. An unlit
+   meter would say "scored zero"; this says the project was never on that scale.
+
+   The dots are deliberately small and close, at a pitch that has nothing to do
+   with the five segments: counted, they say nothing, so the eye reads a texture
+   where a scale would be instead of a sixth reading. They still sit above the
+   empty track in weight — the mark has to be visible enough to be read as a
+   statement rather than a rendering fault — and the label keeps the contrast
+   every other label has. Nothing here is told apart by being harder to see. */
+.meter.is-void {
+  width: 43px;
+  height: 2px;
+  background-image: radial-gradient(circle at center, var(--faint) 0 0.8px, transparent 0.8px);
+  background-size: 4px 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter i {
+    transition: none;
+  }
+}
