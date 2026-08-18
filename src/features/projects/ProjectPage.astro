@@ -1,0 +1,72 @@
+---
+import Icon from '../../components/ui/Icon.astro';
+import SiteFooter from '../../components/shell/SiteFooter.astro';
+import type { ProjectDetail } from './model';
+import { projectLinks } from './links';
+import '../../styles/rail-page.css';
+import './project-page.css';
+
+// A project's page. The home page is a fixed rail beside a column of work; a
+// project keeps that skeleton and only changes what the rail holds. The
+// identity, the links and the tools stay in view for the whole page, and the
+// story is the only thing that scrolls — which is the same deal the list
+// already offers.
+
+interface Props {
+  project: ProjectDetail;
+}
+
+const { project } = Astro.props;
+const links = projectLinks(project);
+---
+
+<a class="skip" href="#story">Skip to the story</a>
+
+<aside class="project-rail">
+  <a class="back" href="/"><span class="back-mark" aria-hidden="true">←</span>Every project</a>
+
+  <div class="rail-id">
+    <span class="rail-logo"><img src={project.logo} alt="" width="54" height="54" /></span>
+    <h1>{project.name}</h1>
+    <p class="intro-description">{project.blurb}</p>
+  </div>
+
+  {/* A project with nowhere to send anyone gets no rule of its own: an empty
+      block would read as a link that failed to load. */}
+  <nav class="rail-links" aria-label={`${project.name} links`} hidden={links.length === 0}>
+    {
+      links.map((link) => (
+        <a class="rail-link" href={link.href} target="_blank" rel="noopener noreferrer">
+          <Icon name={link.icon} class="rail-link-mark" />
+          <span class="rail-link-label">{link.label}</span>
+          <span class="rail-link-arrow" aria-hidden="true">
+            ↗
+          </span>
+        </a>
+      ))
+    }
+  </nav>
+
+  <p class="rail-stack">
+    <span class="for-screen-readers">Built with</span>
+    {project.stack.map((tool) => <span class="tool">{tool}</span>)}
+  </p>
+</aside>
+
+<main>
+  <article class="story" id="story">
+    <header class="story-head"><h2>How it went</h2></header>
+
+    {
+      project.history.length > 0 ? (
+        project.history.map((paragraph, index) => (
+          <p class={index === 0 ? 'lead' : undefined}>{paragraph}</p>
+        ))
+      ) : (
+        <p class="story-none">Nothing written about this one yet.</p>
+      )
+    }
+  </article>
+
+  <SiteFooter />
+</main>

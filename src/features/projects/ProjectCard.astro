@@ -28,13 +28,7 @@ const attr = (score: number | null) => (score === null ? undefined : score);
   data-utility={attr(project.scores.utility)}
   data-impact={attr(project.scores.impact)}
 >
-  <a
-    class="project"
-    href={project.url ?? undefined}
-    target={project.url ? '_blank' : undefined}
-    rel={project.url ? 'noopener noreferrer' : undefined}
-    aria-disabled={!project.url ? 'true' : undefined}
-  >
+  <a class="project" href={`/projects/${project.slug}`}>
     <State active={project.active} />
     <span class="project-logo"><img src={project.logo} alt="" loading="lazy" /></span>
     <span class="project-copy">
@@ -64,6 +58,6 @@ const attr = (score: number | null) => (score === null ? undefined : score);
       <span>{KIND_LABEL[project.kind]}</span>
       <span>{formatProjectRange(project)}</span>
     </span>
-    <span class="arrow" aria-hidden="true">{project.url ? '↗' : '—'}</span>
+    <span class="arrow" aria-hidden="true">→</span>
   </a>
 </li>

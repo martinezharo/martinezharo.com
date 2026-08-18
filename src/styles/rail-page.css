@@ -1,23 +1,9 @@
 @import './breakpoints.css';
 
-/* The frame of any page that carries the fixed rail: the skip link that gets
-   past it, and the content column it holds open. The rail is `position: fixed`,
-   so the offset is what keeps the two from overlapping. */
-
-.skip {
-  position: fixed;
-  z-index: 20;
-  top: -60px;
-  left: 20px;
-  padding: 10px 14px;
-  background: var(--text);
-  color: var(--bg);
-  transition: top 0.2s;
-}
-
-.skip:focus {
-  top: 18px;
-}
+/* The frame of any page that carries the fixed rail: the content column it
+   holds open. The rail is `position: fixed`, so the offset is what keeps the
+   two from overlapping. The skip link that gets past it is in global.css, since
+   a page without a rail has one too. */
 
 main {
   min-height: 100vh;

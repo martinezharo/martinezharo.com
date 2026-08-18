@@ -118,18 +118,3 @@ export function formatProjectRange(project: Project): string {
 export function toRating(score: number): number {
   return Math.max(1, Math.min(5, Math.round(score / 20)));
 }
-
-/**
- * The part of a link worth reading: the host without the `www.` that says
- * nothing, and the path when there is one — two repositories on the same forge
- * are told apart by the path alone, so dropping it would print the same line
- * under both. Anything that is not a URL is shown as it was stored.
- */
-export function formatLink(url: string): string {
-  try {
-    const { host, pathname } = new URL(url);
-    return `${host.replace(/^www\./, '')}${pathname.replace(/\/$/, '')}`;
-  } catch {
-    return url;
-  }
-}

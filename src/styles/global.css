@@ -57,6 +57,23 @@ body {
   display: none !important;
 }
 
+/* Out of the way until it is tabbed to, on any page that has something worth
+   skipping past. */
+.skip {
+  position: fixed;
+  z-index: 20;
+  top: -60px;
+  left: 20px;
+  padding: 10px 14px;
+  background: var(--text);
+  color: var(--bg);
+  transition: top 0.2s;
+}
+
+.skip:focus {
+  top: 18px;
+}
+
 /* Off screen but still announced: text meant only for assistive technology. */
 .for-screen-readers {
   position: absolute;

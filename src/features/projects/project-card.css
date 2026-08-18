@@ -66,10 +66,6 @@
   color: var(--text);
 }
 
-.project[aria-disabled='true'] {
-  cursor: default;
-}
-
 /* The mark itself is shared; where it sits in the row is not. */
 .state {
   align-self: start;
@@ -185,7 +181,7 @@
 
 .project:hover .arrow {
   color: var(--accent);
-  transform: translate(2px, -2px);
+  transform: translateX(4px);
 }
 
 .empty {

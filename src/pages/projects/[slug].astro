@@ -1,0 +1,18 @@
+---
+import { site } from '../../config/site';
+import ProjectPage from '../../features/projects/ProjectPage.astro';
+import { loadProject } from '../../features/projects/repository';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// One project by slug. A slug with no row behind it — or a row the showcase
+// would have left out of the list — is a 404 rather than an empty page.
+
+const { slug } = Astro.params;
+const project = slug ? await loadProject(slug) : null;
+
+if (!project) return new Response('Project not found', { status: 404 });
+---
+
+<BaseLayout title={`${project.name} — ${site.name}`} description={project.blurb}>
+  <ProjectPage project={project} />
+</BaseLayout>
