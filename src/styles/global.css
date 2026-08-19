@@ -37,9 +37,12 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* No `scroll-behavior: smooth` here. The client router restores a saved scroll
+   position with a bare `scrollTo`, having just jumped the page to the top, and
+   a smooth rule turns that pair into a long slide down the page every time you
+   come back to the list — which is the trip this site is mostly made of. There
+   is no hook to switch it off for the duration either: the swap wipes the root
+   attributes before the restore, and `astro:after-swap` fires after it. */
 
 body {
   margin: 0;
@@ -152,10 +155,4 @@ button {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.65;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
 }

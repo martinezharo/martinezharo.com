@@ -10,6 +10,10 @@ export default defineConfig({
   // `remoteBindings` honours the `remote` flag on the D1 binding, so `dev` and
   // `preview` read the real database instead of an empty local one.
   adapter: cloudflare({ remoteBindings: true }),
+  // Two page types and a handful of links between them: the HTML behind
+  // whatever the pointer is resting on is small enough to be worth fetching
+  // before the click rather than after it.
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   devToolbar: { enabled: false },
   vite: {
     css: {

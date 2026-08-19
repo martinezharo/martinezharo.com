@@ -92,3 +92,36 @@ test('switches to the compact layout on mobile', async ({ page }) => {
   await expect(page.locator('.mobile-head')).toBeVisible();
   await expect(page.locator('.mobile-intro')).toBeVisible();
 });
+
+test('keeps the list working after a round trip to a project', async ({ page }) => {
+  await page.goto('/');
+
+  // The client router swaps the body and keeps the document, so nothing here
+  // proves itself on a first load: the list has to survive being swapped out
+  // and back. A module script only runs once per document, which is what would
+  // leave the controls dead on the return leg.
+  await page.locator('[data-item]').first().locator('a.project').click();
+  await expect(page.locator('.story')).toBeVisible();
+
+  await page.goBack();
+  await expect(page.locator('[data-work]')).toHaveAttribute('data-ready', 'true');
+
+  await page.getByRole('button', { name: 'Filter and sort' }).click();
+  await page.getByRole('menuitem', { name: /^Status/ }).click();
+  await page.getByRole('menuitemradio', { name: /^Active/ }).click();
+
+  await expect(page.locator('[data-item]:visible')).toHaveCount(5);
+});
+
+test('navigates between the list and a project without rebuilding the document', async ({ page }) => {
+  await page.goto('/');
+
+  // A marker on the window survives a body swap and dies with a full document
+  // load, so it tells the two kinds of navigation apart.
+  await page.evaluate(() => ((window as unknown as { kept?: boolean }).kept = true));
+
+  await page.locator('[data-item]').first().locator('a.project').click();
+  await expect(page.locator('.story')).toBeVisible();
+
+  expect(await page.evaluate(() => (window as unknown as { kept?: boolean }).kept)).toBe(true);
+});

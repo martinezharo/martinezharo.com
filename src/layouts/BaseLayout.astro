@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/geist';
 import '../styles/global.css';
 
@@ -20,6 +21,11 @@ const { title, description } = Astro.props;
     <link rel="icon" href="/icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="dark" />
+
+    {/* Navigation swaps the body instead of rebuilding the document, so the
+        stylesheet and the font stay put and there is no blank frame between a
+        project and the list it came from. */}
+    <ClientRouter />
   </head>
   <body>
     <slot />

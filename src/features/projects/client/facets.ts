@@ -16,7 +16,7 @@ interface Facet {
   hit: HTMLElement | null;
 }
 
-export function initProjectFacets(root: HTMLElement): void {
+export function initProjectFacets(root: HTMLElement, signal: AbortSignal): void {
   const wrap = root.querySelector<HTMLElement>('[data-facets]');
   const button = root.querySelector<HTMLButtonElement>('[data-facets-button]');
   const menu = root.querySelector<HTMLElement>('[data-facets-menu]');
@@ -193,11 +193,16 @@ export function initProjectFacets(root: HTMLElement): void {
   for (const opener of root.querySelectorAll<HTMLButtonElement>('[data-facets-open]'))
     opener.addEventListener('click', () => open(opener.dataset.facetsOpen));
 
+  // These two are the only listeners that outlive the menu's own markup, so
+  // they are the only ones the client router can leave behind: it keeps one
+  // document across navigations, and without the signal every return to the
+  // list would stack another pair on top of the last, each still holding a
+  // menu that has since been swapped away.
   document.addEventListener('pointerdown', (event) => {
     if (!wrap.contains(event.target as Node) && !(event.target as HTMLElement).closest('[data-facets-open]'))
       close({ restore: false });
-  });
+  }, { signal });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') close();
-  });
+  }, { signal });
 }
