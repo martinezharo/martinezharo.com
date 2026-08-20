@@ -1,13 +1,21 @@
 ---
 import { site } from '../../config/site';
+import { getCopy, localizedPath, type Locale } from '../../i18n';
 import './identity.css';
 import './mobile-header.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
 ---
 
 <header class="mobile-head">
-  <a class="identity" href="/">
+  <a class="identity" href={localizedPath(locale, '/')} aria-label={copy.navigation.home}>
     <img src="/icon.svg" alt="" width="30" height="30" />
     <span>{site.name}</span>
   </a>
-  <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
 </header>

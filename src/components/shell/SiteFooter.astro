@@ -1,14 +1,38 @@
 ---
 import { mailto, site } from '../../config/site';
+import {
+  LOCALE_NAMES,
+  alternateLocale,
+  getCopy,
+  localizedPath,
+  routeFromPath,
+  type Locale,
+} from '../../i18n';
 import './footer.css';
 
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
 const year = new Date().getFullYear();
+
+// The footer is the one piece both the list and a project share, which makes it
+// the only place a language switch can live once and be reachable from every
+// page. It points at the same route in the other language rather than at that
+// language's home, so switching keeps you where you were reading.
+const other = alternateLocale(locale);
+const otherHref = localizedPath(other, routeFromPath(Astro.url.pathname));
 ---
 
 <footer>
   <span>© {year} {site.name}</span>
   <p>
-    Have something interesting in mind?{' '}
-    <a href={mailto}>Say hello.</a>
+    {copy.footer.prompt}{' '}
+    <a href={mailto}>{copy.footer.link}</a>
   </p>
+  <a class="language" href={otherHref} hreflang={other} lang={other} rel="alternate" aria-label={copy.navigation.language}>
+    {LOCALE_NAMES[other]}
+  </a>
 </footer>

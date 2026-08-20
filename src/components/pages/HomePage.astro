@@ -1,0 +1,38 @@
+---
+import AboutSection from '../about/AboutSection.astro';
+import MobileHeader from '../shell/MobileHeader.astro';
+import SiteFooter from '../shell/SiteFooter.astro';
+import SiteSidebar from '../shell/SiteSidebar.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCopy, type Locale } from '../../i18n';
+import ProjectShowcase from '../../features/projects/ProjectShowcase.astro';
+import { loadProjects } from '../../features/projects/repository';
+import '../../styles/home.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+const projects = await loadProjects(locale);
+---
+
+<BaseLayout locale={locale} title={copy.site.title} description={copy.site.description}>
+  <a class="skip" href="#projects">{copy.common.skipProjects}</a>
+  <SiteSidebar locale={locale} />
+
+  <main>
+    <MobileHeader locale={locale} />
+
+    <section class="mobile-intro">
+      <p class="eyebrow">{copy.site.intro.eyebrow}</p>
+      <h1>{copy.site.intro.heading}</h1>
+      <p class="intro-description">{copy.site.intro.body}</p>
+    </section>
+
+    <ProjectShowcase projects={projects} locale={locale} />
+    <AboutSection locale={locale} />
+    <SiteFooter locale={locale} />
+  </main>
+</BaseLayout>

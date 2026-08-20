@@ -1,14 +1,17 @@
 ---
 import './meter.css';
 import { toRating } from './model';
+import { getCopy, type Locale } from '../../i18n';
 
 interface Props {
   /** Named so the mark can announce itself; the visible label is drawn outside. */
   label: string;
   score: number | null;
+  locale: Locale;
 }
 
-const { label, score } = Astro.props;
+const { label, score, locale } = Astro.props;
+const copy = getCopy(locale);
 const rating = score === null ? null : toRating(score);
 ---
 
@@ -17,9 +20,9 @@ const rating = score === null ? null : toRating(score);
      gives way to a dot per segment: an empty meter would read as a score of
      zero, and this cannot. */
   rating === null ? (
-    <span class="meter is-void" role="img" aria-label={`${label}: does not apply`} />
+    <span class="meter is-void" role="img" aria-label={copy.projects.meter.notApplicable(label)} />
   ) : (
-    <span class="meter" role="img" aria-label={`${label}: ${rating} out of 5`}>
+    <span class="meter" role="img" aria-label={copy.projects.meter.rating(label, rating)}>
       {Array.from({ length: 5 }, (_, index) => (
         <i data-on={String(index < rating)} aria-hidden="true" />
       ))}

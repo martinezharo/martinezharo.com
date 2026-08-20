@@ -1,4 +1,5 @@
 import type { IconName } from '../../components/ui/icons';
+import { getCopy, type Locale } from '../../i18n';
 import type { ProjectDetail } from './model';
 
 /** One outbound link on a project's page: the mark that names it, and where it goes. */
@@ -18,11 +19,12 @@ export interface ProjectLink {
  * is for the browser's status bar, and a verb is what makes a row on a hairline
  * read as something to press.
  */
-export function projectLinks(project: ProjectDetail): ProjectLink[] {
+export function projectLinks(project: ProjectDetail, locale: Locale): ProjectLink[] {
+  const copy = getCopy(locale).detail;
   const links: ProjectLink[] = [];
 
-  if (project.url) links.push({ icon: 'globe', label: 'Visit site', href: project.url });
-  if (project.repo) links.push({ icon: 'github', label: 'View source', href: project.repo });
+  if (project.url) links.push({ icon: 'globe', label: copy.visitSite, href: project.url });
+  if (project.repo) links.push({ icon: 'github', label: copy.viewSource, href: project.repo });
 
   return links;
 }

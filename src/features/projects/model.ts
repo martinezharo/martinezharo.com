@@ -34,51 +34,27 @@ export interface ProjectDetail extends Project {
   repo: string | null;
 }
 
-export const KIND_LABEL: Record<ProjectKind, string> = {
-  ecommerce: 'E-commerce',
-  marketplace: 'Marketplace',
-  app: 'App',
-  tool: 'Tool',
-  brand: 'Brand',
-};
+export type ScoreKey = 'craft' | 'depth' | 'utility' | 'impact';
+export const SCORE_META: ReadonlyArray<{ key: ScoreKey }> = [
+  { key: 'craft' },
+  { key: 'depth' },
+  { key: 'utility' },
+  { key: 'impact' },
+];
 
-export const SCORE_META = [
-  { key: 'craft', label: 'Craft', hint: 'Interface finish: composition, detail and interaction.' },
-  { key: 'depth', label: 'Depth', hint: 'Technical complexity: architecture, integrations and edge cases.' },
-  { key: 'utility', label: 'Utility', hint: 'How much the project solves for the people who use it.' },
-  { key: 'impact', label: 'Impact', hint: 'Measurable results: sales, traffic and adoption.' },
-] as const;
-
-export type ScoreKey = (typeof SCORE_META)[number]['key'];
 export type SortField = 'date' | 'name' | 'overall' | ScoreKey;
 export type SortDirection = 'desc' | 'asc';
 export type ProjectStatus = 'all' | 'active' | 'archived';
 
-export const SORT_FIELDS: ReadonlyArray<{ key: SortField; label: string }> = [
-  { key: 'date', label: 'Date' },
-  { key: 'name', label: 'Name' },
-  { key: 'overall', label: 'Overall rating' },
-  { key: 'craft', label: 'Craft' },
-  { key: 'depth', label: 'Depth' },
-  { key: 'utility', label: 'Utility' },
-  { key: 'impact', label: 'Impact' },
+export const SORT_FIELDS: ReadonlyArray<{ key: SortField }> = [
+  { key: 'date' },
+  { key: 'name' },
+  { key: 'overall' },
+  { key: 'craft' },
+  { key: 'depth' },
+  { key: 'utility' },
+  { key: 'impact' },
 ];
-
-export const DIRECTION_LABEL: Record<SortField, Record<SortDirection, string>> = {
-  date: { desc: 'Newest first', asc: 'Oldest first' },
-  name: { desc: 'Z to A', asc: 'A to Z' },
-  overall: { desc: 'Highest first', asc: 'Lowest first' },
-  craft: { desc: 'Highest first', asc: 'Lowest first' },
-  depth: { desc: 'Highest first', asc: 'Lowest first' },
-  utility: { desc: 'Highest first', asc: 'Lowest first' },
-  impact: { desc: 'Highest first', asc: 'Lowest first' },
-};
-
-export const STATUS_LABEL: Record<ProjectStatus, string> = {
-  all: 'Every status',
-  active: 'Active',
-  archived: 'Archived',
-};
 
 export const DEFAULT_PROJECT_STATE = {
   field: 'date',

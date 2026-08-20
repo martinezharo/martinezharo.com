@@ -2,14 +2,17 @@
 import Meter from './Meter.astro';
 import State from './State.astro';
 import type { Project } from './model';
-import { formatProjectRange, getOverallScore, KIND_LABEL, SCORE_META } from './model';
+import { formatProjectRange, getOverallScore, SCORE_META } from './model';
+import { getCopy, localizedPath, type Locale } from '../../i18n';
 import './project-card.css';
 
 interface Props {
   project: Project;
+  locale: Locale;
 }
 
-const { project } = Astro.props;
+const { project, locale } = Astro.props;
+const copy = getCopy(locale);
 
 // A rating the project does not carry leaves its attribute off the row rather
 // than writing a zero, which is what lets the sort tell "unrated" from "worst".
@@ -28,8 +31,8 @@ const attr = (score: number | null) => (score === null ? undefined : score);
   data-utility={attr(project.scores.utility)}
   data-impact={attr(project.scores.impact)}
 >
-  <a class="project" href={`/projects/${project.slug}`}>
-    <State active={project.active} />
+  <a class="project" href={localizedPath(locale, `/projects/${project.slug}`)}>
+    <State active={project.active} locale={locale} />
     <span class="project-logo"><img src={project.logo} alt="" loading="lazy" /></span>
     <span class="project-copy">
       <span class="project-name">{project.name}</span>
@@ -38,16 +41,17 @@ const attr = (score: number | null) => (score === null ? undefined : score);
         {
           SCORE_META.map((metric) => {
             const score = project.scores[metric.key];
+            const metricCopy = copy.projects.metrics[metric.key];
 
             return (
               <span
                 class="rating"
                 data-metric={metric.key}
                 data-rated={String(score !== null)}
-                title={score === null ? `${metric.label} does not apply to this project.` : metric.hint}
+                title={score === null ? copy.projects.meter.notApplicable(metricCopy.label) : metricCopy.hint}
               >
-                <span class="rating-label">{metric.label}</span>
-                <Meter label={metric.label} score={score} />
+                <span class="rating-label">{metricCopy.label}</span>
+                <Meter label={metricCopy.label} score={score} locale={locale} />
               </span>
             );
           })
@@ -55,7 +59,7 @@ const attr = (score: number | null) => (score === null ? undefined : score);
       </span>
     </span>
     <span class="project-meta">
-      <span>{KIND_LABEL[project.kind]}</span>
+      <span>{copy.projects.kindLabels[project.kind]}</span>
       <span>{formatProjectRange(project)}</span>
     </span>
     <span class="arrow" aria-hidden="true">→</span>

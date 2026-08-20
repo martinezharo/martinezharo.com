@@ -94,7 +94,11 @@
   object-fit: cover;
 }
 
+/* A container so the metrics can answer to the width they actually get, which
+   is a track of the row's grid and not something a viewport query can name. */
 .project-copy {
+  container: project-copy / inline-size;
+
   display: grid;
   gap: 8px;
   padding-right: 24px;
@@ -118,10 +122,21 @@
   -webkit-line-clamp: 2;
 }
 
+/* Four equal columns rather than a flex row. The metrics have to line up down
+   the whole list, and content-sized tracks would set that alignment from the
+   longest label in each card: in English the four words happen to be a similar
+   length and the row looks aligned by luck, in Spanish it comes apart. Equal
+   fractions of a column every card shares put each metric at the same place in
+   every row, whatever the language writes in it, and the cap keeps the group
+   reading as one block instead of spreading over a wide screen. */
 .ratings {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 15px;
+  --rating-col: 126px;
+  --rating-gap: 12px;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px var(--rating-gap);
+  max-width: calc(4 * var(--rating-col) + 3 * var(--rating-gap));
   margin-top: 2px;
 }
 
@@ -134,6 +149,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   transition: opacity 0.25s;
 }
 
@@ -141,6 +157,36 @@
   color: var(--label);
   font-size: 11px;
   transition: color 0.25s;
+}
+
+/* Narrower than the four label-and-scale pairs need side by side — a Spanish
+   card between the breakpoint and a wide screen, say — and each metric puts
+   its label over its scale instead, the shape the phone layout already uses.
+   The alternative is labels running into one another. */
+@container project-copy (width < 430px) {
+  .rating {
+    display: grid;
+    gap: 5px;
+  }
+
+  .ratings .meter i {
+    width: auto;
+    flex: 1;
+  }
+
+  .ratings .meter.is-void {
+    width: auto;
+  }
+}
+
+/* Narrower still and four columns stop being columns: the labels touch and the
+   four scales read as one long rule. Two by two keeps each pair its own shape,
+   at the cost of a taller block, which is the trade the phone layout makes as
+   well. */
+@container project-copy (width < 260px) {
+  .ratings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .projects:is(

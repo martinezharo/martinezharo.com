@@ -1,6 +1,7 @@
 ---
 import Icon from '../../components/ui/Icon.astro';
 import SiteFooter from '../../components/shell/SiteFooter.astro';
+import { getCopy, localizedPath, type Locale } from '../../i18n';
 import type { ProjectDetail } from './model';
 import { projectLinks } from './links';
 import '../../styles/rail-page.css';
@@ -14,16 +15,18 @@ import './project-page.css';
 
 interface Props {
   project: ProjectDetail;
+  locale: Locale;
 }
 
-const { project } = Astro.props;
-const links = projectLinks(project);
+const { project, locale } = Astro.props;
+const copy = getCopy(locale);
+const links = projectLinks(project, locale);
 ---
 
-<a class="skip" href="#story">Skip to the story</a>
+<a class="skip" href="#story">{copy.common.skipStory}</a>
 
 <aside class="project-rail">
-  <a class="back" href="/"><span class="back-mark" aria-hidden="true">←</span>Every project</a>
+  <a class="back" href={localizedPath(locale, '/')}><span class="back-mark" aria-hidden="true">←</span>{copy.detail.back}</a>
 
   <div class="rail-id">
     <span class="rail-logo"><img src={project.logo} alt="" width="54" height="54" /></span>
@@ -33,7 +36,7 @@ const links = projectLinks(project);
 
   {/* A project with nowhere to send anyone gets no rule of its own: an empty
       block would read as a link that failed to load. */}
-  <nav class="rail-links" aria-label={`${project.name} links`} hidden={links.length === 0}>
+  <nav class="rail-links" aria-label={copy.detail.linksLabel(project.name)} hidden={links.length === 0}>
     {
       links.map((link) => (
         <a class="rail-link" href={link.href} target="_blank" rel="noopener noreferrer">
@@ -48,14 +51,14 @@ const links = projectLinks(project);
   </nav>
 
   <p class="rail-stack">
-    <span class="for-screen-readers">Built with</span>
+    <span class="for-screen-readers">{copy.common.builtWith}</span>
     {project.stack.map((tool) => <span class="tool">{tool}</span>)}
   </p>
 </aside>
 
 <main>
   <article class="story" id="story">
-    <header class="story-head"><h2>How it went</h2></header>
+    <header class="story-head"><h2>{copy.detail.storyHeading}</h2></header>
 
     {
       project.history.length > 0 ? (
@@ -63,10 +66,10 @@ const links = projectLinks(project);
           <p class={index === 0 ? 'lead' : undefined}>{paragraph}</p>
         ))
       ) : (
-        <p class="story-none">Nothing written about this one yet.</p>
+        <p class="story-none">{copy.detail.storyNone}</p>
       )
     }
   </article>
 
-  <SiteFooter />
+  <SiteFooter locale={locale} />
 </main>

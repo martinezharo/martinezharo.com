@@ -2,13 +2,16 @@
 import Icon from '../../components/ui/Icon.astro';
 import type { FilterField } from './filter-options';
 import { FILTER_CLAUSES } from './filter-options';
+import { getCopy, type Locale } from '../../i18n';
 import './filters.css';
 
 interface Props {
   fields: FilterField[];
+  locale: Locale;
 }
 
-const { fields } = Astro.props;
+const { fields, locale } = Astro.props;
+const copy = getCopy(locale);
 ---
 
 <div class="builder">
@@ -19,8 +22,8 @@ const { fields } = Astro.props;
       data-facets-button
       aria-haspopup="menu"
       aria-expanded="false"
-      aria-label="Filter and sort"
-      title="Filter and sort"
+      aria-label={copy.projects.filters.buttonLabel}
+      title={copy.projects.filters.buttonTitle}
     >
       <Icon name="filters" />
     </button>
@@ -31,14 +34,14 @@ const { fields } = Astro.props;
         <input
           type="search"
           data-facets-search
-          placeholder="Search fields…"
-          aria-label="Search fields"
+          placeholder={copy.projects.filters.searchPlaceholder}
+          aria-label={copy.projects.filters.searchLabel}
           autocomplete="off"
           spellcheck="false"
         />
       </div>
 
-      <ul class="facet-list" role="menu" aria-label="Fields">
+      <ul class="facet-list" role="menu" aria-label={copy.projects.filters.fieldsLabel}>
         {
           fields.map((field) => (
             <li class="facet" data-facet={field.key} role="none">
@@ -78,7 +81,7 @@ const { fields } = Astro.props;
         }
       </ul>
 
-      <p class="facet-empty" data-facets-empty hidden>No field by that name.</p>
+      <p class="facet-empty" data-facets-empty hidden>{copy.projects.filters.noField}</p>
     </div>
   </div>
 
@@ -87,15 +90,15 @@ const { fields } = Astro.props;
       FILTER_CLAUSES.map((clause) => (
         <span class="clause" data-chip={clause.key} hidden>
           <button type="button" class="clause-open" data-facets-open={clause.facet}>
-            <span class="clause-field">{clause.label}</span>
-            <span class="clause-is">is</span>
+            <span class="clause-field">{copy.projects.filters.clauseLabels[clause.key]}</span>
+            <span class="clause-is">{copy.common.conditionIs}</span>
             <span class="clause-value" data-echo={clause.key}></span>
           </button>
           <button
             type="button"
             class="clause-clear"
             data-clear={clause.key}
-            aria-label={`Remove the ${clause.label.toLowerCase()} condition`}
+            aria-label={copy.common.removeCondition(copy.projects.filters.clauseLabels[clause.key])}
           >
             <Icon name="clear" />
           </button>

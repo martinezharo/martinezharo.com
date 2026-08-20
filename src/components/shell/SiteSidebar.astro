@@ -1,28 +1,37 @@
 ---
 import { mailto, site } from '../../config/site';
+import { getCopy, localizedPath, type Locale } from '../../i18n';
 import './identity.css';
 import './sidebar.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
 ---
 
 <aside class="side">
-  <a class="identity" href="/" aria-label="Home">
+  <a class="identity" href={localizedPath(locale, '/')} aria-label={copy.navigation.home}>
     <img src="/icon.svg" alt="" width="34" height="34" />
     <span>Oliver<br />Martínez Haro</span>
   </a>
 
   <div class="side-copy">
-    <p class="eyebrow">{site.intro.eyebrow}</p>
-    <h1>{site.intro.heading}</h1>
-    <p class="intro-description">{site.intro.body}</p>
+    <p class="eyebrow">{copy.site.intro.eyebrow}</p>
+    <h1>{copy.site.intro.heading}</h1>
+    <p class="intro-description">{copy.site.intro.body}</p>
   </div>
 
-  <nav aria-label="Primary navigation">
-    {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-    <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  <nav aria-label={copy.navigation.primary}>
+    <a href="#projects">{copy.navigation.projects}</a>
+    <a href="#about">{copy.navigation.about}</a>
+    <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
   </nav>
 
   <div class="side-foot">
-    <span class="availability"><i aria-hidden="true"></i>{site.availability}</span>
+    <span class="availability"><i aria-hidden="true"></i>{copy.site.availability}</span>
     <a href={mailto}>{site.email}</a>
   </div>
 </aside>

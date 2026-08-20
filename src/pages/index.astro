@@ -1,32 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import '../styles/home.css';
-import AboutSection from '../components/about/AboutSection.astro';
-import MobileHeader from '../components/shell/MobileHeader.astro';
-import SiteFooter from '../components/shell/SiteFooter.astro';
-import SiteSidebar from '../components/shell/SiteSidebar.astro';
-import { site } from '../config/site';
-import ProjectShowcase from '../features/projects/ProjectShowcase.astro';
-import { loadProjects } from '../features/projects/repository';
-
-const projects = await loadProjects();
+import HomePage from '../components/pages/HomePage.astro';
 ---
 
-<BaseLayout title={site.title} description={site.description}>
-  <a class="skip" href="#projects">Skip to projects</a>
-  <SiteSidebar />
-
-  <main>
-    <MobileHeader />
-
-    <section class="mobile-intro">
-      <p class="eyebrow">{site.intro.eyebrow}</p>
-      <h1>{site.intro.heading}</h1>
-      <p class="intro-description">{site.intro.body}</p>
-    </section>
-
-    <ProjectShowcase projects={projects} />
-    <AboutSection />
-    <SiteFooter />
-  </main>
-</BaseLayout>
+<HomePage locale="en" />

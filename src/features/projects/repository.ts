@@ -1,9 +1,12 @@
 import { env } from 'cloudflare:workers';
 import { projectPresentation } from '../../data/project-presentation';
+import type { Locale } from '../../i18n';
 import type { Project, ProjectDetail } from './model';
 
 // Reads the portfolio from the `oliweb` D1 database and joins each row with the
-// presentation record that carries its type, ratings, hours and stack.
+// presentation record that carries its type, ratings, hours and stack. The
+// description and history expressions are selected for the requested locale,
+// with the other language as a safe fallback for an incomplete row.
 
 /** The columns of `projects` this site reads. The table holds more. */
 interface ProjectRow {
@@ -14,27 +17,37 @@ interface ProjectRow {
   end_date: string | null;
   url: string | null;
   logo_url: string | null;
-  short_description_en: string | null;
+  short_description: string | null;
 }
 
-/** The two columns only a detail page reads: they are long, so the list skips them. */
 interface ProjectDetailRow extends ProjectRow {
-  history_en: string | null;
+  history: string | null;
   github_url: string | null;
 }
 
-const PROJECT_COLUMNS = 'slug, name, is_active, start_date, end_date, url, logo_url, short_description_en';
+function localizedColumn(locale: Locale, field: 'short_description' | 'history'): string {
+  const suffix = locale === 'es' ? 'es' : 'en';
+  const fallback = locale === 'es' ? 'en' : 'es';
+  return `COALESCE(NULLIF(${field}_${suffix}, ''), ${field}_${fallback})`;
+}
 
-const SELECT_PROJECTS = `
-  SELECT ${PROJECT_COLUMNS}
-  FROM projects
-`;
+function selectProjects(locale: Locale): string {
+  return `
+    SELECT slug, name, is_active, start_date, end_date, url, logo_url,
+      ${localizedColumn(locale, 'short_description')} AS short_description
+    FROM projects
+  `;
+}
 
-const SELECT_PROJECT = `
-  SELECT ${PROJECT_COLUMNS}, history_en, github_url
-  FROM projects
-  WHERE slug = ?1
-`;
+function selectProject(locale: Locale): string {
+  return `
+    SELECT slug, name, is_active, start_date, end_date, url, logo_url,
+      ${localizedColumn(locale, 'short_description')} AS short_description,
+      ${localizedColumn(locale, 'history')} AS history, github_url
+    FROM projects
+    WHERE slug = ?1
+  `;
+}
 
 /** Dates are stored as `YYYY-MM-DD`; the portfolio only ever shows the year. */
 function year(date: string | null): number | null {
@@ -42,7 +55,7 @@ function year(date: string | null): number | null {
   return Number.isInteger(parsed) ? parsed : null;
 }
 
-function toProject(row: ProjectRow): Project | null {
+function toProject(row: ProjectRow, locale: Locale): Project | null {
   const presentation = projectPresentation[row.slug];
   const start = year(row.start_date);
   if (!presentation || start === null) return null;
@@ -55,8 +68,9 @@ function toProject(row: ProjectRow): Project | null {
     end: year(row.end_date),
     url: row.url,
     logo: row.logo_url ?? '',
-    blurb: row.short_description_en ?? '',
+    blurb: row.short_description ?? '',
     ...presentation,
+    stack: presentation.stack[locale],
   };
 }
 
@@ -79,15 +93,16 @@ function paragraphs(history: string | null): string[] {
  */
 export async function loadProject(
   slug: string,
+  locale: Locale,
   db: D1Database = env.DB,
 ): Promise<ProjectDetail | null> {
-  const row = await db.prepare(SELECT_PROJECT).bind(slug).first<ProjectDetailRow>();
+  const row = await db.prepare(selectProject(locale)).bind(slug).first<ProjectDetailRow>();
   if (!row) return null;
 
-  const project = toProject(row);
+  const project = toProject(row, locale);
   if (!project) return null;
 
-  return { ...project, history: paragraphs(row.history_en), repo: row.github_url };
+  return { ...project, history: paragraphs(row.history), repo: row.github_url };
 }
 
 /**
@@ -96,14 +111,14 @@ export async function loadProject(
  *
  * The database defaults to the `DB` binding; passing one in is for tests.
  */
-export async function loadProjects(db: D1Database = env.DB): Promise<Project[]> {
-  const { results } = await db.prepare(SELECT_PROJECTS).all<ProjectRow>();
+export async function loadProjects(locale: Locale, db: D1Database = env.DB): Promise<Project[]> {
+  const { results } = await db.prepare(selectProjects(locale)).all<ProjectRow>();
 
   const projects: Project[] = [];
   const skipped: string[] = [];
 
   for (const row of results) {
-    const project = toProject(row);
+    const project = toProject(row, locale);
     if (project) projects.push(project);
     else skipped.push(row.slug);
   }
@@ -115,5 +130,5 @@ export async function loadProjects(db: D1Database = env.DB): Promise<Project[]> 
     );
   }
 
-  return projects.sort((a, b) => b.start - a.start || a.name.localeCompare(b.name, 'en'));
+  return projects.sort((a, b) => b.start - a.start || a.name.localeCompare(b.name, locale));
 }

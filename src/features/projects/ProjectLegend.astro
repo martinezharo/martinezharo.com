@@ -2,12 +2,20 @@
 import Icon from '../../components/ui/Icon.astro';
 import './legend.css';
 import { SCORE_META } from './model';
+import { getCopy, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
 ---
 
 <div class="legend">
   <button type="button" class="legend-open" data-legend-open aria-haspopup="dialog">
     <span class="legend-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-    How the ratings work
+    {copy.projects.legend.button}
   </button>
 
   <!-- Padding lives on the body, so a click that lands on the dialog itself can
@@ -15,24 +23,22 @@ import { SCORE_META } from './model';
   <dialog class="legend-panel" data-legend aria-labelledby="legend-title">
     <div class="legend-body">
       <div class="legend-head">
-        <h3 id="legend-title">How the ratings work</h3>
-        <button type="button" class="legend-close" data-legend-close aria-label="Close">
+        <h3 id="legend-title">{copy.projects.legend.title}</h3>
+        <button type="button" class="legend-close" data-legend-close aria-label={copy.projects.legend.close}>
           <Icon name="clear" />
         </button>
       </div>
 
       <p class="legend-lede">
-        A project carries up to four scores, each drawn as five segments. The lit part is the score
-        and the rest of the track stays visible, so two projects can be compared without reading a
-        number.
+        {copy.projects.legend.lede}
       </p>
 
       <ul class="legend-list">
         {
           SCORE_META.map((metric) => (
             <li>
-              <span class="legend-name">{metric.label}</span>
-              <span class="legend-hint">{metric.hint}</span>
+              <span class="legend-name">{copy.projects.metrics[metric.key].label}</span>
+              <span class="legend-hint">{copy.projects.metrics[metric.key].hint}</span>
             </li>
           ))
         }
@@ -42,11 +48,7 @@ import { SCORE_META } from './model';
            the rows behind the panel instead of holding a sentence in mind. -->
       <p class="legend-note">
         <span class="legend-void" aria-hidden="true"></span>
-        <span>
-          Dots in place of the scale mean the metric doesn't apply — a brand with no interface of
-          its own isn't rated on craft. It is left out of the overall rating, and when the list is
-          ordered by that metric those projects sit at the end.
-        </span>
+        <span>{copy.projects.legend.note}</span>
       </p>
     </div>
   </dialog>

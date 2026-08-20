@@ -2,17 +2,31 @@
 import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/geist';
 import '../styles/global.css';
+import { LOCALES, localizedPath, routeFromPath, type Locale } from '../i18n';
 
 interface Props {
+  locale: Locale;
   title: string;
   description: string;
 }
 
-const { title, description } = Astro.props;
+const { locale, title, description } = Astro.props;
+
+// Both languages of a page are the same route wearing a different prefix, so
+// the address each one should be known by can be derived rather than passed
+// down. Without these two, English answers at more than one address and
+// nothing says which of them is the page — or that the Spanish version is a
+// translation rather than a second, competing page about the same project.
+const route = routeFromPath(Astro.url.pathname);
+const canonical = new URL(localizedPath(locale, route), Astro.site);
+const alternates = LOCALES.map((code) => ({
+  code,
+  href: new URL(localizedPath(code, route), Astro.site).href,
+}));
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -21,6 +35,11 @@ const { title, description } = Astro.props;
     <link rel="icon" href="/icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="dark" />
+
+    <link rel="canonical" href={canonical.href} />
+    {alternates.map(({ code, href }) => <link rel="alternate" hreflang={code} href={href} />)}
+    {/* English is what a reader of neither language gets. */}
+    <link rel="alternate" hreflang="x-default" href={new URL(localizedPath('en', route), Astro.site).href} />
 
     {/* Navigation swaps the body instead of rebuilding the document, so the
         stylesheet and the font stay put and there is no blank frame between a

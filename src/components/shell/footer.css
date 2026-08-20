@@ -22,6 +22,20 @@ footer a {
   text-underline-offset: 4px;
 }
 
+/* The switch is a quieter thing than the invitation to write: it sits at the
+   muted weight of the copyright beside it until it is pointed at. */
+.language {
+  align-self: start;
+  color: var(--muted);
+  text-decoration-color: transparent;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.language:hover {
+  color: var(--text);
+  text-decoration-color: var(--line);
+}
+
 @media (--compact) {
   footer {
     display: grid;

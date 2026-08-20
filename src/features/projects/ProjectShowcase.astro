@@ -4,14 +4,17 @@ import { DEFAULT_PROJECT_STATE, type Project } from './model';
 import ProjectCard from './ProjectCard.astro';
 import ProjectFilters from './ProjectFilters.astro';
 import ProjectLegend from './ProjectLegend.astro';
+import { getCopy, type Locale } from '../../i18n';
 import './showcase.css';
 
 interface Props {
   projects: readonly Project[];
+  locale: Locale;
 }
 
-const { projects } = Astro.props;
-const fields = createFilterFields(projects);
+const { projects, locale } = Astro.props;
+const copy = getCopy(locale);
+const fields = createFilterFields(projects, locale);
 ---
 
 <section
@@ -22,11 +25,12 @@ const fields = createFilterFields(projects);
   data-state-dir={DEFAULT_PROJECT_STATE.direction}
   data-state-kind={DEFAULT_PROJECT_STATE.kind}
   data-state-status={DEFAULT_PROJECT_STATE.status}
+  data-locale={locale}
 >
   <header class="section-head">
-    <h2>Things I've built</h2>
+    <h2>{copy.projects.heading}</h2>
 
-    <ProjectFilters fields={fields} />
+    <ProjectFilters fields={fields} locale={locale} />
   </header>
 
   <!-- The list reorders and hides rows in place, which is silent to a screen
@@ -34,12 +38,12 @@ const fields = createFilterFields(projects);
   <p class="for-screen-readers" aria-live="polite" data-announce></p>
 
   <ul class="project-list" data-list>
-    {projects.map((project) => <ProjectCard project={project} />)}
+    {projects.map((project) => <ProjectCard project={project} locale={locale} />)}
   </ul>
 
-  <p class="empty" data-empty hidden>Nothing here matches those filters.</p>
+  <p class="empty" data-empty hidden>{copy.projects.filters.empty}</p>
 
-  <ProjectLegend />
+  <ProjectLegend locale={locale} />
 </section>
 
 <script>

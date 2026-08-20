@@ -1,13 +1,16 @@
 ---
 import './state.css';
+import { getCopy, type Locale } from '../../i18n';
 
 interface Props {
   active: boolean;
+  locale: Locale;
 }
 
-const { active } = Astro.props;
+const { active, locale } = Astro.props;
+const copy = getCopy(locale);
 ---
 
 <span class="state" data-on={String(active)}>
-  <i aria-hidden="true"></i>{active ? 'Active' : 'Archived'}
+  <i aria-hidden="true"></i>{active ? copy.projects.status.active : copy.projects.status.archived}
 </span>

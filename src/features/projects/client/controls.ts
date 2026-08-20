@@ -1,12 +1,6 @@
 import { FILTER_CLAUSES } from '../filter-options';
-import {
-  DIRECTION_LABEL,
-  SORT_FIELDS,
-  STATUS_LABEL,
-  type ProjectStatus,
-  type SortDirection,
-  type SortField,
-} from '../model';
+import { type ProjectStatus, type SortDirection, type SortField } from '../model';
+import { getCopy, isLocale, type Locale } from '../../../i18n';
 
 // Client behaviour for the project list. The list is rendered on the server;
 // this only reorders and hides the rows that are already there, so the page
@@ -25,7 +19,7 @@ import {
 // The menu those attributes hang off lives in the facets module.
 
 const name = (el: HTMLElement) => el.dataset.name ?? '';
-const byName = (a: HTMLElement, b: HTMLElement) => name(a).localeCompare(name(b), 'en');
+const byName = (a: HTMLElement, b: HTMLElement, locale: Locale) => name(a).localeCompare(name(b), locale);
 
 /** What a row is worth on a field, or null when it does not carry that rating. */
 function value(el: HTMLElement, field: SortField): number | null {
@@ -42,8 +36,8 @@ function value(el: HTMLElement, field: SortField): number | null {
  * project going down and the best one coming back up, and "not applicable" is
  * neither.
  */
-function compare(a: HTMLElement, b: HTMLElement, field: SortField, sign: number) {
-  if (field === 'name') return byName(a, b) * sign;
+function compare(a: HTMLElement, b: HTMLElement, field: SortField, sign: number, locale: Locale) {
+  if (field === 'name') return byName(a, b, locale) * sign;
 
   const left = value(a, field);
   const right = value(b, field);
@@ -55,6 +49,9 @@ function compare(a: HTMLElement, b: HTMLElement, field: SortField, sign: number)
 export function initProjectControls(root: HTMLElement): void {
   const list = root.querySelector<HTMLElement>('[data-list]');
   if (!list) return;
+
+  const locale: Locale = isLocale(root.dataset.locale) ? root.dataset.locale : 'en';
+  const copy = getCopy(locale);
 
   // Keep a non-null alias for callbacks that run after this initializer exits.
   const projectList = list;
@@ -85,20 +82,20 @@ export function initProjectControls(root: HTMLElement): void {
 
   /** The current state as the words the page would use for it. */
   function echo(which: string) {
-    if (which === 'status') return STATUS_LABEL[status];
+    if (which === 'status') return copy.projects.filters.statusLabels[status];
     // The name of a type is already printed by the item that selects it, and a
     // menu item carries it on [data-label] since its own text holds a count.
     if (which === 'kind') {
-      if (kind === 'all') return 'Every type';
+      if (kind === 'all') return copy.projects.kindLabels.all;
       const source = root.querySelector<HTMLElement>(`[data-set-kind="${kind}"]`);
       return source?.dataset.label ?? kind;
     }
-    if (which === 'sort') return SORT_FIELDS.find((sort) => sort.key === field)?.label ?? '';
-    if (which === 'dir') return DIRECTION_LABEL[field][dir];
+    if (which === 'sort') return copy.projects.filters.sortLabels[field] ?? '';
+    if (which === 'dir') return copy.projects.filters.directionLabels[field][dir];
     // The order is one clause even though it is two pieces of state, because
     // "Date" alone does not say which end of the list you are looking at.
     if (which === 'order')
-      return `${SORT_FIELDS.find((sort) => sort.key === field)?.label ?? ''}, ${DIRECTION_LABEL[field][dir].toLowerCase()}`;
+      return `${copy.projects.filters.sortLabels[field] ?? ''}, ${copy.projects.filters.directionLabels[field][dir].toLowerCase()}`;
     return '';
   }
 
@@ -125,12 +122,12 @@ export function initProjectControls(root: HTMLElement): void {
   function announcement(count: number) {
     // The empty case borrows the wording the page itself shows, so the two
     // cannot drift apart.
-    if (count === 0) return empty[0]?.textContent?.trim() ?? 'Nothing matches those filters.';
+    if (count === 0) return empty[0]?.textContent?.trim() ?? copy.projects.filters.empty;
 
     const clauses = [
       count === items.length
-        ? `Showing all ${items.length} projects`
-        : `Showing ${count} of ${items.length} projects`,
+        ? copy.projects.filters.announcements.all(items.length)
+        : copy.projects.filters.announcements.some(count, items.length),
     ];
 
     for (const clause of FILTER_CLAUSES) {
@@ -139,8 +136,11 @@ export function initProjectControls(root: HTMLElement): void {
       // it wants a verb.
       clauses.push(
         clause.key === 'order'
-          ? `sorted by ${echo('order').toLowerCase()}`
-          : `${clause.label.toLowerCase()} is ${echo(clause.key).toLowerCase()}`,
+          ? copy.projects.filters.announcements.order(echo('order').toLowerCase())
+          : copy.projects.filters.announcements.filter(
+              copy.projects.filters.clauseLabels[clause.key].toLowerCase(),
+              echo(clause.key).toLowerCase(),
+            ),
       );
     }
 
@@ -153,7 +153,7 @@ export function initProjectControls(root: HTMLElement): void {
 
     const ordered = items
       .filter(visible)
-      .sort((a, b) => compare(a, b, field, sign) || byName(a, b));
+      .sort((a, b) => compare(a, b, field, sign, locale) || byName(a, b, locale));
 
     for (const item of items) item.hidden = !visible(item);
     for (const item of ordered) projectList.appendChild(item);
@@ -168,7 +168,7 @@ export function initProjectControls(root: HTMLElement): void {
     for (const node of setSort) check(node, field === node.dataset.setSort);
     for (const node of setDir) check(node, dir === node.dataset.setDir);
     for (const node of dirNames)
-      node.textContent = DIRECTION_LABEL[field][node.dataset.dirName as SortDirection];
+      node.textContent = copy.projects.filters.directionLabels[field][node.dataset.dirName as SortDirection];
     for (const node of echoes) node.textContent = echo(node.dataset.echo ?? '');
     // A clause is only worth printing once its dimension has been moved off the
     // value it holds by default.

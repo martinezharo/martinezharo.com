@@ -1,5 +1,6 @@
 import type { Project } from './model';
-import { DIRECTION_LABEL, KIND_LABEL, SORT_FIELDS } from './model';
+import { SORT_FIELDS } from './model';
+import { getCopy, type Locale } from '../../i18n';
 
 export interface FilterOption {
   label: string;
@@ -16,60 +17,60 @@ export interface FilterField {
 }
 
 export const FILTER_CLAUSES = [
-  { key: 'status', label: 'Status', facet: 'status' },
-  { key: 'kind', label: 'Type', facet: 'kind' },
-  { key: 'order', label: 'Order', facet: 'sort' },
+  { key: 'status', facet: 'status' },
+  { key: 'kind', facet: 'kind' },
+  { key: 'order', facet: 'sort' },
 ] as const;
 
-const projectCount = (count: number) => `${count} project${count === 1 ? '' : 's'}`;
-
-export function createFilterFields(projects: readonly Project[]): FilterField[] {
+export function createFilterFields(projects: readonly Project[], locale: Locale): FilterField[] {
+  const projectCopy = getCopy(locale).projects;
+  const copy = projectCopy.filters;
   const activeCount = projects.filter((project) => project.active).length;
   const kinds = [...new Set(projects.map((project) => project.kind))];
 
   return [
     {
       key: 'status',
-      label: 'Status',
+      label: copy.fieldLabels.status,
       echo: 'status',
       options: [
-        { label: 'Every status', attrs: { 'data-set-status': 'all' }, hint: projectCount(projects.length) },
-        { label: 'Active', attrs: { 'data-set-status': 'active' }, hint: projectCount(activeCount) },
+        { label: copy.statusLabels.all, attrs: { 'data-set-status': 'all' }, hint: copy.projectCount(projects.length) },
+        { label: copy.statusLabels.active, attrs: { 'data-set-status': 'active' }, hint: copy.projectCount(activeCount) },
         {
-          label: 'Archived',
+          label: copy.statusLabels.archived,
           attrs: { 'data-set-status': 'archived' },
-          hint: projectCount(projects.length - activeCount),
+          hint: copy.projectCount(projects.length - activeCount),
         },
       ],
     },
     {
       key: 'kind',
-      label: 'Type',
+      label: copy.fieldLabels.kind,
       echo: 'kind',
       options: [
-        { label: 'Every type', attrs: { 'data-set-kind': 'all' }, hint: projectCount(projects.length) },
+        { label: projectCopy.kindLabels.all, attrs: { 'data-set-kind': 'all' }, hint: copy.projectCount(projects.length) },
         ...kinds.map((kind) => ({
-          label: KIND_LABEL[kind],
+          label: projectCopy.kindLabels[kind],
           attrs: { 'data-set-kind': kind },
-          hint: projectCount(projects.filter((project) => project.kind === kind).length),
+          hint: copy.projectCount(projects.filter((project) => project.kind === kind).length),
         })),
       ],
     },
     {
       key: 'sort',
-      label: 'Order',
+      label: copy.fieldLabels.sort,
       echo: 'sort',
       options: SORT_FIELDS.map((sort) => ({
-        label: sort.label,
+        label: copy.sortLabels[sort.key],
         attrs: { 'data-set-sort': sort.key },
       })),
     },
     {
       key: 'dir',
-      label: 'Direction',
+      label: copy.fieldLabels.dir,
       echo: 'dir',
       options: (['desc', 'asc'] as const).map((direction) => ({
-        label: DIRECTION_LABEL.date[direction],
+        label: copy.directionLabels.date[direction],
         attrs: { 'data-set-dir': direction },
         rename: direction,
       })),

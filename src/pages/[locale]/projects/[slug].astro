@@ -1,0 +1,20 @@
+---
+import { site } from '../../../config/site';
+import ProjectPage from '../../../features/projects/ProjectPage.astro';
+import { getCopy, isPrefixedLocale } from '../../../i18n';
+import { loadProject } from '../../../features/projects/repository';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+// Only prefixed locales route here; `/en/projects/...` is redirected instead.
+const locale = isPrefixedLocale(Astro.params.locale) ? Astro.params.locale : null;
+const slug = Astro.params.slug;
+if (!locale || !slug) return new Response(getCopy('en').errors.notFound, { status: 404 });
+
+const copy = getCopy(locale);
+const project = await loadProject(slug, locale);
+if (!project) return new Response(copy.errors.projectNotFound, { status: 404 });
+---
+
+<BaseLayout locale={locale} title={`${project.name} — ${site.name}`} description={project.blurb || copy.site.description}>
+  <ProjectPage project={project} locale={locale} />
+</BaseLayout>
