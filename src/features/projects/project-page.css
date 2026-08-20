@@ -248,13 +248,17 @@ main footer {
     font-size: clamp(34px, 10vw, 46px);
   }
 
+  /* Wider, but not bigger. The home page's mobile intro grows its description
+     to 16px because that copy is the page; here the story follows underneath at
+     16.5px, and a blurb at the same size as the opening paragraph left the two
+     indistinguishable once the rail stopped being a column of its own. */
   .rail-id .intro-description {
     max-width: 480px;
-    font-size: 16px;
   }
 
   .rail-links {
     margin-bottom: 22px;
+    border-top: 0;
   }
 
   /* Nothing hovers on a touch screen, and the rows start at the screen edge
@@ -263,8 +267,23 @@ main footer {
     content: none;
   }
 
+  /* Stacked, the rail's hairlines all become the same full-width line and queue
+     up: a project with two links drew five of them in one screen, at two
+     different widths, which reads as noise rather than as structure. The rows
+     keep their mark, their arrow and their height, which is enough to tell them
+     apart, and the only rule left on the screen is the one under the rail —
+     where the page actually changes subject. */
   .rail-link {
     min-height: 56px;
+    border-bottom: 0;
+  }
+
+  /* The rail's foot already separates the identity from the story, so the
+     heading gets air instead of a second line saying the same thing. */
+  .story-head {
+    margin-bottom: 34px;
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   .rail-link:active {
@@ -276,7 +295,7 @@ main footer {
   }
 
   main {
-    padding-top: 34px;
+    padding-top: 46px;
   }
 }
 
