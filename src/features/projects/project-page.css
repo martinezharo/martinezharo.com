@@ -44,9 +44,18 @@
   transform: translateX(-3px);
 }
 
-/* Centred in the rail exactly as the intro copy is on the home page. */
-.rail-id {
+/* Centred in the rail as the intro copy is on the home page, except that here
+   it is the whole block that centres rather than the identity alone. The home
+   sidebar draws the same nav and foot under its copy on every page, so there is
+   nothing below for the free space to separate; a project's links come and go
+   with the project, and handing the space to the identity alone dropped it
+   between the blurb and them. An auto margin only takes positive free space, so
+   a block taller than the column still starts at the top and scrolls. */
+.rail-body {
   margin: auto 0;
+}
+
+.rail-id {
   padding: 44px 0 34px;
 }
 
@@ -232,7 +241,6 @@ main footer {
   }
 
   .rail-id {
-    margin: 0;
     padding: 34px 0 30px;
   }
 

@@ -28,32 +28,38 @@ const links = projectLinks(project, locale);
 <aside class="project-rail">
   <a class="back" href={localizedPath(locale, '/')}><span class="back-mark" aria-hidden="true">←</span>{copy.detail.back}</a>
 
-  <div class="rail-id">
-    <span class="rail-logo"><img src={project.logo} alt="" width="54" height="54" /></span>
-    <h1>{project.name}</h1>
-    <p class="intro-description">{project.blurb}</p>
+  {/* The identity, the links and the tools are one block rather than three.
+      What a project carries varies — plenty have no link to give at all — and
+      holding them together means the column draws a shorter block for a project
+      with less to say instead of the same block with a hole in it. */}
+  <div class="rail-body">
+    <div class="rail-id">
+      <span class="rail-logo"><img src={project.logo} alt="" width="54" height="54" /></span>
+      <h1>{project.name}</h1>
+      <p class="intro-description">{project.blurb}</p>
+    </div>
+
+    {/* A project with nowhere to send anyone gets no rule of its own: an empty
+        block would read as a link that failed to load. */}
+    <nav class="rail-links" aria-label={copy.detail.linksLabel(project.name)} hidden={links.length === 0}>
+      {
+        links.map((link) => (
+          <a class="rail-link" href={link.href} target="_blank" rel="noopener noreferrer">
+            <Icon name={link.icon} class="rail-link-mark" />
+            <span class="rail-link-label">{link.label}</span>
+            <span class="rail-link-arrow" aria-hidden="true">
+              ↗
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <p class="rail-stack">
+      <span class="for-screen-readers">{copy.common.builtWith}</span>
+      {project.stack.map((tool) => <span class="tool">{tool}</span>)}
+    </p>
   </div>
-
-  {/* A project with nowhere to send anyone gets no rule of its own: an empty
-      block would read as a link that failed to load. */}
-  <nav class="rail-links" aria-label={copy.detail.linksLabel(project.name)} hidden={links.length === 0}>
-    {
-      links.map((link) => (
-        <a class="rail-link" href={link.href} target="_blank" rel="noopener noreferrer">
-          <Icon name={link.icon} class="rail-link-mark" />
-          <span class="rail-link-label">{link.label}</span>
-          <span class="rail-link-arrow" aria-hidden="true">
-            ↗
-          </span>
-        </a>
-      ))
-    }
-  </nav>
-
-  <p class="rail-stack">
-    <span class="for-screen-readers">{copy.common.builtWith}</span>
-    {project.stack.map((tool) => <span class="tool">{tool}</span>)}
-  </p>
 </aside>
 
 <main>
