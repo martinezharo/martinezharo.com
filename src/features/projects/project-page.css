@@ -167,15 +167,13 @@
 .rail-stack {
   display: flex;
   flex-wrap: wrap;
+  /* Space alone separates the tools: a middot before each one leaves an orphan
+     dot at the head of the second line as soon as the list wraps. */
+  gap: 6px 14px;
   margin: 0;
   color: var(--faint);
   font-size: 11px;
-}
-
-.tool + .tool::before {
-  content: '·';
-  margin: 0 7px;
-  color: var(--line-strong);
+  line-height: 1.4;
 }
 
 /* The story sets the width of the column, and the footer's rule stops where the
