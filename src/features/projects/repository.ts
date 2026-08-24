@@ -1,12 +1,13 @@
 import { env } from 'cloudflare:workers';
-import { projectPresentation } from '../../data/project-presentation';
 import type { Locale } from '../../i18n';
-import type { Project, ProjectDetail } from './model';
+import type { Project, ProjectDetail, ProjectKind, ProjectScores } from './model';
+import { PROJECT_KINDS, SCORE_META } from './model';
 
-// Reads the portfolio from the `oliweb` D1 database and joins each row with the
-// presentation record that carries its type, ratings, hours and stack. The
-// description and history expressions are selected for the requested locale,
-// with the other language as a safe fallback for an incomplete row.
+// Reads the portfolio from the `oliweb` D1 database. Everything a project is
+// and everything the portfolio says about it lives on the same row, so the
+// admin panel can put a project on the site without a deploy. The description,
+// history and stack expressions are selected for the requested locale, with
+// the other language as a safe fallback for an incomplete row.
 
 /** The columns of `projects` this site reads. The table holds more. */
 interface ProjectRow {
@@ -18,6 +19,12 @@ interface ProjectRow {
   url: string | null;
   logo_url: string | null;
   short_description: string | null;
+  kind: string | null;
+  score_craft: number | null;
+  score_depth: number | null;
+  score_utility: number | null;
+  score_impact: number | null;
+  stack: string | null;
 }
 
 interface ProjectDetailRow extends ProjectRow {
@@ -25,24 +32,32 @@ interface ProjectDetailRow extends ProjectRow {
   github_url: string | null;
 }
 
-function localizedColumn(locale: Locale, field: 'short_description' | 'history'): string {
+type LocalizedField = 'short_description' | 'history' | 'stack';
+
+function localizedColumn(locale: Locale, field: LocalizedField): string {
   const suffix = locale === 'es' ? 'es' : 'en';
   const fallback = locale === 'es' ? 'en' : 'es';
   return `COALESCE(NULLIF(${field}_${suffix}, ''), ${field}_${fallback})`;
 }
 
+/** The columns every query needs, in both the list and the detail shape. */
+function commonColumns(locale: Locale): string {
+  return `slug, name, is_active, start_date, end_date, url, logo_url,
+      kind, score_craft, score_depth, score_utility, score_impact,
+      ${localizedColumn(locale, 'short_description')} AS short_description,
+      ${localizedColumn(locale, 'stack')} AS stack`;
+}
+
 function selectProjects(locale: Locale): string {
   return `
-    SELECT slug, name, is_active, start_date, end_date, url, logo_url,
-      ${localizedColumn(locale, 'short_description')} AS short_description
+    SELECT ${commonColumns(locale)}
     FROM projects
   `;
 }
 
 function selectProject(locale: Locale): string {
   return `
-    SELECT slug, name, is_active, start_date, end_date, url, logo_url,
-      ${localizedColumn(locale, 'short_description')} AS short_description,
+    SELECT ${commonColumns(locale)},
       ${localizedColumn(locale, 'history')} AS history, github_url
     FROM projects
     WHERE slug = ?1
@@ -55,10 +70,60 @@ function year(date: string | null): number | null {
   return Number.isInteger(parsed) ? parsed : null;
 }
 
-function toProject(row: ProjectRow, locale: Locale): Project | null {
-  const presentation = projectPresentation[row.slug];
+/**
+ * The type of a project, or null when the column holds something this site has
+ * no way to draw — including the NULL a row carries before anyone has said
+ * what it is. Either way the showcase leaves the project out rather than
+ * guessing, which is what it did when the type lived in a source file and the
+ * row had no entry there.
+ */
+function toKind(value: string | null): ProjectKind | null {
+  return PROJECT_KINDS.find((kind) => kind === value) ?? null;
+}
+
+/**
+ * The stack is stored as a JSON array of tool names. A row whose column is
+ * empty, malformed or not an array of strings draws no tools at all — the same
+ * as a project that named none.
+ */
+function toStack(value: string | null): string[] {
+  if (!value) return [];
+
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((tool): tool is string => typeof tool === 'string' && tool !== '');
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * The four ratings, 1 to 5 — one segment of the meter each, so nothing is
+ * rounded on the way out. A column left NULL means the metric does not apply to
+ * the project, which the card, the ordering and the announcement all treat as
+ * its own state rather than as a zero.
+ */
+function toScores(row: ProjectRow): ProjectScores {
+  const columns = {
+    craft: row.score_craft,
+    depth: row.score_depth,
+    utility: row.score_utility,
+    impact: row.score_impact,
+  };
+
+  return Object.fromEntries(
+    SCORE_META.map((metric) => [
+      metric.key,
+      typeof columns[metric.key] === 'number' ? columns[metric.key] : null,
+    ]),
+  ) as ProjectScores;
+}
+
+function toProject(row: ProjectRow): Project | null {
+  const kind = toKind(row.kind);
   const start = year(row.start_date);
-  if (!presentation || start === null) return null;
+  if (!kind || start === null) return null;
 
   return {
     slug: row.slug,
@@ -66,11 +131,12 @@ function toProject(row: ProjectRow, locale: Locale): Project | null {
     active: row.is_active === 1,
     start,
     end: year(row.end_date),
+    kind,
     url: row.url,
     logo: row.logo_url ?? '',
     blurb: row.short_description ?? '',
-    ...presentation,
-    stack: presentation.stack[locale],
+    scores: toScores(row),
+    stack: toStack(row.stack),
   };
 }
 
@@ -88,7 +154,7 @@ function paragraphs(history: string | null): string[] {
 
 /**
  * One project by slug, with its story and repository, or null when there is no
- * such row — or when the row has no presentation record, which is the same
+ * such row — or when the row has no type or no start date, which is the same
  * reason the showcase would have left it out of the list.
  */
 export async function loadProject(
@@ -99,7 +165,7 @@ export async function loadProject(
   const row = await db.prepare(selectProject(locale)).bind(slug).first<ProjectDetailRow>();
   if (!row) return null;
 
-  const project = toProject(row, locale);
+  const project = toProject(row);
   if (!project) return null;
 
   return { ...project, history: paragraphs(row.history), repo: row.github_url };
@@ -118,15 +184,15 @@ export async function loadProjects(locale: Locale, db: D1Database = env.DB): Pro
   const skipped: string[] = [];
 
   for (const row of results) {
-    const project = toProject(row, locale);
+    const project = toProject(row);
     if (project) projects.push(project);
     else skipped.push(row.slug);
   }
 
   if (skipped.length > 0) {
     console.warn(
-      `[projects] skipped rows with no presentation record or start date: ${skipped.join(', ')}. ` +
-        'Add them to src/data/project-presentation.ts.',
+      `[projects] skipped rows with no type or no start date: ${skipped.join(', ')}. ` +
+        'Give them one in the admin panel.',
     );
   }
 

@@ -1,4 +1,11 @@
-export type ProjectKind = 'ecommerce' | 'marketplace' | 'app' | 'tool' | 'brand';
+/**
+ * The types a project can be. This is the list the database column is checked
+ * against on the way in, so it is a value rather than only a type — a row
+ * whose `kind` is not one of these has not been described and the showcase
+ * cannot draw it.
+ */
+export const PROJECT_KINDS = ['ecommerce', 'marketplace', 'app', 'tool', 'brand'] as const;
+export type ProjectKind = (typeof PROJECT_KINDS)[number];
 
 /**
  * What a project scores on each metric, or `null` where the metric does not
@@ -20,7 +27,6 @@ export interface Project {
   logo: string;
   blurb: string;
   scores: ProjectScores;
-  hours: number;
   stack: string[];
 }
 
