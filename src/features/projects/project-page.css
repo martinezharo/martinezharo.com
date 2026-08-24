@@ -176,16 +176,17 @@
   line-height: 1.4;
 }
 
-/* The story sets the width of the column, and the footer's rule stops where the
-   story's does rather than running out past it. */
-.story,
-main footer {
-  max-width: 680px;
+/* The page holds the same centred column the home page does, so the footer under
+   it is the one footer of the site rather than a narrower copy of it. Prose is
+   the only thing that wants less: the story keeps a reading measure inside that
+   column instead of setting the column's own width. */
+.story {
+  max-width: var(--content-max);
+  margin: 0 auto;
 }
 
-main footer {
-  margin-right: auto;
-  margin-left: 0;
+.story > * {
+  max-width: 680px;
 }
 
 .story-head {
