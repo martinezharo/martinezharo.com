@@ -256,7 +256,7 @@ const copies: Record<Locale, LocaleCopy> = {
         title: 'How the ratings work',
         close: 'Close',
         lede: 'A project carries up to four scores, each drawn as five segments. The lit part is the score and the rest of the track stays visible, so two projects can be compared without reading a number.',
-        note: "Dots in place of the scale mean the metric doesn't apply — a brand with no interface of its own isn't rated on craft. It is left out of the overall rating, and when the list is ordered by that metric those projects sit at the end.",
+        note: "Dots in place of the scale mean the metric doesn't apply and is left out of the overall rating.",
       },
     },
     detail: {
@@ -384,7 +384,7 @@ const copies: Record<Locale, LocaleCopy> = {
         title: 'Cómo funcionan las valoraciones',
         close: 'Cerrar',
         lede: 'Cada proyecto tiene hasta cuatro valoraciones, representadas por cinco segmentos. La parte iluminada es la puntuación y el resto de la escala permanece visible, para poder comparar dos proyectos sin leer un número.',
-        note: 'Los puntos en lugar de la escala indican que la métrica no se aplica: una marca sin interfaz propia no recibe una valoración de acabado. Se excluye de la valoración general y, al ordenar la lista por esa métrica, esos proyectos quedan al final.',
+        note: 'Los puntos en lugar de la escala indican que la métrica no se aplica y no cuenta en la valoración general.',
       },
     },
     detail: {
