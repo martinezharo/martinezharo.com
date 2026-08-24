@@ -1,8 +1,8 @@
 -- Cloudflare D1 schema for oliweb.
 --
--- This is a schema-only snapshot through migration 0003. It intentionally
+-- This is a schema-only snapshot through migration 0005. It intentionally
 -- excludes rows and Wrangler's internal tables. For a fresh local database,
--- run this as the complete bootstrap; do not replay migrations 0001-0003 on
+-- run this as the complete bootstrap; do not replay migrations 0001-0005 on
 -- top of a database initialized from this file:
 --   pnpm exec wrangler d1 execute oliweb --local --file=./schema.sql
 --
@@ -44,9 +44,9 @@ CREATE TABLE IF NOT EXISTS projects (
   score_depth           INTEGER,
   score_utility         INTEGER,
   score_impact          INTEGER,
-  -- JSON-encoded arrays of tool names, one per language
-  stack_en              TEXT,
-  stack_es              TEXT
+  -- A JSON-encoded array of tool names. Not translated: a tool is called the
+  -- same thing in both languages.
+  stack                 TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_posts_created_at ON posts (created_at DESC);

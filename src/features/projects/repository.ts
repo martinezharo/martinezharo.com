@@ -5,9 +5,10 @@ import { PROJECT_KINDS, SCORE_META } from './model';
 
 // Reads the portfolio from the `oliweb` D1 database. Everything a project is
 // and everything the portfolio says about it lives on the same row, so the
-// admin panel can put a project on the site without a deploy. The description,
-// history and stack expressions are selected for the requested locale, with
-// the other language as a safe fallback for an incomplete row.
+// admin panel can put a project on the site without a deploy. The description
+// and history expressions are selected for the requested locale, with the
+// other language as a safe fallback for an incomplete row. The stack is not
+// one of them: tool names are the same in either language.
 
 /** The columns of `projects` this site reads. The table holds more. */
 interface ProjectRow {
@@ -32,7 +33,7 @@ interface ProjectDetailRow extends ProjectRow {
   github_url: string | null;
 }
 
-type LocalizedField = 'short_description' | 'history' | 'stack';
+type LocalizedField = 'short_description' | 'history';
 
 function localizedColumn(locale: Locale, field: LocalizedField): string {
   const suffix = locale === 'es' ? 'es' : 'en';
@@ -43,9 +44,8 @@ function localizedColumn(locale: Locale, field: LocalizedField): string {
 /** The columns every query needs, in both the list and the detail shape. */
 function commonColumns(locale: Locale): string {
   return `slug, name, is_active, start_date, end_date, url, logo_url,
-      kind, score_craft, score_depth, score_utility, score_impact,
-      ${localizedColumn(locale, 'short_description')} AS short_description,
-      ${localizedColumn(locale, 'stack')} AS stack`;
+      kind, score_craft, score_depth, score_utility, score_impact, stack,
+      ${localizedColumn(locale, 'short_description')} AS short_description`;
 }
 
 function selectProjects(locale: Locale): string {
