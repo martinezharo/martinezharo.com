@@ -41,7 +41,7 @@ test('keeps a project off a scale that does not apply to it', async ({ page }) =
   // The other three still have a scale, and craft is left out of the average
   // rather than counted as a zero.
   await expect(kenobismo.locator('.meter.is-void')).toHaveCount(1);
-  await expect(kenobismo).toHaveAttribute('data-overall', '53');
+  await expect(kenobismo).toHaveAttribute('data-overall', '2.67');
   await expect(kenobismo).not.toHaveAttribute('data-craft');
 
   const names = page.locator('[data-item]:visible .project-name');

@@ -8,13 +8,19 @@ export const PROJECT_KINDS = ['ecommerce', 'marketplace', 'app', 'tool', 'brand'
 export type ProjectKind = (typeof PROJECT_KINDS)[number];
 
 /**
- * What a project scores on each metric, or `null` where the metric does not
- * apply to it — a brand with no interface of its own is not judged on craft.
- * That is a different statement from a low score, and the list draws, orders
- * and announces it as one. Every key stays required so that leaving a project
- * off a scale has to be written down rather than forgotten.
+ * What a project scores on each metric, 1 to 5 — the scale the meter draws, so
+ * there is no number behind the segments finer than the segments themselves.
+ *
+ * `null` where the metric does not apply to the project: a brand with no
+ * interface of its own is not judged on craft. That is a different statement
+ * from a low score, and the list draws, orders and announces it as one. Every
+ * key stays required so that leaving a project off a scale has to be written
+ * down rather than forgotten.
  */
 export type ProjectScores = Record<ScoreKey, number | null>;
+
+/** The segments a meter draws, and the top of the scale a score is out of. */
+export const SCORE_MAX = 5;
 
 export interface Project {
   slug: string;
@@ -85,18 +91,19 @@ function ratedScores(project: Project): number[] {
  * The average of the ratings a project carries, or null when it carries none.
  * A metric that does not apply is left out of the average rather than counted
  * as a zero, so a project is never marked down for a scale it was never on.
+ *
+ * Left unrounded, to two places. Nothing prints this — it is the key the list
+ * orders by — and on a scale with five stops, rounding it would put half the
+ * portfolio on the same rung and leave the order to the tie-break.
  */
 export function getOverallScore(project: Project): number | null {
   const scores = ratedScores(project);
   if (scores.length === 0) return null;
-  return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
+  const mean = scores.reduce((total, score) => total + score, 0) / scores.length;
+  return Math.round(mean * 100) / 100;
 }
 
 export function formatProjectRange(project: Project): string {
   if (!project.end) return `${project.start} —`;
   return project.end === project.start ? `${project.start}` : `${project.start}–${project.end}`;
-}
-
-export function toRating(score: number): number {
-  return Math.max(1, Math.min(5, Math.round(score / 20)));
 }

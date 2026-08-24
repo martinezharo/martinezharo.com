@@ -1,30 +1,30 @@
 ---
 import './meter.css';
-import { toRating } from './model';
+import { SCORE_MAX } from './model';
 import { getCopy, type Locale } from '../../i18n';
 
 interface Props {
   /** Named so the mark can announce itself; the visible label is drawn outside. */
   label: string;
+  /** 1 to 5, or null where the metric does not apply to the project. */
   score: number | null;
   locale: Locale;
 }
 
 const { label, score, locale } = Astro.props;
 const copy = getCopy(locale);
-const rating = score === null ? null : toRating(score);
 ---
 
 {
   /* A metric the project is not on keeps its place in the row, but the scale
      gives way to a dot per segment: an empty meter would read as a score of
      zero, and this cannot. */
-  rating === null ? (
+  score === null ? (
     <span class="meter is-void" role="img" aria-label={copy.projects.meter.notApplicable(label)} />
   ) : (
-    <span class="meter" role="img" aria-label={copy.projects.meter.rating(label, rating)}>
-      {Array.from({ length: 5 }, (_, index) => (
-        <i data-on={String(index < rating)} aria-hidden="true" />
+    <span class="meter" role="img" aria-label={copy.projects.meter.rating(label, score)}>
+      {Array.from({ length: SCORE_MAX }, (_, index) => (
+        <i data-on={String(index < score)} aria-hidden="true" />
       ))}
     </span>
   )
