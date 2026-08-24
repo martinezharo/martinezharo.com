@@ -10,6 +10,18 @@ export const LOCALES = ['en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
+/**
+ * How the switcher states a choice, and where that choice is kept.
+ *
+ * The root negotiates, so a Spanish reader asking for English at `/` would be
+ * sent straight back to `/es` and the switch would look broken. The link asks
+ * for the language out loud; the middleware records it and drops the query, so
+ * the address bar keeps the clean URL and later visits to `/` obey the choice
+ * instead of the browser's header.
+ */
+export const LOCALE_QUERY = 'lang';
+export const LOCALE_COOKIE = 'locale';
+
 /** Each language named in itself, for the switcher. */
 export const LOCALE_NAMES: Record<Locale, string> = { en: 'English', es: 'Español' };
 

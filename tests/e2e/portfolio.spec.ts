@@ -228,3 +228,25 @@ test('keeps the negotiated page out of shared caches', async ({ request }) => {
   expect(project.headers()['cache-control']).toBe('public, max-age=60, s-maxage=60');
   expect(project.headers()['vary'] ?? '').not.toContain('Accept-Language');
 });
+
+test('honours the switch out of Spanish on the page that negotiates', async ({ browser }) => {
+  const context = await browser.newContext({ locale: 'es-ES' });
+  const page = await context.newPage();
+
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/es$/);
+
+  // The root is the one address that reads the browser's header, so asking for
+  // English there has to outrank it — otherwise the switch bounces straight
+  // back and looks broken.
+  await page.getByRole('link', { name: 'Idioma' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+
+  // And the choice sticks: coming back to the root does not undo it.
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+
+  await context.close();
+});

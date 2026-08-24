@@ -2,6 +2,7 @@
 import { mailto, site } from '../../config/site';
 import {
   LOCALE_NAMES,
+  LOCALE_QUERY,
   alternateLocale,
   getCopy,
   localizedPath,
@@ -22,8 +23,13 @@ const year = new Date().getFullYear();
 // the only place a language switch can live once and be reachable from every
 // page. It points at the same route in the other language rather than at that
 // language's home, so switching keeps you where you were reading.
+//
+// The query says the language was chosen rather than guessed. Without it the
+// English link on `/es` lands on the negotiated root, which reads the Spanish
+// browser header and bounces straight back — the switch would do nothing. The
+// middleware records the choice and redirects to the bare address.
 const other = alternateLocale(locale);
-const otherHref = localizedPath(other, routeFromPath(Astro.url.pathname));
+const otherHref = `${localizedPath(other, routeFromPath(Astro.url.pathname))}?${LOCALE_QUERY}=${other}`;
 ---
 
 <footer>

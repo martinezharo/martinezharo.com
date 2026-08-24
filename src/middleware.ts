@@ -1,5 +1,13 @@
 import { defineMiddleware } from 'astro:middleware';
-import { localizedPath, preferredLocale } from './i18n';
+import {
+  LOCALE_COOKIE,
+  LOCALE_QUERY,
+  isLocale,
+  localizedPath,
+  preferredLocale,
+  routeFromPath,
+  type Locale,
+} from './i18n';
 
 // Every page here is public, read-only and rendered from the same handful of D1
 // rows, so the browser is allowed to keep one rather than ask for it again on
@@ -45,14 +53,40 @@ function unprefixEnglish(url: URL): Response | null {
 }
 
 /**
+ * A language named in the query was chosen by hand, in the footer switcher.
+ *
+ * It is remembered and then dropped: the reader lands on the bare address, and
+ * the cookie is what keeps the negotiator from undoing the choice the next time
+ * they arrive at the root — which, from Spanish, is every click on "English".
+ */
+function statedLocale(url: URL): Response | null {
+  const stated = url.searchParams.get(LOCALE_QUERY) ?? undefined;
+  if (!isLocale(stated)) return null;
+
+  const target = new URL(url);
+  target.searchParams.delete(LOCALE_QUERY);
+  target.pathname = localizedPath(stated, routeFromPath(url.pathname));
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: target.toString(),
+      'Cache-Control': 'no-store',
+      'Set-Cookie': `${LOCALE_COOKIE}=${stated}; Path=/; Max-Age=31536000; SameSite=Lax`,
+    },
+  });
+}
+
+/**
  * A reader who asked for Spanish gets Spanish, but only when they arrived at a
  * URL that named no language. Anything under `/projects/` or `/es/` was chosen,
  * and overriding a chosen address would leave no way to read the other version
  * — and would keep a crawler from ever seeing it.
  */
-function chooseLocale(url: URL, request: Request): Response | null {
+function chooseLocale(url: URL, request: Request, chosen: Locale | undefined): Response | null {
   if (!negotiates(url.pathname)) return null;
-  if (preferredLocale(request.headers.get('accept-language')) !== 'es') return null;
+  // A choice made in the switcher outranks the header it contradicts.
+  const locale = chosen ?? preferredLocale(request.headers.get('accept-language'));
+  if (locale !== 'es') return null;
 
   const target = new URL(url);
   target.pathname = localizedPath('es', url.pathname);
@@ -71,7 +105,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isRead = context.request.method === 'GET' || context.request.method === 'HEAD';
 
   if (isRead) {
-    const redirect = unprefixEnglish(url) ?? chooseLocale(url, context.request);
+    const stored = context.cookies.get(LOCALE_COOKIE)?.value;
+    const chosen = isLocale(stored) ? stored : undefined;
+    const redirect =
+      unprefixEnglish(url) ?? statedLocale(url) ?? chooseLocale(url, context.request, chosen);
     if (redirect) return redirect;
   }
 
