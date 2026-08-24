@@ -88,9 +88,10 @@ function ratedScores(project: Project): number[] {
 }
 
 /**
- * The average of the ratings a project carries, or null when it carries none.
- * A metric that does not apply is left out of the average rather than counted
- * as a zero, so a project is never marked down for a scale it was never on.
+ * The average of a project's ratings over every metric, or null when it carries
+ * none at all. A metric left unrated counts as a zero: the scales are the same
+ * four for every project, so a blank is a gap in the project rather than a
+ * scale it was never on.
  *
  * Left unrounded, to two places. Nothing prints this — it is the key the list
  * orders by — and on a scale with five stops, rounding it would put half the
@@ -99,7 +100,7 @@ function ratedScores(project: Project): number[] {
 export function getOverallScore(project: Project): number | null {
   const scores = ratedScores(project);
   if (scores.length === 0) return null;
-  const mean = scores.reduce((total, score) => total + score, 0) / scores.length;
+  const mean = scores.reduce((total, score) => total + score, 0) / SCORE_META.length;
   return Math.round(mean * 100) / 100;
 }
 

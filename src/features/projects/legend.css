@@ -139,30 +139,6 @@
   line-height: 1.55;
 }
 
-/* A footnote to the four, not a fifth metric: it sits below the list, past its
-   last rule, with the mark it explains held out in the margin. */
-.legend-note {
-  display: flex;
-  gap: 10px;
-  margin: 0;
-  padding-top: 13px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-/* The same mark the rows carry, at the same size, so it can be matched against
-   them by eye. */
-.legend-void {
-  flex: none;
-  width: 43px;
-  height: 2px;
-  margin-top: 8px;
-  background-image: radial-gradient(circle at center, var(--faint) 0 0.8px, transparent 0.8px);
-  background-size: 4px 100%;
-}
-
 @media (--compact) {
   .legend {
     margin-top: 10px;

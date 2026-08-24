@@ -38,10 +38,10 @@ test('keeps a project off a scale that does not apply to it', async ({ page }) =
 
   await expect(design.locator('.meter')).toHaveClass(/is-void/);
   await expect(design.getByLabel('Design: does not apply')).toBeAttached();
-  // The other three still have a scale, and design is left out of the average
-  // rather than counted as a zero.
+  // The other three still have a scale, and design counts as a zero in the
+  // average rather than being left out of it.
   await expect(kenobismo.locator('.meter.is-void')).toHaveCount(1);
-  await expect(kenobismo).toHaveAttribute('data-overall', '2.67');
+  await expect(kenobismo).toHaveAttribute('data-overall', '2');
   await expect(kenobismo).not.toHaveAttribute('data-design');
 
   // More than one project can be off a scale, so this asks where an unrated
