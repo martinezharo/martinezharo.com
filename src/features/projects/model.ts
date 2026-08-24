@@ -12,7 +12,7 @@ export type ProjectKind = (typeof PROJECT_KINDS)[number];
  * there is no number behind the segments finer than the segments themselves.
  *
  * `null` where the metric does not apply to the project: a brand with no
- * interface of its own is not judged on craft. That is a different statement
+ * interface of its own is not judged on design. That is a different statement
  * from a low score, and the list draws, orders and announces it as one. Every
  * key stays required so that leaving a project off a scale has to be written
  * down rather than forgotten.
@@ -46,12 +46,12 @@ export interface ProjectDetail extends Project {
   repo: string | null;
 }
 
-export type ScoreKey = 'craft' | 'depth' | 'utility' | 'impact';
+export type ScoreKey = 'design' | 'engineering' | 'value' | 'maturity';
 export const SCORE_META: ReadonlyArray<{ key: ScoreKey }> = [
-  { key: 'craft' },
-  { key: 'depth' },
-  { key: 'utility' },
-  { key: 'impact' },
+  { key: 'design' },
+  { key: 'engineering' },
+  { key: 'value' },
+  { key: 'maturity' },
 ];
 
 export type SortField = 'date' | 'name' | 'overall' | ScoreKey;
@@ -62,10 +62,10 @@ export const SORT_FIELDS: ReadonlyArray<{ key: SortField }> = [
   { key: 'date' },
   { key: 'name' },
   { key: 'overall' },
-  { key: 'craft' },
-  { key: 'depth' },
-  { key: 'utility' },
-  { key: 'impact' },
+  { key: 'design' },
+  { key: 'engineering' },
+  { key: 'value' },
+  { key: 'maturity' },
 ];
 
 export const DEFAULT_PROJECT_STATE = {

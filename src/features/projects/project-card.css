@@ -190,10 +190,10 @@
 }
 
 .projects:is(
-  [data-state-field='craft'],
-  [data-state-field='depth'],
-  [data-state-field='utility'],
-  [data-state-field='impact']
+  [data-state-field='design'],
+  [data-state-field='engineering'],
+  [data-state-field='value'],
+  [data-state-field='maturity']
 ) .rating {
   opacity: 0.8;
 }
@@ -201,10 +201,10 @@
 /* Ordering by a metric lights it up on every project that carries it. A project
    that does not stays dimmed, which is also the reason it has sunk to the foot
    of the list. */
-.projects[data-state-field='craft'] .rating[data-metric='craft'][data-rated='true'],
-.projects[data-state-field='depth'] .rating[data-metric='depth'][data-rated='true'],
-.projects[data-state-field='utility'] .rating[data-metric='utility'][data-rated='true'],
-.projects[data-state-field='impact'] .rating[data-metric='impact'][data-rated='true'] {
+.projects[data-state-field='design'] .rating[data-metric='design'][data-rated='true'],
+.projects[data-state-field='engineering'] .rating[data-metric='engineering'][data-rated='true'],
+.projects[data-state-field='value'] .rating[data-metric='value'][data-rated='true'],
+.projects[data-state-field='maturity'] .rating[data-metric='maturity'][data-rated='true'] {
   --mark: var(--accent);
   --label: var(--text);
 

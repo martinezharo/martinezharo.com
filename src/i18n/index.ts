@@ -131,20 +131,20 @@ const englishDirections: Record<SortField, Record<SortDirection, string>> = {
   date: { desc: 'Newest first', asc: 'Oldest first' },
   name: { desc: 'Z to A', asc: 'A to Z' },
   overall: { desc: 'Highest first', asc: 'Lowest first' },
-  craft: { desc: 'Highest first', asc: 'Lowest first' },
-  depth: { desc: 'Highest first', asc: 'Lowest first' },
-  utility: { desc: 'Highest first', asc: 'Lowest first' },
-  impact: { desc: 'Highest first', asc: 'Lowest first' },
+  design: { desc: 'Highest first', asc: 'Lowest first' },
+  engineering: { desc: 'Highest first', asc: 'Lowest first' },
+  value: { desc: 'Highest first', asc: 'Lowest first' },
+  maturity: { desc: 'Highest first', asc: 'Lowest first' },
 };
 
 const spanishDirections: Record<SortField, Record<SortDirection, string>> = {
   date: { desc: 'Más recientes primero', asc: 'Más antiguos primero' },
   name: { desc: 'De la Z a la A', asc: 'De la A a la Z' },
   overall: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
-  craft: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
-  depth: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
-  utility: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
-  impact: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
+  design: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
+  engineering: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
+  value: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
+  maturity: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
 };
 
 const copies: Record<Locale, LocaleCopy> = {
@@ -200,18 +200,18 @@ const copies: Record<Locale, LocaleCopy> = {
         brand: 'Brand',
       },
       metrics: {
-        craft: { label: 'Craft', hint: 'Interface finish: composition, detail and interaction.' },
-        depth: {
-          label: 'Depth',
-          hint: 'Technical complexity: architecture, integrations and edge cases.',
+        design: { label: 'Design', hint: 'How strong the interface and the experience are.' },
+        engineering: {
+          label: 'Engineering',
+          hint: 'How technically demanding or sophisticated the project is.',
         },
-        utility: {
-          label: 'Utility',
-          hint: 'How much the project solves for the people who use it.',
+        value: {
+          label: 'Value',
+          hint: 'How useful it is, and how meaningful the problem it solves is.',
         },
-        impact: {
-          label: 'Impact',
-          hint: 'Measurable results: sales, traffic and adoption.',
+        maturity: {
+          label: 'Maturity',
+          hint: 'How complete, reliable, polished and ready for the real world it is.',
         },
       },
       meter: {
@@ -237,10 +237,10 @@ const copies: Record<Locale, LocaleCopy> = {
           date: 'Date',
           name: 'Name',
           overall: 'Overall rating',
-          craft: 'Craft',
-          depth: 'Depth',
-          utility: 'Utility',
-          impact: 'Impact',
+          design: 'Design',
+          engineering: 'Engineering',
+          value: 'Value',
+          maturity: 'Maturity',
         },
         directionLabels: englishDirections,
         projectCount: (count) => `${count} project${count === 1 ? '' : 's'}`,
@@ -322,24 +322,24 @@ const copies: Record<Locale, LocaleCopy> = {
         brand: 'Marca',
       },
       metrics: {
-        craft: {
-          label: 'Acabado',
-          hint: 'Acabado de la interfaz: composición, detalle e interacción.',
+        design: {
+          label: 'Diseño',
+          hint: 'Qué tan buenas son la interfaz y la experiencia de uso.',
         },
-        depth: {
-          // "Técnica" rather than "Profundidad": it says what the hint says,
-          // and it keeps the four labels within a word of each other, which is
-          // what lets them sit in one row of the card.
-          label: 'Técnica',
-          hint: 'Complejidad técnica: arquitectura, integraciones y casos límite.',
+        engineering: {
+          // "Ingeniería" rather than "Técnica": it names the discipline the
+          // hint describes, and it stays within a word of the other three,
+          // which is what lets them sit in one row of the card.
+          label: 'Ingeniería',
+          hint: 'Qué tan exigente o sofisticado es el proyecto a nivel técnico.',
         },
-        utility: {
-          label: 'Utilidad',
-          hint: 'Cuánto resuelve el proyecto para las personas que lo utilizan.',
+        value: {
+          label: 'Valor',
+          hint: 'Qué tan útil es y qué tan relevante es el problema que resuelve.',
         },
-        impact: {
-          label: 'Impacto',
-          hint: 'Resultados medibles: ventas, tráfico y adopción.',
+        maturity: {
+          label: 'Madurez',
+          hint: 'Qué tan completo, fiable, pulido y listo para el mundo real está.',
         },
       },
       meter: {
@@ -365,10 +365,10 @@ const copies: Record<Locale, LocaleCopy> = {
           date: 'Fecha',
           name: 'Nombre',
           overall: 'Valoración general',
-          craft: 'Acabado',
-          depth: 'Técnica',
-          utility: 'Utilidad',
-          impact: 'Impacto',
+          design: 'Diseño',
+          engineering: 'Ingeniería',
+          value: 'Valor',
+          maturity: 'Madurez',
         },
         directionLabels: spanishDirections,
         projectCount: (count) => `${count} proyecto${count === 1 ? '' : 's'}`,

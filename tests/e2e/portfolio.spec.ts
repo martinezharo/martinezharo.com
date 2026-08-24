@@ -32,31 +32,33 @@ test('filters and sorts the project list', async ({ page }) => {
 test('keeps a project off a scale that does not apply to it', async ({ page }) => {
   await page.goto('/');
 
-  // Kenobismo is a brand with no interface of its own, so it carries no craft.
+  // Kenobismo is a brand with no interface of its own, so it carries no design.
   const kenobismo = page.locator('[data-item]').filter({ hasText: 'Kenobismo' });
-  const craft = kenobismo.locator('.rating[data-metric="craft"]');
+  const design = kenobismo.locator('.rating[data-metric="design"]');
 
-  await expect(craft.locator('.meter')).toHaveClass(/is-void/);
-  await expect(craft.getByLabel('Craft: does not apply')).toBeAttached();
-  // The other three still have a scale, and craft is left out of the average
+  await expect(design.locator('.meter')).toHaveClass(/is-void/);
+  await expect(design.getByLabel('Design: does not apply')).toBeAttached();
+  // The other three still have a scale, and design is left out of the average
   // rather than counted as a zero.
   await expect(kenobismo.locator('.meter.is-void')).toHaveCount(1);
   await expect(kenobismo).toHaveAttribute('data-overall', '2.67');
-  await expect(kenobismo).not.toHaveAttribute('data-craft');
+  await expect(kenobismo).not.toHaveAttribute('data-design');
 
-  const names = page.locator('[data-item]:visible .project-name');
+  // More than one project can be off a scale, so this asks where an unrated
+  // project sits rather than naming the one that happens to sort last.
+  const items = page.locator('[data-item]:visible');
 
   await page.getByRole('button', { name: 'Filter and sort' }).click();
   await page.getByRole('menuitem', { name: /^Order/ }).click();
-  await page.getByRole('menuitemradio', { name: 'Craft' }).click();
-  await expect(names.last()).toHaveText('Kenobismo');
+  await page.getByRole('menuitemradio', { name: 'Design' }).click();
+  await expect(items.last()).not.toHaveAttribute('data-design');
 
   // Turning the order round must not promote "does not apply" to "the best".
   await page.getByRole('button', { name: 'Filter and sort' }).click();
   await page.getByRole('menuitem', { name: /^Direction/ }).click();
   await page.getByRole('menuitemradio', { name: 'Lowest first' }).click();
-  await expect(names.first()).toHaveText('EliteBara');
-  await expect(names.last()).toHaveText('Kenobismo');
+  await expect(items.first()).toHaveAttribute('data-design');
+  await expect(items.last()).not.toHaveAttribute('data-design');
 });
 
 test('explains the ratings in the legend', async ({ page }) => {
@@ -70,10 +72,10 @@ test('explains the ratings in the legend', async ({ page }) => {
   await page.getByRole('button', { name: 'How the ratings work' }).click();
   await expect(legend).toBeVisible();
   await expect(legend.locator('.legend-name')).toHaveText([
-    'Craft',
-    'Depth',
-    'Utility',
-    'Impact',
+    'Design',
+    'Engineering',
+    'Value',
+    'Maturity',
   ]);
 
   await page.getByRole('button', { name: 'Close' }).click();

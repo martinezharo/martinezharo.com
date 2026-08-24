@@ -40,10 +40,10 @@ CREATE TABLE IF NOT EXISTS projects (
   -- 1-5, the scale the portfolio draws, or NULL where the metric does not
   -- apply to this project. That is a different statement from a low score and
   -- the list draws it as one.
-  score_craft           INTEGER,
-  score_depth           INTEGER,
-  score_utility         INTEGER,
-  score_impact          INTEGER,
+  score_design          INTEGER,
+  score_engineering     INTEGER,
+  score_value           INTEGER,
+  score_maturity        INTEGER,
   -- A JSON-encoded array of tool names. Not translated: a tool is called the
   -- same thing in both languages.
   stack                 TEXT
