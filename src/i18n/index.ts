@@ -123,6 +123,8 @@ export interface LocaleCopy {
     viewSource: string;
     storyHeading: string;
     storyNone: string;
+    nextLabel: string;
+    nextEyebrow: string;
   };
 }
 
@@ -264,6 +266,8 @@ const copies: Record<Locale, LocaleCopy> = {
       viewSource: 'View source',
       storyHeading: 'How it went',
       storyNone: 'Nothing written about this one yet.',
+      nextLabel: 'Next project',
+      nextEyebrow: 'Next',
     },
   },
   es: {
@@ -391,6 +395,8 @@ const copies: Record<Locale, LocaleCopy> = {
       viewSource: 'Ver código fuente',
       storyHeading: 'Cómo fue',
       storyNone: 'Todavía no hay nada escrito sobre este proyecto.',
+      nextLabel: 'Siguiente proyecto',
+      nextEyebrow: 'Siguiente',
     },
   },
 };

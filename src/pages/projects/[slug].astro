@@ -1,7 +1,7 @@
 ---
 import { site } from '../../config/site';
 import ProjectPage from '../../features/projects/ProjectPage.astro';
-import { loadProject } from '../../features/projects/repository';
+import { loadProject, loadProjects } from '../../features/projects/repository';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCopy } from '../../i18n';
 
@@ -11,11 +11,17 @@ import { getCopy } from '../../i18n';
 const { slug } = Astro.params;
 const locale = 'en' as const;
 const copy = getCopy(locale);
-const project = slug ? await loadProject(slug, locale) : null;
+// The list comes along with the project, for the link on to the next one. The
+// two queries go together rather than one after the other: a page that exists
+// needs both, and only a 404 pays for a list it will not draw.
+const [project, projects] = await Promise.all([
+  slug ? loadProject(slug, locale) : null,
+  loadProjects(locale),
+]);
 
 if (!project) return new Response(copy.errors.projectNotFound, { status: 404 });
 ---
 
 <BaseLayout locale={locale} title={`${project.name} — ${site.name}`} description={project.blurb || copy.site.description}>
-  <ProjectPage project={project} locale={locale} />
+  <ProjectPage project={project} projects={projects} locale={locale} />
 </BaseLayout>

@@ -2,8 +2,9 @@
 import Icon from '../../components/ui/Icon.astro';
 import SiteFooter from '../../components/shell/SiteFooter.astro';
 import { getCopy, localizedPath, type Locale } from '../../i18n';
-import type { ProjectDetail } from './model';
+import type { Project, ProjectDetail } from './model';
 import { projectLinks } from './links';
+import NextProject from './NextProject.astro';
 import '../../styles/rail-page.css';
 import './project-page.css';
 
@@ -15,10 +16,11 @@ import './project-page.css';
 
 interface Props {
   project: ProjectDetail;
+  projects: readonly Project[];
   locale: Locale;
 }
 
-const { project, locale } = Astro.props;
+const { project, projects, locale } = Astro.props;
 const copy = getCopy(locale);
 const links = projectLinks(project, locale);
 ---
@@ -76,6 +78,11 @@ const links = projectLinks(project, locale);
       )
     }
   </article>
+
+  {/* The way on goes under the story rather than in the rail: the rail is who
+      the project is and stays put while you read, and there is no point
+      offering the next project to someone who has not yet read this one. */}
+  <NextProject projects={projects} current={project} locale={locale} />
 
   <SiteFooter locale={locale} />
 </main>

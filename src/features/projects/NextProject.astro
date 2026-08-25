@@ -1,0 +1,65 @@
+---
+import { DEFAULT_PROJECT_STATE } from './model';
+import type { Project } from './model';
+import { nextProject } from './ordering';
+import { toCandidates } from './next-project';
+import { getCopy, localizedPath, type Locale } from '../../i18n';
+import './next-project.css';
+
+// The way on at the foot of a story.
+//
+// It points at whichever project the list would have shown after this one,
+// which means it depends on the order and the filters the visitor left the
+// list in — state that only exists in their browser. So the server draws the
+// link for the order the list starts in, and the script below moves it if the
+// visitor had chosen another. Without JavaScript the link is still there and
+// still true; it just answers for the default order.
+//
+// There is nothing after the last project. The block goes away rather than
+// wrapping round to the first, and the rail keeps its way back to the list.
+
+interface Props {
+  projects: readonly Project[];
+  current: Project;
+  locale: Locale;
+}
+
+const { projects, current, locale } = Astro.props;
+const copy = getCopy(locale);
+
+const next = nextProject(projects, current.slug, DEFAULT_PROJECT_STATE, locale);
+// `<` is escaped so a blurb can never close the script tag it is written into.
+const candidates = JSON.stringify(toCandidates(projects)).replaceAll('<', '\\u003c');
+---
+
+<nav
+  class="next"
+  aria-label={copy.detail.nextLabel}
+  data-next
+  data-slug={current.slug}
+  data-locale={locale}
+  hidden={next === null}
+>
+  <p class="next-eyebrow">{copy.detail.nextEyebrow}</p>
+
+  <a class="next-link" href={next ? localizedPath(locale, `/projects/${next.slug}`) : '#'} data-next-link>
+    <span class="next-logo"><img src={next?.logo} alt="" width="40" height="40" data-next-logo /></span>
+    <span class="next-copy">
+      <span class="next-name" data-next-name>{next?.name}</span>
+      <span class="next-blurb" data-next-blurb>{next?.blurb}</span>
+    </span>
+    <span class="next-arrow" aria-hidden="true">→</span>
+  </a>
+</nav>
+
+{/* The portfolio, as little of it as the link needs. Reading it back is
+    cheaper than fetching the list again for one name. */}
+<script is:inline type="application/json" data-projects set:html={candidates} />
+
+<script>
+  import { initNextProject } from './client/next';
+
+  document.addEventListener('astro:page-load', () => {
+    initNextProject(document.querySelector<HTMLElement>('[data-next]'));
+  });
+</script>

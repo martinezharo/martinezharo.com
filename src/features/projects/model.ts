@@ -81,7 +81,7 @@ export const DEFAULT_PROJECT_STATE = {
 };
 
 /** The metrics a project is on, in the order the card draws them. */
-function ratedScores(project: Project): number[] {
+function ratedScores(project: Pick<Project, 'scores'>): number[] {
   return SCORE_META.map((metric) => project.scores[metric.key]).filter(
     (score): score is number => score !== null,
   );
@@ -97,7 +97,7 @@ function ratedScores(project: Project): number[] {
  * orders by — and on a scale with five stops, rounding it would put half the
  * portfolio on the same rung and leave the order to the tie-break.
  */
-export function getOverallScore(project: Project): number | null {
+export function getOverallScore(project: Pick<Project, 'scores'>): number | null {
   const scores = ratedScores(project);
   if (scores.length === 0) return null;
   const mean = scores.reduce((total, score) => total + score, 0) / SCORE_META.length;

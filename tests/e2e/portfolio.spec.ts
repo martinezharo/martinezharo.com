@@ -4,16 +4,20 @@ test('filters and sorts the project list', async ({ page }) => {
   await page.goto('/');
 
   const projects = page.locator('[data-item]');
-  await expect(projects).toHaveCount(8);
-  await expect(page.locator('[data-item]:visible')).toHaveCount(8);
+  await expect(page.locator('[data-work]')).toHaveAttribute('data-ready', 'true');
+  const total = await projects.count();
+  const active = await page.locator('[data-item][data-active="true"]').count();
+  expect(total).toBeGreaterThan(0);
+  expect(active).toBeGreaterThan(0);
+  await expect(page.locator('[data-item]:visible')).toHaveCount(total);
 
   await page.getByRole('button', { name: 'Filter and sort' }).click();
   await page.getByRole('menuitem', { name: /^Status/ }).click();
   await page.getByRole('menuitemradio', { name: /^Active/ }).click();
 
-  await expect(page.locator('[data-item]:visible')).toHaveCount(5);
+  await expect(page.locator('[data-item]:visible')).toHaveCount(active);
   await expect(page.locator('[data-announce]')).toHaveText(
-    'Showing 5 of 8 projects, status is active.',
+    `Showing ${active} of ${total} projects, status is active.`,
   );
   await expect(page.locator('[data-chip="status"]')).toBeVisible();
 
@@ -24,9 +28,10 @@ test('filters and sorts the project list', async ({ page }) => {
   await expect(page.locator('[data-work]')).toHaveAttribute('data-state-dir', 'asc');
   // Reordering keeps the count, so the order clause is what makes it audible.
   await expect(page.locator('[data-announce]')).toHaveText(
-    'Showing 5 of 8 projects, status is active, sorted by name, a to z.',
+    `Showing ${active} of ${total} projects, status is active, sorted by name, a to z.`,
   );
-  await expect(page.locator('[data-item]:visible').first().locator('.project-name')).toHaveText('Fewya');
+  const names = await page.locator('[data-item]:visible .project-name').allTextContents();
+  expect(names).toEqual([...names].sort((left, right) => left.localeCompare(right, 'en')));
 });
 
 test('keeps a project off a scale that does not apply to it', async ({ page }) => {
@@ -38,10 +43,16 @@ test('keeps a project off a scale that does not apply to it', async ({ page }) =
 
   await expect(design.locator('.meter')).toHaveClass(/is-void/);
   await expect(design.getByLabel('Design: does not apply')).toBeAttached();
-  // The other three still have a scale, and design counts as a zero in the
-  // average rather than being left out of it.
-  await expect(kenobismo.locator('.meter.is-void')).toHaveCount(1);
-  await expect(kenobismo).toHaveAttribute('data-overall', '2');
+  // Unrated metrics count as zero in the average rather than being left out of
+  // it. The other scores are live database content, so derive the answer from
+  // the row instead of pinning the test to today's values.
+  const scores = await kenobismo.evaluate((item) =>
+    ['design', 'engineering', 'value', 'maturity'].map((metric) =>
+      Number((item as HTMLElement).dataset[metric] ?? 0),
+    ),
+  );
+  const overall = Number(await kenobismo.getAttribute('data-overall'));
+  expect(overall).toBe(scores.reduce((total, score) => total + score, 0) / scores.length);
   await expect(kenobismo).not.toHaveAttribute('data-design');
 
   // More than one project can be off a scale, so this asks where an unrated
@@ -97,6 +108,7 @@ test('switches to the compact layout on mobile', async ({ page }) => {
 
 test('keeps the list working after a round trip to a project', async ({ page }) => {
   await page.goto('/');
+  const active = await page.locator('[data-item][data-active="true"]').count();
 
   // The client router swaps the body and keeps the document, so nothing here
   // proves itself on a first load: the list has to survive being swapped out
@@ -112,7 +124,7 @@ test('keeps the list working after a round trip to a project', async ({ page }) 
   await page.getByRole('menuitem', { name: /^Status/ }).click();
   await page.getByRole('menuitemradio', { name: /^Active/ }).click();
 
-  await expect(page.locator('[data-item]:visible')).toHaveCount(5);
+  await expect(page.locator('[data-item]:visible')).toHaveCount(active);
 });
 
 test('navigates between the list and a project without rebuilding the document', async ({ page }) => {
@@ -136,11 +148,14 @@ test('serves translated interface and project data at /es', async ({ page }) => 
   await expect(page.getByRole('heading', { name: 'Cosas que he construido' })).toBeVisible();
   await expect(page.getByText('Un marketplace especializado en productos nuevos de vendedores profesionales.')).toBeVisible();
 
+  const total = await page.locator('[data-item]').count();
+  const active = await page.locator('[data-item][data-active="true"]').count();
+
   await page.getByRole('button', { name: 'Filtrar y ordenar' }).click();
   await page.getByRole('menuitem', { name: /^Estado/ }).click();
   await page.getByRole('menuitemradio', { name: /^Activo/ }).click();
   await expect(page.locator('[data-announce]')).toHaveText(
-    'Mostrando 5 de 8 proyectos, estado: activo.',
+    `Mostrando ${active} de ${total} proyectos, estado: activo.`,
   );
 
   await page.locator('[data-item]').filter({ hasText: 'Fewya' }).locator('a.project').click();
@@ -251,4 +266,81 @@ test('honours the switch out of Spanish on the page that negotiates', async ({ b
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 
   await context.close();
+});
+
+test('carries the order you chose into the link on to the next project', async ({ page }) => {
+  await page.goto('/');
+
+  const rows = page.locator('[data-item]:visible');
+  const names = rows.locator('.project-name');
+  const next = page.locator('.next');
+  const list = page.locator('[data-work]');
+
+  // The first pass moves the rows into place, and a row clicked while it is
+  // being moved swallows the click.
+  await expect(list).toHaveAttribute('data-ready', 'true');
+
+  // What follows the first project is simply the second row, whichever order
+  // the list happens to be in — so this asks the list rather than naming a
+  // project the database could rename tomorrow.
+  const second = await names.nth(1).textContent();
+  await rows.first().locator('a.project').click();
+  await expect(next.locator('.next-name')).toHaveText(second ?? '');
+
+  // The same question under an order the visitor chose. The list forgets it on
+  // the way back, so the sort is applied again on the return leg.
+  await page.goBack();
+  await expect(list).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Filter and sort' }).click();
+  await page.getByRole('menuitem', { name: /^Order/ }).click();
+  await page.getByRole('menuitemradio', { name: 'Name' }).click();
+  await expect(list).toHaveAttribute('data-state-dir', 'asc');
+
+  const secondByName = await names.nth(1).textContent();
+  await rows.first().locator('a.project').click();
+  await expect(next.locator('.next-name')).toHaveText(secondByName ?? '');
+
+  // Nothing follows the last one, and the rail keeps the way back to the list.
+  await page.goBack();
+  await expect(list).toHaveAttribute('data-ready', 'true');
+  await page.getByRole('button', { name: 'Filter and sort' }).click();
+  await page.getByRole('menuitem', { name: /^Order/ }).click();
+  await page.getByRole('menuitemradio', { name: 'Name' }).click();
+  await expect(list).toHaveAttribute('data-state-dir', 'asc');
+  await rows.last().locator('a.project').click();
+  await expect(next).toBeHidden();
+  await expect(page.getByRole('link', { name: 'Every project' })).toBeVisible();
+});
+
+test('falls back to the list\'s own order when your filter leaves the project out', async ({ page }) => {
+  await page.goto('/');
+
+  // The list as it arrives, which is the order it starts in.
+  await expect(page.locator('[data-work]')).toHaveAttribute('data-ready', 'true');
+
+  const order = await page.locator('[data-item]').evaluateAll((items) =>
+    items.map((item) => ({
+      archived: (item as HTMLElement).dataset.active !== 'true',
+      name: item.querySelector('.project-name')?.textContent ?? '',
+      href: item.querySelector('a')?.getAttribute('href') ?? '',
+    })),
+  );
+
+  // An archived project with something after it: the filter below will leave
+  // it off the list it is supposed to be part of, and there is still a right
+  // answer to give.
+  const index = order.findIndex((project, at) => project.archived && at < order.length - 1);
+  expect(index, 'the portfolio needs an archived project that is not the last one').toBeGreaterThanOrEqual(0);
+
+  await page.getByRole('button', { name: 'Filter and sort' }).click();
+  await page.getByRole('menuitem', { name: /^Status/ }).click();
+  await page.getByRole('menuitemradio', { name: /^Active/ }).click();
+  const active = order.filter((project) => !project.archived).length;
+  await expect(page.locator('[data-item]:visible')).toHaveCount(active);
+
+  // Rather than take the way on away over a filter set on another page, the
+  // page answers for the order the list starts in.
+  await page.goto(order[index].href);
+  await expect(page.locator('.next')).toBeVisible();
+  await expect(page.locator('.next-name')).toHaveText(order[index + 1].name);
 });

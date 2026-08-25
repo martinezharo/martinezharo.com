@@ -1,5 +1,7 @@
 import { FILTER_CLAUSES } from '../filter-options';
 import { type ProjectStatus, type SortDirection, type SortField } from '../model';
+import { compareRanked, type Ranked } from '../ordering';
+import { writeProjectState } from '../state-store';
 import { getCopy, isLocale, type Locale } from '../../../i18n';
 
 // Client behaviour for the project list. The list is rendered on the server;
@@ -18,32 +20,19 @@ import { getCopy, isLocale, type Locale } from '../../../i18n';
 // [data-announce] receives the sentence a screen reader hears after a change.
 // The menu those attributes hang off lives in the facets module.
 
-const name = (el: HTMLElement) => el.dataset.name ?? '';
-const byName = (a: HTMLElement, b: HTMLElement, locale: Locale) => name(a).localeCompare(name(b), locale);
-
-/** What a row is worth on a field, or null when it does not carry that rating. */
-function value(el: HTMLElement, field: SortField): number | null {
-  const raw = el.dataset[field === 'date' ? 'start' : field];
-  return raw === undefined ? null : Number(raw);
-}
-
 /**
- * The chosen field, already turned round by the direction.
- *
- * A project that is not rated on the field being sorted has no place on that
- * scale, so it settles below every rated one whichever way the list runs. It
- * cannot be folded into the numbers: counted as a zero it would be the worst
- * project going down and the best one coming back up, and "not applicable" is
- * neither.
+ * A row as something to be ordered. A rating the project is not on was left
+ * off the element rather than written as a zero, which is what lets `null`
+ * here mean "not on that scale" instead of "worst on it".
  */
-function compare(a: HTMLElement, b: HTMLElement, field: SortField, sign: number, locale: Locale) {
-  if (field === 'name') return byName(a, b, locale) * sign;
-
-  const left = value(a, field);
-  const right = value(b, field);
-  if (left === null || right === null) return left === right ? 0 : left === null ? 1 : -1;
-
-  return (left - right) * sign;
+function rank(el: HTMLElement): Ranked {
+  return {
+    name: el.dataset.name ?? '',
+    value(field) {
+      const raw = el.dataset[field === 'date' ? 'start' : field];
+      return raw === undefined ? null : Number(raw);
+    },
+  };
 }
 
 export function initProjectControls(root: HTMLElement): void {
@@ -149,11 +138,10 @@ export function initProjectControls(root: HTMLElement): void {
 
   function apply({ animate = true, announce = true } = {}) {
     const before = new Map(items.map((item) => [item, item.getBoundingClientRect().top]));
-    const sign = dir === 'asc' ? 1 : -1;
 
     const ordered = items
       .filter(visible)
-      .sort((a, b) => compare(a, b, field, sign, locale) || byName(a, b, locale));
+      .sort((a, b) => compareRanked(rank(a), rank(b), field, dir, locale));
 
     for (const item of items) item.hidden = !visible(item);
     for (const item of ordered) projectList.appendChild(item);
@@ -162,6 +150,11 @@ export function initProjectControls(root: HTMLElement): void {
     root.dataset.stateDir = dir;
     root.dataset.stateKind = kind;
     root.dataset.stateStatus = status;
+
+    // A project page reads this back to work out which project comes after the
+    // one being read, so it is written on every pass rather than only on a
+    // change: what is stored is then always what the list is showing.
+    writeProjectState({ field, direction: dir, kind, status });
 
     for (const node of setStatus) check(node, status === node.dataset.setStatus);
     for (const node of setKind) check(node, kind === node.dataset.setKind);
