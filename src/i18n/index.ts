@@ -317,7 +317,7 @@ const copies: Record<Locale, LocaleCopy> = {
       status: { active: 'Activo', archived: 'Archivado' },
       kindLabels: {
         all: 'Todos los tipos',
-        ecommerce: 'Comercio electrónico',
+        ecommerce: 'E-commerce',
         marketplace: 'Marketplace',
         app: 'Aplicación',
         game: 'Videojuego',
