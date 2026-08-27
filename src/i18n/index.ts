@@ -197,7 +197,7 @@ const copies: Record<Locale, LocaleCopy> = {
         ecommerce: 'E-commerce',
         marketplace: 'Marketplace',
         app: 'App',
-        tool: 'Tool',
+        game: 'Game',
         brand: 'Brand',
       },
       metrics: {
@@ -320,7 +320,7 @@ const copies: Record<Locale, LocaleCopy> = {
         ecommerce: 'Comercio electrónico',
         marketplace: 'Marketplace',
         app: 'Aplicación',
-        tool: 'Herramienta',
+        game: 'Videojuego',
         brand: 'Marca',
       },
       metrics: {

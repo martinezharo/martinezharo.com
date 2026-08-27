@@ -4,7 +4,7 @@
  * whose `kind` is not one of these has not been described and the showcase
  * cannot draw it.
  */
-export const PROJECT_KINDS = ['ecommerce', 'marketplace', 'app', 'tool', 'brand'] as const;
+export const PROJECT_KINDS = ['ecommerce', 'marketplace', 'app', 'game', 'brand'] as const;
 export type ProjectKind = (typeof PROJECT_KINDS)[number];
 
 /**
