@@ -192,7 +192,7 @@
 .projects:is(
   [data-state-field='design'],
   [data-state-field='engineering'],
-  [data-state-field='value'],
+  [data-state-field='impact'],
   [data-state-field='maturity']
 ) .rating {
   opacity: 0.8;
@@ -203,7 +203,7 @@
    of the list. */
 .projects[data-state-field='design'] .rating[data-metric='design'][data-rated='true'],
 .projects[data-state-field='engineering'] .rating[data-metric='engineering'][data-rated='true'],
-.projects[data-state-field='value'] .rating[data-metric='value'][data-rated='true'],
+.projects[data-state-field='impact'] .rating[data-metric='impact'][data-rated='true'],
 .projects[data-state-field='maturity'] .rating[data-metric='maturity'][data-rated='true'] {
   --mark: var(--accent);
   --label: var(--text);

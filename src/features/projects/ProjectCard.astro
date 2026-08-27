@@ -28,7 +28,7 @@ const attr = (score: number | null) => (score === null ? undefined : score);
   data-overall={attr(getOverallScore(project))}
   data-design={attr(project.scores.design)}
   data-engineering={attr(project.scores.engineering)}
-  data-value={attr(project.scores.value)}
+  data-impact={attr(project.scores.impact)}
   data-maturity={attr(project.scores.maturity)}
 >
   <a class="project" href={localizedPath(locale, `/projects/${project.slug}`)}>

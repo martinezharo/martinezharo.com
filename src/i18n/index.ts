@@ -134,7 +134,7 @@ const englishDirections: Record<SortField, Record<SortDirection, string>> = {
   overall: { desc: 'Highest first', asc: 'Lowest first' },
   design: { desc: 'Highest first', asc: 'Lowest first' },
   engineering: { desc: 'Highest first', asc: 'Lowest first' },
-  value: { desc: 'Highest first', asc: 'Lowest first' },
+  impact: { desc: 'Highest first', asc: 'Lowest first' },
   maturity: { desc: 'Highest first', asc: 'Lowest first' },
 };
 
@@ -144,7 +144,7 @@ const spanishDirections: Record<SortField, Record<SortDirection, string>> = {
   overall: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   design: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   engineering: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
-  value: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
+  impact: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   maturity: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
 };
 
@@ -206,9 +206,9 @@ const copies: Record<Locale, LocaleCopy> = {
           label: 'Engineering',
           hint: 'How technically demanding or sophisticated the project is.',
         },
-        value: {
-          label: 'Value',
-          hint: 'How useful it is, and how meaningful the problem it solves is.',
+        impact: {
+          label: 'Impact',
+          hint: 'How much real-world benefit it has delivered, considering how many people it reached and how meaningfully it helped them.',
         },
         maturity: {
           label: 'Maturity',
@@ -240,7 +240,7 @@ const copies: Record<Locale, LocaleCopy> = {
           overall: 'Overall rating',
           design: 'Design',
           engineering: 'Engineering',
-          value: 'Value',
+          impact: 'Impact',
           maturity: 'Maturity',
         },
         directionLabels: englishDirections,
@@ -335,9 +335,9 @@ const copies: Record<Locale, LocaleCopy> = {
           label: 'Ingeniería',
           hint: 'Qué tan exigente o sofisticado es el proyecto a nivel técnico.',
         },
-        value: {
-          label: 'Valor',
-          hint: 'Qué tan útil es y qué tan relevante es el problema que resuelve.',
+        impact: {
+          label: 'Impacto',
+          hint: 'Cuánto beneficio real ha generado, teniendo en cuenta a cuántas personas ha llegado y cuánto les ha ayudado.',
         },
         maturity: {
           label: 'Madurez',
@@ -369,7 +369,7 @@ const copies: Record<Locale, LocaleCopy> = {
           overall: 'Valoración general',
           design: 'Diseño',
           engineering: 'Ingeniería',
-          value: 'Valor',
+          impact: 'Impacto',
           maturity: 'Madurez',
         },
         directionLabels: spanishDirections,

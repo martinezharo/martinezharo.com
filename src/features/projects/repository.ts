@@ -23,7 +23,7 @@ interface ProjectRow {
   kind: string | null;
   score_design: number | null;
   score_engineering: number | null;
-  score_value: number | null;
+  score_impact: number | null;
   score_maturity: number | null;
   stack: string | null;
 }
@@ -44,7 +44,7 @@ function localizedColumn(locale: Locale, field: LocalizedField): string {
 /** The columns every query needs, in both the list and the detail shape. */
 function commonColumns(locale: Locale): string {
   return `slug, name, is_active, start_date, end_date, url, logo_url,
-      kind, score_design, score_engineering, score_value, score_maturity, stack,
+      kind, score_design, score_engineering, score_impact, score_maturity, stack,
       ${localizedColumn(locale, 'short_description')} AS short_description`;
 }
 
@@ -108,7 +108,7 @@ function toScores(row: ProjectRow): ProjectScores {
   const columns = {
     design: row.score_design,
     engineering: row.score_engineering,
-    value: row.score_value,
+    impact: row.score_impact,
     maturity: row.score_maturity,
   };
 

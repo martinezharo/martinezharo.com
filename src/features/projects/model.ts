@@ -46,11 +46,11 @@ export interface ProjectDetail extends Project {
   repo: string | null;
 }
 
-export type ScoreKey = 'design' | 'engineering' | 'value' | 'maturity';
+export type ScoreKey = 'design' | 'engineering' | 'impact' | 'maturity';
 export const SCORE_META: ReadonlyArray<{ key: ScoreKey }> = [
   { key: 'design' },
   { key: 'engineering' },
-  { key: 'value' },
+  { key: 'impact' },
   { key: 'maturity' },
 ];
 
@@ -64,7 +64,7 @@ export const SORT_FIELDS: ReadonlyArray<{ key: SortField }> = [
   { key: 'overall' },
   { key: 'design' },
   { key: 'engineering' },
-  { key: 'value' },
+  { key: 'impact' },
   { key: 'maturity' },
 ];
 

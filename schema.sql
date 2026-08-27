@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS projects (
   -- the list draws it as one.
   score_design          INTEGER,
   score_engineering     INTEGER,
-  score_value           INTEGER,
+  score_impact          INTEGER,
   score_maturity        INTEGER,
   -- A JSON-encoded array of tool names. Not translated: a tool is called the
   -- same thing in both languages.

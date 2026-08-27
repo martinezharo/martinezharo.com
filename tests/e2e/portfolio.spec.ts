@@ -47,7 +47,7 @@ test('keeps a project off a scale that does not apply to it', async ({ page }) =
   // it. The other scores are live database content, so derive the answer from
   // the row instead of pinning the test to today's values.
   const scores = await kenobismo.evaluate((item) =>
-    ['design', 'engineering', 'value', 'maturity'].map((metric) =>
+    ['design', 'engineering', 'impact', 'maturity'].map((metric) =>
       Number((item as HTMLElement).dataset[metric] ?? 0),
     ),
   );
@@ -85,7 +85,7 @@ test('explains the ratings in the legend', async ({ page }) => {
   await expect(legend.locator('.legend-name')).toHaveText([
     'Design',
     'Engineering',
-    'Value',
+    'Impact',
     'Maturity',
   ]);
 
