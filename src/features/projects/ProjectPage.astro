@@ -4,6 +4,7 @@ import SiteFooter from '../../components/shell/SiteFooter.astro';
 import { getCopy, localizedPath, type Locale } from '../../i18n';
 import type { Project, ProjectDetail } from './model';
 import { projectLinks } from './links';
+import { linkProjectNames } from './story';
 import NextProject from './NextProject.astro';
 import '../../styles/rail-page.css';
 import './project-page.css';
@@ -23,6 +24,9 @@ interface Props {
 const { project, projects, locale } = Astro.props;
 const copy = getCopy(locale);
 const links = projectLinks(project, locale);
+// The story is cut at the names of the other projects before it is drawn, so a
+// mention of one of them is the way to its page.
+const story = linkProjectNames(project.history, projects, project.slug);
 ---
 
 <a class="skip" href="#story">{copy.common.skipStory}</a>
@@ -69,9 +73,19 @@ const links = projectLinks(project, locale);
     <header class="story-head"><h2>{copy.detail.storyHeading}</h2></header>
 
     {
-      project.history.length > 0 ? (
-        project.history.map((paragraph, index) => (
-          <p class={index === 0 ? 'lead' : undefined}>{paragraph}</p>
+      story.length > 0 ? (
+        story.map((paragraph, index) => (
+          <p class={index === 0 ? 'lead' : undefined}>
+            {paragraph.map((segment) =>
+              segment.slug ? (
+                <a class="story-link" href={localizedPath(locale, `/projects/${segment.slug}`)}>
+                  {segment.text}
+                </a>
+              ) : (
+                segment.text
+              ),
+            )}
+          </p>
         ))
       ) : (
         <p class="story-none">{copy.detail.storyNone}</p>

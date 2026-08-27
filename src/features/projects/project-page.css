@@ -222,6 +222,34 @@
   letter-spacing: -0.01em;
 }
 
+/* A project named inside the story. The name is already written in the
+   sentence, so the link is the sentence's own word raised out of the muted
+   prose to full strength and underlined on a hairline, rather than a coloured
+   word dropped into a paragraph. The accent is kept for the hover, where it
+   says the word can be pressed at the moment anyone asks. */
+.story-link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+/* The opening paragraph is already at full strength, so a link in it had only
+   the hairline under it to go on and read as ordinary emphasis. It keeps the
+   same two marks as the rest of the story and pushes both: a brighter rule, and
+   the weight the copy around it does not carry. */
+.story .lead .story-link {
+  font-weight: 560;
+  text-decoration-color: var(--faint);
+}
+
+.story-link:hover,
+.story-link:focus-visible {
+  color: var(--accent);
+  text-decoration-color: rgb(var(--accent-rgb) / 45%);
+}
+
 .story-none {
   color: var(--faint);
   font-size: 13px;
@@ -300,6 +328,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .back-mark,
+  .story-link,
   .rail-link::before,
   .rail-link-mark,
   .rail-link-label,
