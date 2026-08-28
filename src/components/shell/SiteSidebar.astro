@@ -1,32 +1,49 @@
 ---
 import { mailto, site } from '../../config/site';
-import { getCopy, localizedPath, type Locale } from '../../i18n';
+import { getCopy, localizedPath, routeFromPath, type Locale } from '../../i18n';
 import './identity.css';
 import './sidebar.css';
 
 interface Props {
   locale: Locale;
+  /**
+   * The copy the rail carries. The home page's own words by default; a page
+   * with something else to say about itself passes that instead, which is what
+   * a project's rail already does with its own markup.
+   */
+  intro?: { eyebrow: string; heading: string; body: string };
 }
 
-const { locale } = Astro.props;
+const { locale, intro } = Astro.props;
 const copy = getCopy(locale);
+const railIntro = intro ?? copy.site.intro;
+
+// Both nav entries name a page, so each one has to know whether it is the page
+// you are already standing on. `routeFromPath` strips the locale prefix first,
+// so this is one question rather than one per language.
+const route = routeFromPath(Astro.url.pathname);
+const home = localizedPath(locale, '/');
+const onHome = route === '/';
+
+const stackPath = localizedPath(locale, '/stack');
+const onStack = route === '/stack';
 ---
 
 <aside class="side">
-  <a class="identity" href={localizedPath(locale, '/')} aria-label={copy.navigation.home}>
+  <a class="identity" href={home} aria-label={copy.navigation.home}>
     <img src="/icon.svg" alt="" width="34" height="34" />
     <span>Oliver<br />Martínez Haro</span>
   </a>
 
   <div class="side-copy">
-    <p class="eyebrow">{copy.site.intro.eyebrow}</p>
-    <h1>{copy.site.intro.heading}</h1>
-    <p class="intro-description">{copy.site.intro.body}</p>
+    <p class="eyebrow">{railIntro.eyebrow}</p>
+    <h1>{railIntro.heading}</h1>
+    <p class="intro-description">{railIntro.body}</p>
   </div>
 
   <nav aria-label={copy.navigation.primary}>
-    <a href="#projects">{copy.navigation.projects}</a>
-    <a href="#about">{copy.navigation.about}</a>
+    <a href={home} aria-current={onHome ? 'page' : undefined}>{copy.navigation.home}</a>
+    <a href={stackPath} aria-current={onStack ? 'page' : undefined}>{copy.navigation.stack}</a>
     <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
   </nav>
 

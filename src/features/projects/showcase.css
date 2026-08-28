@@ -1,22 +1,8 @@
+@import '../../styles/section-head.css';
+
 .projects {
   max-width: var(--content-max);
   margin: 0 auto;
-}
-
-.section-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 30px;
-  margin-bottom: 22px;
-}
-
-.section-head h2 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 620;
-  letter-spacing: -0.01em;
 }
 
 .builder {

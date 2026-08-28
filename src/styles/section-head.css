@@ -1,0 +1,21 @@
+/* The line that opens a section of a page: what it is on the left, and on the
+   right whatever that section keeps up there — the list's filter builder, the
+   stack's count. Shared because it is the same element saying the same thing on
+   both pages; how each section's right-hand side folds is its own business and
+   stays in its own stylesheet. */
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 30px;
+  margin-bottom: 22px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}

@@ -1,25 +1,5 @@
-@import './breakpoints.css';
 @import './rail-page.css';
+@import './mobile-intro.css';
 
-/* The rail carries the intro on a wide screen. Below the breakpoint it is gone,
-   so the page opens with the same words instead. */
-.mobile-intro {
-  display: none;
-}
-
-@media (--compact) {
-  .mobile-intro {
-    display: block;
-    padding: 76px 0 92px;
-  }
-
-  .mobile-intro h1 {
-    max-width: 520px;
-    font-size: clamp(40px, 12vw, 62px);
-  }
-
-  .mobile-intro .intro-description {
-    max-width: 480px;
-    font-size: 16px;
-  }
-}
+/* The home page is the rail-page frame plus the intro that stands in for the
+   rail on a small screen, and nothing else of its own. */

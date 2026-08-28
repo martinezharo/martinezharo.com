@@ -1,0 +1,41 @@
+---
+import { STACK, TOOL_COUNT } from './model';
+import { getCopy, type Locale } from '../../i18n';
+import './stack.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+---
+
+<section class="stack" id="stack">
+  <div class="section-head">
+    <h2>{copy.stack.heading}</h2>
+    <span class="stack-count">{copy.stack.count(STACK.length, TOOL_COUNT)}</span>
+  </div>
+
+  <ul class="stack-list">
+    {
+      STACK.map((category) => (
+        <li data-ends-group={category.endsGroup}>
+          <div class="stack-row">
+            <span class="stack-category">{copy.stack.categories[category.key]}</span>
+            <span class="stack-tools">
+              {category.tools.map((tool) => (
+                <span class="stack-tool">
+                  <img src={tool.logo} alt="" width="24" height="24" />
+                  <span class="stack-name">{tool.name}</span>
+                </span>
+              ))}
+            </span>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="stack-note">{copy.stack.note}</p>
+</section>

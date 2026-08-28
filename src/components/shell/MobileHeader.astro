@@ -1,6 +1,6 @@
 ---
 import { site } from '../../config/site';
-import { getCopy, localizedPath, type Locale } from '../../i18n';
+import { getCopy, localizedPath, routeFromPath, type Locale } from '../../i18n';
 import './identity.css';
 import './mobile-header.css';
 
@@ -10,6 +10,11 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = getCopy(locale);
+
+// With no rail below the breakpoint this header is the only navigation there
+// is, so any page that is not reachable by scrolling has to be named here.
+const route = routeFromPath(Astro.url.pathname);
+const stackPath = localizedPath(locale, '/stack');
 ---
 
 <header class="mobile-head">
@@ -17,5 +22,8 @@ const copy = getCopy(locale);
     <img src="/icon.svg" alt="" width="30" height="30" />
     <span>{site.name}</span>
   </a>
-  <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
+  <nav aria-label={copy.navigation.primary}>
+    <a href={stackPath} aria-current={route === '/stack' ? 'page' : undefined}>{copy.navigation.stack}</a>
+    <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
+  </nav>
 </header>

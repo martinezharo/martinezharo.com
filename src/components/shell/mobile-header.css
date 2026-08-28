@@ -17,4 +17,15 @@
   .mobile-head .identity {
     font-size: 13px;
   }
+
+  /* The two entries share the right edge the GitHub link used to hold alone. */
+  .mobile-head nav {
+    display: flex;
+    gap: 18px;
+    color: var(--muted);
+  }
+
+  .mobile-head nav a[aria-current='page'] {
+    color: var(--accent);
+  }
 }

@@ -5,6 +5,7 @@ import type {
   SortDirection,
   SortField,
 } from '../features/projects/model';
+import type { CategoryKey } from '../features/stack/model';
 
 export const LOCALES = ['en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -45,13 +46,13 @@ export interface LocaleCopy {
     home: string;
     primary: string;
     language: string;
-    projects: string;
-    about: string;
+    stack: string;
     github: string;
   };
   common: {
     skipProjects: string;
     skipStory: string;
+    skipStack: string;
     close: string;
     builtWith: string;
     conditionIs: string;
@@ -61,6 +62,19 @@ export interface LocaleCopy {
     eyebrow: string;
     heading: string;
     body: string;
+  };
+  stack: {
+    title: string;
+    description: string;
+    intro: {
+      eyebrow: string;
+      heading: string;
+      body: string;
+    };
+    heading: string;
+    count(categories: number, tools: number): string;
+    note: string;
+    categories: Record<CategoryKey, string>;
   };
   footer: {
     prompt: string;
@@ -164,13 +178,13 @@ const copies: Record<Locale, LocaleCopy> = {
       home: 'Home',
       primary: 'Primary navigation',
       language: 'Language',
-      projects: "Things I've built",
-      about: 'About',
+      stack: 'Stack',
       github: 'GitHub ↗',
     },
     common: {
       skipProjects: 'Skip to projects',
       skipStory: 'Skip to the story',
+      skipStack: 'Skip to the stack',
       close: 'Close',
       builtWith: 'Built with',
       conditionIs: 'is',
@@ -180,6 +194,37 @@ const copies: Record<Locale, LocaleCopy> = {
       eyebrow: 'A little context',
       heading: 'I like software that stays out of the way.',
       body: 'I care about the whole thing: the idea, the awkward edge cases, the interface, the infrastructure and whether it remains pleasant after the hundredth use. Building my own tools and shops keeps that standard honest.',
+    },
+    stack: {
+      title: 'The stack — Oliver Martínez Haro',
+      description:
+        'The languages, frameworks and tools Oliver Martínez Haro reaches for, category by category.',
+      intro: {
+        eyebrow: 'The stack',
+        heading: 'What I\nbuild with.',
+        body: 'Favourites, not a survey. Each one earned its place on something I shipped and then had to keep running.',
+      },
+      heading: 'Favourites, by category',
+      count: (categories, tools) => `${categories} categories · ${tools} tools`,
+      note: 'One name on a line means it is the default, not the only one I will use. Where there are two, the second is what the first turns into when the job is smaller.',
+      categories: {
+        languages: 'Languages',
+        frameworks: 'Frameworks',
+        uiLibraries: 'UI libraries',
+        cssFramework: 'CSS framework',
+        backendPlatform: 'Backend platform',
+        deploymentPlatform: 'Deployment platform',
+        packageManager: 'Package manager',
+        buildTool: 'Build tool',
+        testing: 'Testing',
+        ciCd: 'CI/CD',
+        versionControl: 'Version control',
+        codeHosting: 'Code hosting',
+        codeEditor: 'Code editor',
+        devEnvironment: 'Development environment',
+        shell: 'Shell',
+        aiAgents: 'AI coding agents',
+      },
     },
     footer: {
       prompt: 'Have something interesting in mind?',
@@ -285,15 +330,13 @@ const copies: Record<Locale, LocaleCopy> = {
       home: 'Inicio',
       primary: 'Navegación principal',
       language: 'Idioma',
-      // The nav does not reuse the section heading here: in Spanish that
-      // heading fills the row on its own and pushes GitHub onto a second line.
-      projects: 'Proyectos',
-      about: 'Sobre mí',
+      stack: 'Stack',
       github: 'GitHub ↗',
     },
     common: {
       skipProjects: 'Saltar a los proyectos',
       skipStory: 'Saltar a la historia',
+      skipStack: 'Saltar al stack',
       close: 'Cerrar',
       builtWith: 'Construido con',
       conditionIs: 'es',
@@ -303,6 +346,37 @@ const copies: Record<Locale, LocaleCopy> = {
       eyebrow: 'Un poco de contexto',
       heading: 'Me gusta el software que no se interpone.',
       body: 'Me importa todo el conjunto: la idea, los casos límite incómodos, la interfaz, la infraestructura y si sigue siendo agradable después del uso número cien. Construir mis propias herramientas y tiendas mantiene ese estándar bajo control.',
+    },
+    stack: {
+      title: 'El stack — Oliver Martínez Haro',
+      description:
+        'Los lenguajes, frameworks y herramientas a los que recurre Oliver Martínez Haro, categoría por categoría.',
+      intro: {
+        eyebrow: 'El stack',
+        heading: 'Con esto\nlo construyo.',
+        body: 'Favoritos, no un inventario. Cada uno se ganó su sitio en algo que lancé y que después tuve que mantener en marcha.',
+      },
+      heading: 'Favoritos, por categoría',
+      count: (categories, tools) => `${categories} categorías · ${tools} herramientas`,
+      note: 'Un solo nombre en una línea significa que es el predeterminado, no el único que uso. Donde hay dos, el segundo es en lo que se convierte el primero cuando el trabajo es más pequeño.',
+      categories: {
+        languages: 'Lenguajes',
+        frameworks: 'Frameworks',
+        uiLibraries: 'Librerías de UI',
+        cssFramework: 'Framework CSS',
+        backendPlatform: 'Plataforma de backend',
+        deploymentPlatform: 'Plataforma de despliegue',
+        packageManager: 'Gestor de paquetes',
+        buildTool: 'Herramienta de build',
+        testing: 'Pruebas',
+        ciCd: 'CI/CD',
+        versionControl: 'Control de versiones',
+        codeHosting: 'Alojamiento del código',
+        codeEditor: 'Editor de código',
+        devEnvironment: 'Entorno de desarrollo',
+        shell: 'Shell',
+        aiAgents: 'Agentes de IA',
+      },
     },
     footer: {
       prompt: '¿Tienes algo interesante en mente?',

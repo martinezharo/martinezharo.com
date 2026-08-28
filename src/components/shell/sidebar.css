@@ -16,10 +16,14 @@
   margin: auto 0;
 }
 
+/* Four entries, and the longest of them is a sentence. At 22px between them
+   the English row runs a few pixels past the widest rail and drops GitHub onto
+   a line of its own; 18px keeps all four on one line there and still wraps
+   cleanly on the narrower rail a small laptop leaves. */
 .side nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 22px;
+  gap: 10px 18px;
   margin-bottom: 48px;
   color: var(--muted);
   font-size: 13px;
@@ -27,6 +31,12 @@
 
 .side nav a:hover {
   color: var(--text);
+}
+
+/* The page you are already on is named rather than linked away from, so it is
+   marked instead of being another thing to press. */
+.side nav a[aria-current='page'] {
+  color: var(--accent);
 }
 
 .side-foot {

@@ -1,0 +1,6 @@
+@import './rail-page.css';
+@import './mobile-intro.css';
+
+/* The stack page is the rail-page frame plus the intro that stands in for the
+   rail on a small screen. What the list itself looks like belongs to the
+   feature, in features/stack/stack.css. */
