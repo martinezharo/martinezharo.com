@@ -132,6 +132,24 @@ test('switches to the compact layout on mobile', async ({ page }) => {
   await expect(page.locator('.mobile-intro')).toBeVisible();
 });
 
+test('links every stack tool to its official website', async ({ page }) => {
+  await page.goto('/stack');
+
+  const tools = page.locator('.stack-tool');
+  await expect(tools).toHaveCount(21);
+
+  for (const tool of await tools.all()) {
+    await expect(tool).toHaveAttribute('href', /^https:\/\//);
+    await expect(tool).toHaveAttribute('target', '_blank');
+    await expect(tool).toHaveAttribute('rel', 'noopener noreferrer');
+  }
+
+  await expect(page.getByRole('link', { name: /official Astro website/ })).toHaveAttribute(
+    'href',
+    'https://astro.build/',
+  );
+});
+
 // The row's shape follows the column it is drawn in, not the screen: the rail
 // takes a fixed 280px, so a 900px window leaves the list less room than a phone
 // in landscape and the row has to fold there too. `display: contents` is what

@@ -3,8 +3,8 @@
 
 /* The stack, drawn the way the project list is drawn: one rule per category on
    a hairline, and a marker that grows in the gutter beside the line being read
-   rather than a fill landing on it. Nothing here is a link — the marker is not
-   promising a destination, it is keeping your place. */
+   rather than a fill landing on it. The marker keeps your place while each
+   tool remains its own, smaller destination. */
 
 .stack {
   max-width: var(--content-max);
@@ -60,7 +60,8 @@
   transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
 }
 
-.stack-row:hover::before {
+.stack-row:hover::before,
+.stack-row:focus-within::before {
   height: 56%;
   opacity: 1;
 }
@@ -76,7 +77,8 @@
   transition: color 0.2s;
 }
 
-.stack-row:hover .stack-category {
+.stack-row:hover .stack-category,
+.stack-row:focus-within .stack-category {
   color: var(--text);
 }
 
@@ -91,6 +93,7 @@
   display: flex;
   align-items: center;
   gap: 11px;
+  border-radius: 2px;
 }
 
 .stack-tool img {
@@ -103,6 +106,15 @@
   object-fit: contain;
 }
 
+/* Convex's official file includes the clear space required by its brand kit.
+   Give that canvas more room so the symbol itself has the same optical weight
+   as its neighbours, while the negative margin keeps the row rhythm at 24px. */
+.stack-tool img[src='/logos/convex.svg'] {
+  width: 32px;
+  height: 32px;
+  margin: -4px;
+}
+
 .stack-name {
   color: var(--muted);
   font-size: 15px;
@@ -111,8 +123,16 @@
   transition: color 0.2s;
 }
 
-.stack-row:hover .stack-name {
+.stack-row:hover .stack-name,
+.stack-row:focus-within .stack-name {
   color: var(--text);
+}
+
+/* The row hover gives context; the accent identifies the one destination the
+   pointer or keyboard is actually over. */
+.stack-tool:hover .stack-name,
+.stack-tool:focus-visible .stack-name {
+  color: var(--accent);
 }
 
 /* Colour is spent on the line being read rather than on all sixteen at once —
@@ -126,7 +146,8 @@
     transition: filter 0.25s, opacity 0.25s, transform 0.35s;
   }
 
-  .stack-row:hover .stack-tool img {
+  .stack-row:hover .stack-tool img,
+  .stack-row:focus-within .stack-tool img {
     filter: none;
     opacity: 1;
     transform: scale(1);
@@ -168,7 +189,9 @@
     }
 
     .stack-row:hover .stack-category,
-    .stack-row:hover .stack-tools {
+    .stack-row:hover .stack-tools,
+    .stack-row:focus-within .stack-category,
+    .stack-row:focus-within .stack-tools {
       transform: none;
     }
   }

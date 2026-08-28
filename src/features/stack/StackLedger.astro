@@ -25,10 +25,16 @@ const copy = getCopy(locale);
             <span class="stack-category">{copy.stack.categories[category.key]}</span>
             <span class="stack-tools">
               {category.tools.map((tool) => (
-                <span class="stack-tool">
+                <a
+                  class="stack-tool"
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={copy.common.officialWebsite(tool.name)}
+                >
                   <img src={tool.logo} alt="" width="24" height="24" />
                   <span class="stack-name">{tool.name}</span>
-                </span>
+                </a>
               ))}
             </span>
           </div>

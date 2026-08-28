@@ -5,9 +5,14 @@ The files are normalised only in the ways an `<img>` at 24px needs: the
 `<title>` and the intrinsic width and height are dropped so the element sizes
 them, and nothing else about the geometry is touched.
 
-- Seventeen come from **simple-icons** (CC0-1.0), which publishes each mark as
+- Fourteen come from **simple-icons** (CC0-1.0), which publishes each mark as
   one path on a 24x24 grid together with its owner's colour. The colour is
   written onto the `<svg>` here so the file carries it.
+- **astro.svg** — Astro's gradient logomark for dark backgrounds, from its
+  official press resources.
+- **convex.svg** — Convex's colour symbol, from its official brand kit.
+- **pnpm.svg** — pnpm's framed colour mark, with its original yellow and dark
+  tiles, from its official website repository.
 - **playwright.svg** — playwright.dev.
 - **vs-code.svg**, **wsl.svg** — Microsoft's own application icons, via
   Wikimedia Commons.

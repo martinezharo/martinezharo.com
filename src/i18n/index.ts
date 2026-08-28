@@ -55,6 +55,7 @@ export interface LocaleCopy {
     skipStack: string;
     close: string;
     builtWith: string;
+    officialWebsite(name: string): string;
     conditionIs: string;
     removeCondition(label: string): string;
   };
@@ -187,6 +188,7 @@ const copies: Record<Locale, LocaleCopy> = {
       skipStack: 'Skip to the stack',
       close: 'Close',
       builtWith: 'Built with',
+      officialWebsite: (name) => `Visit the official ${name} website (opens in a new tab)`,
       conditionIs: 'is',
       removeCondition: (label) => `Remove the ${label.toLowerCase()} condition`,
     },
@@ -339,6 +341,7 @@ const copies: Record<Locale, LocaleCopy> = {
       skipStack: 'Saltar al stack',
       close: 'Cerrar',
       builtWith: 'Construido con',
+      officialWebsite: (name) => `Visitar la web oficial de ${name} (se abre en una pestaña nueva)`,
       conditionIs: 'es',
       removeCondition: (label) => `Quitar la condición de ${label.toLowerCase()}`,
     },
