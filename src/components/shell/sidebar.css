@@ -42,15 +42,20 @@
   text-underline-offset: 4px;
 }
 
+/* The dot belongs to the first line of the label, not to the middle of the
+   block: in Spanish, and in the narrow rail a small laptop leaves, the sentence
+   takes two lines and a centred dot floats between them. */
 .availability {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 8px;
 }
 
 .availability i {
+  flex: none;
   width: 7px;
   height: 7px;
+  margin-top: 6px;
   border-radius: 50%;
   background: var(--accent);
   box-shadow: var(--halo-soft);
