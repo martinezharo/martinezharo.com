@@ -10,6 +10,28 @@ test('filters and sorts the project list', async ({ page }) => {
   expect(total).toBeGreaterThan(0);
   expect(active).toBeGreaterThan(0);
   await expect(page.locator('[data-item]:visible')).toHaveCount(total);
+  await expect(page.locator('[data-work]')).toHaveAttribute('data-state-field', 'default');
+
+  // Default favours projects with more applicable metrics. Within each group,
+  // the completeness-adjusted overall score decides the order.
+  const defaultRanks = await projects.evaluateAll((items) =>
+    items.map((item) => {
+      const data = (item as HTMLElement).dataset;
+      return {
+        name: data.name ?? '',
+        rated: Number(data.ratedCount),
+        overall: data.overall === undefined ? null : Number(data.overall),
+      };
+    }),
+  );
+  expect(defaultRanks).toEqual(
+    [...defaultRanks].sort(
+      (left, right) =>
+        right.rated - left.rated ||
+        (right.overall ?? 0) - (left.overall ?? 0) ||
+        left.name.localeCompare(right.name, 'en'),
+    ),
+  );
 
   await page.getByRole('button', { name: 'Filter and sort' }).click();
   await page.getByRole('menuitem', { name: /^Status/ }).click();
@@ -23,6 +45,10 @@ test('filters and sorts the project list', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Filter and sort' }).click();
   await page.getByRole('menuitem', { name: /^Order/ }).click();
+  await expect(page.getByRole('menuitemradio', { name: 'Default' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
   await page.getByRole('menuitemradio', { name: 'Name' }).click();
 
   await expect(page.locator('[data-work]')).toHaveAttribute('data-state-dir', 'asc');

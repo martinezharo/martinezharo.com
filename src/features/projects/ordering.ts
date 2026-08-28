@@ -1,5 +1,5 @@
 import type { Locale } from '../../i18n';
-import { DEFAULT_PROJECT_STATE, getOverallScore } from './model';
+import { DEFAULT_PROJECT_STATE, getOverallScore, getRatedScoreCount } from './model';
 import type { Project, ProjectStatus, SortDirection, SortField } from './model';
 
 // The rules the project list runs on, written once and away from the DOM.
@@ -40,6 +40,7 @@ export type Listed = Pick<Project, 'slug' | 'name' | 'kind' | 'active' | 'start'
  */
 export interface Ranked {
   name: string;
+  rated: number;
   value(field: SortField): number | null;
 }
 
@@ -49,9 +50,10 @@ export function rank(project: Listed): Ranked {
     // Lowercased because the list sorts on the name it wrote into the row's
     // data attribute, which is lowercase. Both sides have to tie the same way.
     name: project.name.toLowerCase(),
+    rated: getRatedScoreCount(project),
     value(field) {
       if (field === 'date') return project.start;
-      if (field === 'overall') return getOverallScore(project);
+      if (field === 'default') return getOverallScore(project);
       if (field === 'name') return null;
       return project.scores[field];
     },
@@ -81,6 +83,14 @@ export function compareRanked(
   const sign = direction === 'asc' ? 1 : -1;
 
   if (field === 'name') return byName * sign;
+
+  // The default order favours projects that can be judged on more of the four
+  // metrics. Only projects with the same coverage are compared by their
+  // completeness-adjusted overall score.
+  if (field === 'default') {
+    const byCoverage = (a.rated - b.rated) * sign;
+    if (byCoverage) return byCoverage;
+  }
 
   const left = a.value(field);
   const right = b.value(field);

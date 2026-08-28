@@ -2,7 +2,7 @@
 import Meter from './Meter.astro';
 import State from './State.astro';
 import type { Project } from './model';
-import { formatProjectRange, getOverallScore, SCORE_META } from './model';
+import { formatProjectRange, getOverallScore, getRatedScoreCount, SCORE_META } from './model';
 import { getCopy, localizedPath, type Locale } from '../../i18n';
 import './project-card.css';
 
@@ -26,6 +26,7 @@ const attr = (score: number | null) => (score === null ? undefined : score);
   data-kind={project.kind}
   data-start={project.start}
   data-overall={attr(getOverallScore(project))}
+  data-rated-count={getRatedScoreCount(project)}
   data-design={attr(project.scores.design)}
   data-engineering={attr(project.scores.engineering)}
   data-impact={attr(project.scores.impact)}

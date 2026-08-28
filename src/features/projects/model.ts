@@ -54,14 +54,14 @@ export const SCORE_META: ReadonlyArray<{ key: ScoreKey }> = [
   { key: 'maturity' },
 ];
 
-export type SortField = 'date' | 'name' | 'overall' | ScoreKey;
+export type SortField = 'default' | 'date' | 'name' | ScoreKey;
 export type SortDirection = 'desc' | 'asc';
 export type ProjectStatus = 'all' | 'active' | 'archived';
 
 export const SORT_FIELDS: ReadonlyArray<{ key: SortField }> = [
+  { key: 'default' },
   { key: 'date' },
   { key: 'name' },
-  { key: 'overall' },
   { key: 'design' },
   { key: 'engineering' },
   { key: 'impact' },
@@ -69,7 +69,7 @@ export const SORT_FIELDS: ReadonlyArray<{ key: SortField }> = [
 ];
 
 export const DEFAULT_PROJECT_STATE = {
-  field: 'date',
+  field: 'default',
   direction: 'desc',
   kind: 'all',
   status: 'all',
@@ -85,6 +85,11 @@ function ratedScores(project: Pick<Project, 'scores'>): number[] {
   return SCORE_META.map((metric) => project.scores[metric.key]).filter(
     (score): score is number => score !== null,
   );
+}
+
+/** How many of the four metrics apply to a project. */
+export function getRatedScoreCount(project: Pick<Project, 'scores'>): number {
+  return ratedScores(project).length;
 }
 
 /**

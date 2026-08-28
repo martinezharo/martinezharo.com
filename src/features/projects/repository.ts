@@ -1,7 +1,8 @@
 import { env } from 'cloudflare:workers';
 import type { Locale } from '../../i18n';
 import type { Project, ProjectDetail, ProjectKind, ProjectScores } from './model';
-import { PROJECT_KINDS, SCORE_META } from './model';
+import { DEFAULT_PROJECT_STATE, PROJECT_KINDS, SCORE_META } from './model';
+import { orderProjects } from './ordering';
 
 // Reads the portfolio from the `oliweb` D1 database. Everything a project is
 // and everything the portfolio says about it lives on the same row, so the
@@ -172,8 +173,8 @@ export async function loadProject(
 }
 
 /**
- * Every project the showcase can render, newest first — the order the list
- * starts in, so the page reads the same way before the client script sorts it.
+ * Every project the showcase can render, in the default order: projects rated
+ * on more metrics first, then by overall score within the same coverage.
  *
  * The database defaults to the `DB` binding; passing one in is for tests.
  */
@@ -196,5 +197,5 @@ export async function loadProjects(locale: Locale, db: D1Database = env.DB): Pro
     );
   }
 
-  return projects.sort((a, b) => b.start - a.start || a.name.localeCompare(b.name, locale));
+  return orderProjects(projects, DEFAULT_PROJECT_STATE, locale);
 }

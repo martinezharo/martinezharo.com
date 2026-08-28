@@ -143,9 +143,9 @@ export interface LocaleCopy {
 }
 
 const englishDirections: Record<SortField, Record<SortDirection, string>> = {
+  default: { desc: 'Most metrics first', asc: 'Fewest metrics first' },
   date: { desc: 'Newest first', asc: 'Oldest first' },
   name: { desc: 'Z to A', asc: 'A to Z' },
-  overall: { desc: 'Highest first', asc: 'Lowest first' },
   design: { desc: 'Highest first', asc: 'Lowest first' },
   engineering: { desc: 'Highest first', asc: 'Lowest first' },
   impact: { desc: 'Highest first', asc: 'Lowest first' },
@@ -153,9 +153,9 @@ const englishDirections: Record<SortField, Record<SortDirection, string>> = {
 };
 
 const spanishDirections: Record<SortField, Record<SortDirection, string>> = {
+  default: { desc: 'Más métricas primero', asc: 'Menos métricas primero' },
   date: { desc: 'Más recientes primero', asc: 'Más antiguos primero' },
   name: { desc: 'De la Z a la A', asc: 'De la A a la Z' },
-  overall: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   design: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   engineering: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   impact: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
@@ -280,9 +280,9 @@ const copies: Record<Locale, LocaleCopy> = {
           archived: 'Archived',
         },
         sortLabels: {
+          default: 'Default',
           date: 'Date',
           name: 'Name',
-          overall: 'Overall rating',
           design: 'Design',
           engineering: 'Engineering',
           impact: 'Impact',
@@ -438,9 +438,9 @@ const copies: Record<Locale, LocaleCopy> = {
           archived: 'Archivado',
         },
         sortLabels: {
+          default: 'Predeterminado',
           date: 'Fecha',
           name: 'Nombre',
-          overall: 'Valoración general',
           design: 'Diseño',
           engineering: 'Ingeniería',
           impact: 'Impacto',

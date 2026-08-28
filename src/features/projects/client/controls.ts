@@ -28,8 +28,10 @@ import { getCopy, isLocale, type Locale } from '../../../i18n';
 function rank(el: HTMLElement): Ranked {
   return {
     name: el.dataset.name ?? '',
+    rated: Number(el.dataset.ratedCount ?? 0),
     value(field) {
-      const raw = el.dataset[field === 'date' ? 'start' : field];
+      const key = field === 'date' ? 'start' : field === 'default' ? 'overall' : field;
+      const raw = el.dataset[key];
       return raw === undefined ? null : Number(raw);
     },
   };
@@ -59,7 +61,7 @@ export function initProjectControls(root: HTMLElement): void {
 
   const still = matchMedia('(prefers-reduced-motion: reduce)');
 
-  let field = (root.dataset.stateField as SortField) ?? 'date';
+  let field = (root.dataset.stateField as SortField) ?? 'default';
   let dir = (root.dataset.stateDir as SortDirection) ?? 'desc';
   let kind = root.dataset.stateKind ?? 'all';
   let status = (root.dataset.stateStatus as ProjectStatus) ?? 'all';
@@ -90,7 +92,7 @@ export function initProjectControls(root: HTMLElement): void {
 
   /** Whether a dimension still holds the value it starts on. */
   function untouched(which: string | undefined) {
-    if (which === 'order') return field === 'date' && dir === 'desc';
+    if (which === 'order') return field === 'default' && dir === 'desc';
     return (which === 'kind' ? kind : status) === 'all';
   }
 
@@ -218,7 +220,7 @@ export function initProjectControls(root: HTMLElement): void {
       const which = node.dataset.clear;
       // Every dimension goes back to its default, and the order has one too.
       if (which === 'order') {
-        field = 'date';
+        field = 'default';
         dir = 'desc';
       } else {
         if (which !== 'kind') status = 'all';
