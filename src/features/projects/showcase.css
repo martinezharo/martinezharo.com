@@ -1,5 +1,3 @@
-@import '../../styles/breakpoints.css';
-
 .projects {
   max-width: var(--content-max);
   margin: 0 auto;
@@ -34,7 +32,8 @@
   display: contents;
 }
 
-@media (--compact) {
+/* The head answers to the same column its list does. */
+@container page (width < 790px) {
   /* The builder's children join the header grid, so the button keeps the
      title's row and the clauses get a full-width row below it. */
   .section-head {

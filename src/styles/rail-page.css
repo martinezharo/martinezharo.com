@@ -5,7 +5,15 @@
    two from overlapping. The skip link that gets past it is in global.css, since
    a page without a rail has one too. */
 
+/* The column is also a container, under the name `page`. The rail is a third of
+   a small laptop, so between the breakpoint and a wide screen the viewport says
+   almost nothing about the room the content has: at 820px the screen is past
+   the breakpoint and the column is 440px, narrower than the same column on a
+   700px phone. Anything inside that has two shapes asks `page` how wide it is
+   rather than asking the viewport, and gets the same answer on both. */
 main {
+  container: page / inline-size;
+
   min-height: 100vh;
   margin-left: var(--sidebar-w);
   padding: clamp(54px, 7vw, 108px) clamp(30px, 7vw, 108px) 42px;

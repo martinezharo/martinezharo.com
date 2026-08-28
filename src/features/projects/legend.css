@@ -139,11 +139,17 @@
   line-height: 1.55;
 }
 
-@media (--compact) {
+/* The strip closes the list off, so it keeps to the list's own rhythm: folded
+   rows sit closer together and this follows them up. */
+@container page (width < 790px) {
   .legend {
     margin-top: 10px;
   }
+}
 
+/* The panel is a dialog on the screen rather than a block in the column, so
+   what follows is asked of the screen and of the finger opening it. */
+@media (--compact) {
   .legend-open {
     min-height: 40px;
   }

@@ -3,3 +3,26 @@
    resolves the queries at build time and the file itself emits nothing. */
 @custom-media --compact (width <= 780px);
 @custom-media --roomy (width > 780px);
+
+/* The breakpoint answers one question: is there a rail. How much room the
+   content itself has is a second question, and the viewport cannot answer it —
+   the rail takes a fixed 280px, so an 820px screen leaves the column less than
+   a 700px screen does. That one is asked of the `page` container declared on
+   `main` (rail-page.css), at 790px of column, which is the width the wide
+   shapes stop fitting in. It is written out at each use: `@custom-media` is a
+   media-query name and cannot be spent on a container query.
+
+   So a block that lives in the column asks the container, and three kinds of
+   rule keep asking the screen:
+
+   - the rail itself and what stands in for it — the sidebar, the mobile header,
+     the home page's intro, the project page's own rail, and `main`'s margin.
+     These are the breakpoint;
+   - anything drawn against the edge of the screen rather than inside the
+     column: the legend's sheet, the width and height a facet menu is allowed
+     before it runs off (filters.css). A container query would be measuring the
+     wrong box;
+   - a third question that is neither, asked with `(hover: none)` and
+     `(hover: hover)`: whether there is a pointer. The hover marker, the row
+     that lights on press, the logo kept for the row being read. A narrow column
+     on a laptop still has a mouse. */

@@ -278,6 +278,12 @@
   color: var(--text);
 }
 
+/* The screen, not the column: a popover hangs off its button and is bounded by
+   the window it is drawn in, so what is asked here is how much screen is left
+   and whether a finger is doing the pressing. The head above it folds on the
+   column instead (showcase.css), which is why a narrow column on a laptop shows
+   a folded header with the menus still in their wide shape — they have the room
+   for it. */
 @media (--compact) {
   .facet-menu {
     width: min(280px, calc(100vw - 40px));

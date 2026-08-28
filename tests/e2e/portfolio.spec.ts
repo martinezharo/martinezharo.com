@@ -106,6 +106,58 @@ test('switches to the compact layout on mobile', async ({ page }) => {
   await expect(page.locator('.mobile-intro')).toBeVisible();
 });
 
+// The row's shape follows the column it is drawn in, not the screen: the rail
+// takes a fixed 280px, so a 900px window leaves the list less room than a phone
+// in landscape and the row has to fold there too. `display: contents` is what
+// the folded row does to the copy block, whose parts become lines of the row.
+test('folds the project rows while the rail leaves the column narrow', async ({ page }) => {
+  const shape = () =>
+    page.locator('.project-copy').first().evaluate((copy) => getComputedStyle(copy).display);
+
+  await page.setViewportSize({ width: 900, height: 900 });
+  await page.goto('/');
+
+  await expect(page.locator('.side')).toBeVisible();
+  expect(await shape()).toBe('contents');
+
+  await page.setViewportSize({ width: 1600, height: 900 });
+  expect(await shape()).toBe('grid');
+});
+
+// Everything drawn in that column answers the same question, so the header and
+// the footer fold with the rows rather than at their own width.
+test('folds the rest of the column with the rows', async ({ page }) => {
+  const display = (selector: string) =>
+    page.locator(selector).evaluate((el) => getComputedStyle(el).display);
+
+  await page.setViewportSize({ width: 900, height: 900 });
+  await page.goto('/');
+
+  expect(await display('.section-head')).toBe('grid');
+  expect(await display('footer')).toBe('grid');
+
+  await page.setViewportSize({ width: 1600, height: 900 });
+  expect(await display('.section-head')).toBe('flex');
+  expect(await display('footer')).toBe('flex');
+});
+
+// The same question on a project page, where the story sets a 680px measure the
+// row keeps to — until the column is narrower than the measure, and holding it
+// would only crop the row.
+test('lets the next-project row take the whole column once it is narrow', async ({ page }) => {
+  const measure = () =>
+    page.locator('.next-link').evaluate((link) => getComputedStyle(link).maxWidth);
+
+  await page.setViewportSize({ width: 900, height: 900 });
+  await page.goto('/projects/fewya');
+
+  await expect(page.locator('.project-rail')).toBeVisible();
+  expect(await measure()).toBe('none');
+
+  await page.setViewportSize({ width: 1600, height: 900 });
+  expect(await measure()).toBe('680px');
+});
+
 test('keeps the list working after a round trip to a project', async ({ page }) => {
   await page.goto('/');
   const active = await page.locator('[data-item][data-active="true"]').count();

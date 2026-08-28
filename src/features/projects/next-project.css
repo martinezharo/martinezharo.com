@@ -1,5 +1,3 @@
-@import '../../styles/breakpoints.css';
-
 /* The way on, at the end of the story.
 
    It sits on the story's own measure rather than the wider column the footer
@@ -112,25 +110,31 @@
   transform: translateX(3px);
 }
 
-@media (--compact) {
+/* The measure is only a measure while the column is wider than it. Once the
+   column is the narrower of the two — a phone, or the room a rail leaves on a
+   small laptop — holding 680px would crop the row inside a column that is
+   already narrow, so the row takes the column it has. */
+@container page (width < 790px) {
   .next-eyebrow,
   .next-link {
     max-width: none;
   }
 
-  /* Nothing hovers on a touch screen, and the row starts at the screen edge
-     where the marker would have nowhere to sit. */
+  /* Room for the blurb to say something once the row has the whole column. */
+  .next-blurb {
+    white-space: normal;
+  }
+}
+
+/* Nothing hovers on a touch screen, and the row starts at the screen edge where
+   the marker would have nowhere to sit. */
+@media (hover: none) {
   .next-link::before {
     content: none;
   }
 
   .next-link:active {
     opacity: 0.65;
-  }
-
-  /* Room for the blurb to say something once the row has the whole screen. */
-  .next-blurb {
-    white-space: normal;
   }
 }
 

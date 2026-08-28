@@ -1,5 +1,3 @@
-@import '../../styles/breakpoints.css';
-
 footer {
   display: flex;
   justify-content: space-between;
@@ -36,7 +34,10 @@ footer a {
   text-decoration-color: var(--line);
 }
 
-@media (--compact) {
+/* Three parts on one line for as long as the line can hold them; under that the
+   copyright starts wrapping and the language sits on the screen edge, so they
+   stack instead. */
+@container page (width < 790px) {
   footer {
     display: grid;
     gap: 16px;
