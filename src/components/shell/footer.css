@@ -1,5 +1,6 @@
 footer {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
   gap: 28px;
   max-width: var(--content-max);
@@ -10,8 +11,18 @@ footer {
   font-size: 12px;
 }
 
-footer p {
+/* The invitation is the only part of the footer with something to ask of the
+   reader, so it leads the line and carries the full text colour. Everything
+   else here is metadata and stays at the muted weight. */
+.invitation {
   margin: 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.meta {
+  display: flex;
+  gap: 24px;
 }
 
 footer a {
@@ -23,7 +34,6 @@ footer a {
 /* The switch is a quieter thing than the invitation to write: it sits at the
    muted weight of the copyright beside it until it is pointed at. */
 .language {
-  align-self: start;
   color: var(--muted);
   text-decoration-color: transparent;
   transition: color 0.2s, text-decoration-color 0.2s;
@@ -34,12 +44,27 @@ footer a {
   text-decoration-color: var(--line);
 }
 
-/* Three parts on one line for as long as the line can hold them; under that the
-   copyright starts wrapping and the language sits on the screen edge, so they
-   stack instead. */
+/* Two groups would hold one line well past this, but the fold point belongs to
+   the column, not to the footer: it stacks where every other block does. */
 @container page (width < 790px) {
+  /* The single column is stated because `space-between` above would otherwise
+     size it to its content and pack it left, leaving the metadata line nothing
+     to spread across. */
   footer {
     display: grid;
-    gap: 16px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Stacked, the pair would otherwise clump at the left edge and read as one
+     line of small print. Spread across the column it keeps the same left/right
+     axis the wide footer has, and the switch stays a thing you can aim at. */
+  .meta {
+    justify-content: space-between;
+  }
+
+  .language {
+    padding: 4px 0;
+    margin: -4px 0;
   }
 }
