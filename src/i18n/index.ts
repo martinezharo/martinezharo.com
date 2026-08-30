@@ -80,7 +80,6 @@ export interface LocaleCopy {
   };
   footer: {
     prompt: string;
-    link: string;
   };
   errors: {
     notFound: string;
@@ -234,7 +233,6 @@ const copies: Record<Locale, LocaleCopy> = {
     },
     footer: {
       prompt: 'Need something built?',
-      link: 'Write me.',
     },
     errors: {
       notFound: 'Not found',
@@ -389,7 +387,6 @@ const copies: Record<Locale, LocaleCopy> = {
     },
     footer: {
       prompt: '¿Tienes algo entre manos?',
-      link: 'Hablemos.',
     },
     errors: {
       notFound: 'No encontrado',

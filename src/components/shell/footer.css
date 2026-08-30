@@ -28,7 +28,24 @@ footer {
 footer a {
   color: var(--text);
   text-decoration: underline;
+  /* Left at the browser default, the rule under a 14px line of near-white on
+     black comes out heavier than the letters above it and is the first thing
+     the eye lands on. A hairline puts the word back in front. */
+  text-decoration-thickness: 1px;
   text-underline-offset: 4px;
+}
+
+/* The address is the invitation, so it says what it is rather than what to do
+   with it, and it carries the full text colour. The rule under it sits at the
+   muted weight so it reads as a mark on the address instead of a second line
+   of type. It is never dimmer than that: this is the one thing in the footer
+   with something to ask, and the affordance has to survive without a cursor
+   on it. */
+.invitation a {
+  text-decoration-color: var(--muted);
+  /* Broken across two lines an address stops looking like one. The sentence
+     wraps ahead of it instead. */
+  white-space: nowrap;
 }
 
 /* The switch is a quieter thing than the invitation to write: it sits at the

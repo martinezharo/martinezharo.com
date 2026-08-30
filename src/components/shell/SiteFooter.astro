@@ -35,7 +35,7 @@ const otherHref = `${localizedPath(other, routeFromPath(Astro.url.pathname))}?${
 <footer>
   <p class="invitation">
     {copy.footer.prompt}{' '}
-    <a href={mailto}>{copy.footer.link}</a>
+    <a href={mailto}>{site.email}</a>
   </p>
   <div class="meta">
     <a class="language" href={otherHref} hreflang={other} lang={other} rel="alternate" aria-label={copy.navigation.language}>
