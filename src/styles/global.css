@@ -6,10 +6,13 @@
   --panel: #000;
   --panel-raised: #070707;
 
-  /* Text */
+  /* Text. The ramp bottoms out at the 4.5:1 floor rather than under it. The
+     faintest step is the colour of the 11px lines — the stack under a project's
+     rail, the counts beside a filter — and at that size a grey that reads as
+     quiet on a mockup reads as unavailable on a screen. */
   --text: #f2f2f2;
   --muted: #8f8f8f;
-  --faint: #5c5c5c;
+  --faint: #757575;
 
   /* Lines and marks. With no filled surfaces these carry the whole layout. */
   --line: #1a1a1a;
