@@ -208,7 +208,7 @@ const copies: Record<Locale, LocaleCopy> = {
         eyebrow: 'The stack',
         heading: 'What I\nbuild with.',
       },
-      heading: 'What I use, by category',
+      heading: 'Favourites, by category',
       count: (categories, tools) => `${categories} categories · ${tools} tools`,
       categories: {
         languages: 'Languages',
@@ -362,7 +362,7 @@ const copies: Record<Locale, LocaleCopy> = {
         eyebrow: 'El stack',
         heading: 'Con qué\nlo hago.',
       },
-      heading: 'Lo que uso, por categoría',
+      heading: 'Favoritos, por categoría',
       count: (categories, tools) => `${categories} categorías · ${tools} herramientas`,
       categories: {
         languages: 'Lenguajes',
