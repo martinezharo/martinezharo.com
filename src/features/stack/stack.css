@@ -162,14 +162,6 @@
   }
 }
 
-.stack-note {
-  max-width: 560px;
-  margin: 34px 0 0;
-  color: var(--faint);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
 /* In the wide shape the two halves of the row sit slightly out of true and
    settle under the pointer, which is a movement only a pointer can ask for.
    Folded, they are lines rather than columns and have nowhere to travel from. */

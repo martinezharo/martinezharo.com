@@ -14,6 +14,6 @@ const copy = getCopy(locale);
   <p class="eyebrow">{copy.about.eyebrow}</p>
   <div>
     <h2>{copy.about.heading}</h2>
-    <p>{copy.about.body}</p>
+    {copy.about.body.split('\n\n').map((paragraph) => <p>{paragraph}</p>)}
   </div>
 </section>

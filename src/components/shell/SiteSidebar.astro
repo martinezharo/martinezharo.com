@@ -11,7 +11,7 @@ interface Props {
    * with something else to say about itself passes that instead, which is what
    * a project's rail already does with its own markup.
    */
-  intro?: { eyebrow: string; heading: string; body: string };
+  intro?: { eyebrow: string; heading: string; body?: string };
 }
 
 const { locale, intro } = Astro.props;
@@ -38,7 +38,7 @@ const onStack = route === '/stack';
   <div class="side-copy">
     <p class="eyebrow">{railIntro.eyebrow}</p>
     <h1>{railIntro.heading}</h1>
-    <p class="intro-description">{railIntro.body}</p>
+    {railIntro.body && <p class="intro-description">{railIntro.body}</p>}
   </div>
 
   <nav aria-label={copy.navigation.primary}>

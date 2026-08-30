@@ -70,11 +70,10 @@ export interface LocaleCopy {
     intro: {
       eyebrow: string;
       heading: string;
-      body: string;
+      body?: string;
     };
     heading: string;
     count(categories: number, tools: number): string;
-    note: string;
     categories: Record<CategoryKey, string>;
   };
   footer: {
@@ -166,12 +165,13 @@ const spanishDirections: Record<SortField, Record<SortDirection, string>> = {
 const copies: Record<Locale, LocaleCopy> = {
   en: {
     site: {
-      title: 'Oliver Martínez Haro — Independent maker',
-      description: 'Oliver Martínez Haro builds useful software and small internet businesses.',
+      title: 'Oliver Martínez Haro — Software developer',
+      description:
+        'Oliver Martínez Haro is a software developer from Spain who builds his own tools, open-sources most of them, and keeps them running.',
       intro: {
-        eyebrow: 'Independent maker · Spain',
+        eyebrow: 'Software developer · Spain',
         heading: 'I need it,\nI build it.',
-        body: 'Mostly software for my own businesses, plus side projects that begin with a question I cannot leave alone.',
+        body: "What I enjoy most is the interface: clean to look at and good to use. Underneath that, I'm always asking myself how to make the app faster, safer, more accessible.",
       },
       availability: 'Around for interesting work',
     },
@@ -194,21 +194,20 @@ const copies: Record<Locale, LocaleCopy> = {
     },
     about: {
       eyebrow: 'A little context',
-      heading: 'I like software that stays out of the way.',
-      body: 'I care about the whole thing: the idea, the awkward edge cases, the interface, the infrastructure and whether it remains pleasant after the hundredth use. Building my own tools and shops keeps that standard honest.',
+      heading: 'Hi! Oli here ☝🏻👹',
+      body:
+        "I'm a 22-year-old guy who's been jumping from one project to another since I was 16, always trying to create something worth building.\n\nI started out creating content for social media, then moved into e-commerce, and eventually fell in love with programming when AI started becoming a genuinely useful tool for building software.\n\nAfter managing to launch a couple of projects without even knowing what a simple `console.log` was, I decided it was finally time to learn how to code. It turned out to be one of the best decisions I've ever made.\n\nSince then, my productivity has skyrocketed, and I've started turning all those tools, websites, and ideas I'd once wished existed into projects of my own.",
     },
     stack: {
       title: 'The stack — Oliver Martínez Haro',
       description:
-        'The languages, frameworks and tools Oliver Martínez Haro reaches for, category by category.',
+        'The languages, frameworks and tools Oliver Martínez Haro uses by default, category by category.',
       intro: {
         eyebrow: 'The stack',
         heading: 'What I\nbuild with.',
-        body: 'Favourites, not a survey. Each one earned its place on something I shipped and then had to keep running.',
       },
-      heading: 'Favourites, by category',
+      heading: 'What I use, by category',
       count: (categories, tools) => `${categories} categories · ${tools} tools`,
-      note: 'One name on a line means it is the default, not the only one I will use. Where there are two, the second is what the first turns into when the job is smaller.',
       categories: {
         languages: 'Languages',
         frameworks: 'Frameworks',
@@ -229,8 +228,8 @@ const copies: Record<Locale, LocaleCopy> = {
       },
     },
     footer: {
-      prompt: 'Have something interesting in mind?',
-      link: 'Say hello.',
+      prompt: 'Need something built?',
+      link: 'Write me.',
     },
     errors: {
       notFound: 'Not found',
@@ -319,12 +318,13 @@ const copies: Record<Locale, LocaleCopy> = {
   },
   es: {
     site: {
-      title: 'Oliver Martínez Haro — Creador independiente',
-      description: 'Oliver Martínez Haro crea software útil y pequeños negocios en internet.',
+      title: 'Oliver Martínez Haro — Desarrollador de software',
+      description:
+        'Oliver Martínez Haro es un desarrollador de software de España que crea sus propias herramientas, libera su código y las mantiene en marcha.',
       intro: {
-        eyebrow: 'Creador independiente',
-        heading: 'Lo necesito,\nlo construyo.',
-        body: 'Sobre todo software para mis propios negocios, además de proyectos paralelos que empiezan con una pregunta que no puedo dejar sin responder.',
+        eyebrow: 'Desarrollador · España',
+        heading: 'Lo necesito,\nlo hago.',
+        body: 'Lo que más disfruto son las interfaces: que se vean limpias y que dé gusto usarlas. Y por debajo, siempre me estoy preguntando cómo hacer la app más rápida, más segura, más accesible.',
       },
       availability: 'Disponible para proyectos interesantes',
     },
@@ -347,21 +347,20 @@ const copies: Record<Locale, LocaleCopy> = {
     },
     about: {
       eyebrow: 'Un poco de contexto',
-      heading: 'Me gusta el software que no se interpone.',
-      body: 'Me importa todo el conjunto: la idea, los casos límite incómodos, la interfaz, la infraestructura y si sigue siendo agradable después del uso número cien. Construir mis propias herramientas y tiendas mantiene ese estándar bajo control.',
+      heading: 'Hola! Aquí Oli ☝🏻👹',
+      body:
+        'Soy un chico de 22 años que lleva saltando de un proyecto a otro desde los 16, siempre intentando crear algo que mereciera la pena.\n\nEmpecé creando contenido para redes sociales, después pasé por el e-commerce y terminé enamorándome de la programación cuando la IA empezó a convertirse en una herramienta útil para desarrollar software.\n\nDespués de conseguir lanzar un par de proyectos sin saber siquiera qué era un simple `console.log`, decidí que ya era hora de aprender a programar. Fue una de las mejores decisiones que he tomado.\n\nDesde entonces, mi productividad se disparó y empecé a convertir en proyectos todas esas herramientas, webs e ideas que alguna vez había echado en falta.',
     },
     stack: {
       title: 'El stack — Oliver Martínez Haro',
       description:
-        'Los lenguajes, frameworks y herramientas a los que recurre Oliver Martínez Haro, categoría por categoría.',
+        'Los lenguajes, frameworks y herramientas que Oliver Martínez Haro usa por defecto, categoría por categoría.',
       intro: {
         eyebrow: 'El stack',
-        heading: 'Con esto\nlo construyo.',
-        body: 'Favoritos, no un inventario. Cada uno se ganó su sitio en algo que lancé y que después tuve que mantener en marcha.',
+        heading: 'Con qué\nlo hago.',
       },
-      heading: 'Favoritos, por categoría',
+      heading: 'Lo que uso, por categoría',
       count: (categories, tools) => `${categories} categorías · ${tools} herramientas`,
-      note: 'Un solo nombre en una línea significa que es el predeterminado, no el único que uso. Donde hay dos, el segundo es en lo que se convierte el primero cuando el trabajo es más pequeño.',
       categories: {
         languages: 'Lenguajes',
         frameworks: 'Frameworks',
@@ -382,15 +381,15 @@ const copies: Record<Locale, LocaleCopy> = {
       },
     },
     footer: {
-      prompt: '¿Tienes algo interesante en mente?',
-      link: 'Escríbeme.',
+      prompt: '¿Tienes algo entre manos?',
+      link: 'Hablemos.',
     },
     errors: {
       notFound: 'No encontrado',
       projectNotFound: 'Proyecto no encontrado',
     },
     projects: {
-      heading: 'Cosas que he construido',
+      heading: 'Cosas que he hecho',
       status: { active: 'Activo', archived: 'Archivado' },
       kindLabels: {
         all: 'Todos los tipos',

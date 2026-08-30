@@ -241,7 +241,7 @@ test('serves translated interface and project data at /es', async ({ page }) => 
 
   await expect(page).toHaveURL(/\/es$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-  await expect(page.getByRole('heading', { name: 'Cosas que he construido' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cosas que he hecho' })).toBeVisible();
   await expect(page.getByText('Un marketplace especializado en productos nuevos de vendedores profesionales.')).toBeVisible();
 
   const total = await page.locator('[data-item]').count();
@@ -271,7 +271,7 @@ test('chooses Spanish for an unprefixed visit when the browser prefers it', asyn
 
   await expect(page).toHaveURL(/\/es$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-  await expect(page.getByRole('heading', { name: 'Cosas que he construido' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cosas que he hecho' })).toBeVisible();
 
   await context.close();
 });

@@ -1,6 +1,6 @@
 export const site = {
   name: 'Oliver Martínez Haro',
-  email: 'hola@olivermartinezharo.com',
+  email: 'oliver@martinezharo.com',
   githubUrl: 'https://github.com/martinezharo',
 } as const;
 

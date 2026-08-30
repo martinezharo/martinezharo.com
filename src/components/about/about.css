@@ -25,6 +25,10 @@
   color: var(--muted);
 }
 
+.about div p + p {
+  margin-top: 20px;
+}
+
 /* Two columns need room for both: a label column wide enough for its own words
    and a measure wide enough for a 48px heading. Below that the label goes back
    to being what it is, a line above the text, and the section takes the column

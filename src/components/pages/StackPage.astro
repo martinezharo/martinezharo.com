@@ -25,7 +25,7 @@ const copy = getCopy(locale);
     <section class="mobile-intro">
       <p class="eyebrow">{copy.stack.intro.eyebrow}</p>
       <h1>{copy.stack.intro.heading}</h1>
-      <p class="intro-description">{copy.stack.intro.body}</p>
+      {copy.stack.intro.body && <p class="intro-description">{copy.stack.intro.body}</p>}
     </section>
 
     <StackLedger locale={locale} />
