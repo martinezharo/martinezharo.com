@@ -1,5 +1,10 @@
 import type { Locale } from '../../i18n';
-import { DEFAULT_PROJECT_STATE, getOverallScore, getRatedScoreCount } from './model';
+import {
+  DEFAULT_PROJECT_STATE,
+  getOverallScore,
+  getProjectSpan,
+  getRatedScoreCount,
+} from './model';
 import type { Project, ProjectStatus, SortDirection, SortField } from './model';
 
 // The rules the project list runs on, written once and away from the DOM.
@@ -28,7 +33,10 @@ export interface ProjectState {
  * hands the browser only this much about the rest of the portfolio, plus what
  * the link draws, rather than the whole row.
  */
-export type Listed = Pick<Project, 'slug' | 'name' | 'kind' | 'active' | 'start' | 'scores'>;
+export type Listed = Pick<
+  Project,
+  'slug' | 'name' | 'kind' | 'active' | 'start' | 'started' | 'ended' | 'scores'
+>;
 
 /**
  * A row reduced to what ordering asks of it: the name it ties on, and what it
@@ -53,6 +61,7 @@ export function rank(project: Listed): Ranked {
     rated: getRatedScoreCount(project),
     value(field) {
       if (field === 'date') return project.start;
+      if (field === 'span') return getProjectSpan(project);
       if (field === 'default') return getOverallScore(project);
       if (field === 'name') return null;
       return project.scores[field];

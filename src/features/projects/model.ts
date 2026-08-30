@@ -28,6 +28,15 @@ export interface Project {
   active: boolean;
   start: number;
   end: number | null;
+  /**
+   * The day the project started and the day it stopped, as the database keeps
+   * them. The page prints years — a portfolio does not date its work to the
+   * afternoon — but "how long did it run" is a question years cannot answer
+   * once half the work started in the same one, so the exact dates are carried
+   * alongside for the ordering to measure with.
+   */
+  started: string;
+  ended: string | null;
   kind: ProjectKind;
   url: string | null;
   logo: string;
@@ -54,13 +63,14 @@ export const SCORE_META: ReadonlyArray<{ key: ScoreKey }> = [
   { key: 'maturity' },
 ];
 
-export type SortField = 'default' | 'date' | 'name' | ScoreKey;
+export type SortField = 'default' | 'date' | 'span' | 'name' | ScoreKey;
 export type SortDirection = 'desc' | 'asc';
 export type ProjectStatus = 'all' | 'active' | 'archived';
 
 export const SORT_FIELDS: ReadonlyArray<{ key: SortField }> = [
   { key: 'default' },
   { key: 'date' },
+  { key: 'span' },
   { key: 'name' },
   { key: 'design' },
   { key: 'engineering' },
@@ -107,6 +117,30 @@ export function getOverallScore(project: Pick<Project, 'scores'>): number | null
   if (scores.length === 0) return null;
   const mean = scores.reduce((total, score) => total + score, 0) / SCORE_META.length;
   return Math.round(mean * 100) / 100;
+}
+
+const DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * How long a project ran, in days. A project with no end is still running, so
+ * it is measured up to the day being asked about — which is today, passed in
+ * so that the server and the browser can be made to agree on it rather than
+ * each reading its own clock.
+ *
+ * Days rather than years because the years are what everything is bunched in:
+ * measured by year, everything started in the same one runs for "one year" and
+ * the order collapses into the alphabet. Nothing prints this number — it is a
+ * key the list sorts on — so it costs nothing to keep it exact. A project that
+ * began and ended on the same day still counts as a day of work.
+ */
+export function getProjectSpan(
+  project: Pick<Project, 'started' | 'ended'>,
+  through: number = Date.now(),
+): number {
+  const start = Date.parse(project.started);
+  const end = project.ended === null ? through : Date.parse(project.ended);
+  if (Number.isNaN(start) || Number.isNaN(end)) return 1;
+  return Math.max(1, Math.round((end - start) / DAY));
 }
 
 export function formatProjectRange(project: Project): string {

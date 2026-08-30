@@ -132,6 +132,8 @@ function toProject(row: ProjectRow): Project | null {
     active: row.is_active === 1,
     start,
     end: year(row.end_date),
+    started: row.start_date ?? '',
+    ended: row.end_date,
     kind,
     url: row.url,
     logo: row.logo_url ?? '',

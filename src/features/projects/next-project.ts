@@ -13,14 +13,18 @@ import type { Listed } from './ordering';
 export type NextCandidate = Listed & Pick<Project, 'blurb' | 'logo'>;
 
 export function toCandidates(projects: readonly Project[]): NextCandidate[] {
-  return projects.map(({ slug, name, kind, active, start, scores, blurb, logo }) => ({
-    slug,
-    name,
-    kind,
-    active,
-    start,
-    scores,
-    blurb,
-    logo,
-  }));
+  return projects.map(
+    ({ slug, name, kind, active, start, started, ended, scores, blurb, logo }) => ({
+      slug,
+      name,
+      kind,
+      active,
+      start,
+      started,
+      ended,
+      scores,
+      blurb,
+      logo,
+    }),
+  );
 }

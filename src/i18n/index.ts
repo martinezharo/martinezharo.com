@@ -145,6 +145,7 @@ export interface LocaleCopy {
 const englishDirections: Record<SortField, Record<SortDirection, string>> = {
   default: { desc: 'Most metrics first', asc: 'Fewest metrics first' },
   date: { desc: 'Newest first', asc: 'Oldest first' },
+  span: { desc: 'Longest running first', asc: 'Shortest first' },
   name: { desc: 'Z to A', asc: 'A to Z' },
   design: { desc: 'Highest first', asc: 'Lowest first' },
   engineering: { desc: 'Highest first', asc: 'Lowest first' },
@@ -155,6 +156,7 @@ const englishDirections: Record<SortField, Record<SortDirection, string>> = {
 const spanishDirections: Record<SortField, Record<SortDirection, string>> = {
   default: { desc: 'Más métricas primero', asc: 'Menos métricas primero' },
   date: { desc: 'Más recientes primero', asc: 'Más antiguos primero' },
+  span: { desc: 'Más tiempo activos primero', asc: 'Menos tiempo activos primero' },
   name: { desc: 'De la Z a la A', asc: 'De la A a la Z' },
   design: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
   engineering: { desc: 'Mayor puntuación primero', asc: 'Menor puntuación primero' },
@@ -283,6 +285,7 @@ const copies: Record<Locale, LocaleCopy> = {
         sortLabels: {
           default: 'Default',
           date: 'Date',
+          span: 'Time active',
           name: 'Name',
           design: 'Design',
           engineering: 'Engineering',
@@ -442,6 +445,7 @@ const copies: Record<Locale, LocaleCopy> = {
         sortLabels: {
           default: 'Predeterminado',
           date: 'Fecha',
+          span: 'Tiempo activo',
           name: 'Nombre',
           design: 'Diseño',
           engineering: 'Ingeniería',
