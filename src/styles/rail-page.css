@@ -11,12 +11,27 @@
    the breakpoint and the column is 440px, narrower than the same column on a
    700px phone. Anything inside that has two shapes asks `page` how wide it is
    rather than asking the viewport, and gets the same answer on both. */
+
+/* The gutter gives way before the column does. 7vw of air on either side is
+   the shape a wide screen gets, but the rail already takes a quarter of the
+   window: on a 1280px laptop the two together left the column under 790px,
+   which is where every wide shape inside it folds into its phone form — a
+   portfolio drawn for a phone on a laptop with a mouse, and the band that hit
+   is 780px to 1340px of window, which is most laptops.
+
+   So the gutter is whichever is smaller: the air, or what is left over once the
+   column has been given the 850px it needs to stay in its wide shape with room
+   to spare. Above ~1500px the air is the smaller of the two and nothing about
+   the wide screen changes; below that the margins narrow rather than the
+   content, down to the 30px that keeps text off the edge of the screen. */
 main {
+  --gutter: clamp(30px, min(7vw, (100vw - var(--sidebar-w) - 850px) / 2), 108px);
+
   container: page / inline-size;
 
   min-height: 100vh;
   margin-left: var(--sidebar-w);
-  padding: clamp(54px, 7vw, 108px) clamp(30px, 7vw, 108px) 42px;
+  padding: clamp(54px, 7vw, 108px) var(--gutter) 42px;
 }
 
 @media (--compact) {
