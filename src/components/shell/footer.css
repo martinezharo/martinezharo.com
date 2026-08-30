@@ -43,9 +43,24 @@ footer a {
    on it. */
 .invitation a {
   text-decoration-color: var(--muted);
+  transition: color 0.2s, text-decoration-color 0.2s;
   /* Broken across two lines an address stops looking like one. The sentence
      wraps ahead of it instead. */
   white-space: nowrap;
+}
+
+/* The accent is what a destination does under the pointer everywhere else — a
+   project name, a stack tool, a link in a story — so the one link asking to be
+   used should not be the exception.
+
+   The story link pairs it with its rule at 45%, but it starts that rule near
+   black and 45% is a step up from there. This one starts at the muted weight,
+   where 45% would darken the underline at the moment it is pointed at. 60%
+   clears the grey it comes from and stays under the letters it belongs to. */
+.invitation a:hover,
+.invitation a:focus-visible {
+  color: var(--accent);
+  text-decoration-color: rgb(var(--accent-rgb) / 60%);
 }
 
 /* The switch is a quieter thing than the invitation to write: it sits at the
