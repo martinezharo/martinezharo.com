@@ -1,9 +1,10 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "olisite",
-  "compatibility_date": "2026-08-15",
+  "name": "martinezharo",
+  "compatibility_date": "2026-08-30",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
+  "routes": [{ "pattern": "martinezharo.com", "custom_domain": true }],
   // The portfolio reads the same database the previous site wrote: only the
   // `projects` table, and only for reading. `remote` points local dev and
   // preview at the real database too — a local D1 would start empty, and an

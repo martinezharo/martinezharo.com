@@ -1,4 +1,7 @@
+packages:
+  - '.'
+
 # workerd ships a postinstall that unpacks the Workers runtime binary. Without
 # it there is no local Workers runtime to build or serve the site with.
-onlyBuiltDependencies:
-  - workerd
+allowBuilds:
+  workerd: true

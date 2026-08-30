@@ -5,7 +5,7 @@ import { defineConfig } from 'astro/config';
 // Server output on Workers: the portfolio reads its records from the `oliweb`
 // D1 database through the `DB` binding declared in wrangler.jsonc.
 export default defineConfig({
-  site: 'https://olivermartinezharo.com',
+  site: 'https://martinezharo.com',
   output: 'server',
   // `remoteBindings` honours the `remote` flag on the D1 binding, so `dev` and
   // `preview` read the real database instead of an empty local one.
