@@ -1,7 +1,8 @@
 packages:
   - '.'
 
-# workerd ships a postinstall that unpacks the Workers runtime binary. Without
-# it there is no local Workers runtime to build or serve the site with.
+# esbuild and workerd unpack the native binaries used to build and serve the
+# site. A clean CI install needs both lifecycle scripts.
 allowBuilds:
+  esbuild: true
   workerd: true
