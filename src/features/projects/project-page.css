@@ -222,6 +222,53 @@
   letter-spacing: -0.01em;
 }
 
+/* Where the story stops to count something off. The list is the same prose at
+   the same measure, moved in far enough that the marks hang in the margin and
+   the sentences keep one left edge to read down. Items sit closer to each
+   other than paragraphs do — they are one thought in parts — and the list as a
+   whole keeps a paragraph's space under it.
+
+   The marks are drawn rather than left to the browser: a default disc is a
+   size and a colour this page has nowhere else, and the dash is what the story
+   was written with in the first place. */
+.story-list {
+  margin: 0 0 24px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  list-style: none;
+  counter-reset: story-item;
+}
+
+.story-list li {
+  position: relative;
+  padding-left: 22px;
+}
+
+.story-list li + li {
+  margin-top: 10px;
+}
+
+.story-list li::before {
+  position: absolute;
+  left: 0;
+  color: var(--faint);
+}
+
+ul.story-list li::before {
+  content: '—';
+}
+
+/* A numbered list counts itself, so the numbers stay in step with the items
+   however the story was typed — and the figures line up under each other once
+   the list runs past nine. */
+ol.story-list li::before {
+  content: counter(story-item) '.';
+  counter-increment: story-item;
+  font-variant-numeric: tabular-nums;
+}
+
 /* A project named inside the story. The name is already written in the
    sentence, so the link is the sentence's own word raised out of the muted
    prose to full strength and underlined on a hairline, rather than a coloured

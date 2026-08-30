@@ -1,0 +1,28 @@
+---
+import { localizedPath, type Locale } from '../../i18n';
+import type { StorySegment } from './story';
+
+// A run of a story's text, drawn: prose as prose, and a project the story
+// names as the link to its page. A paragraph and a list item are the same
+// sentence-level thing once the story has been read into blocks, so both draw
+// through here rather than each rebuilding the link.
+
+interface Props {
+  segments: readonly StorySegment[];
+  locale: Locale;
+}
+
+const { segments, locale } = Astro.props;
+---
+
+{
+  segments.map((segment) =>
+    segment.slug ? (
+      <a class="story-link" href={localizedPath(locale, `/projects/${segment.slug}`)}>
+        {segment.text}
+      </a>
+    ) : (
+      segment.text
+    ),
+  )
+}
