@@ -1,0 +1,45 @@
+@import '../../styles/breakpoints.css';
+
+.gh-badge {
+  display: none;
+}
+
+@media (--compact) {
+  /* A hairline square, not a floating button: the page has no filled surfaces
+     and this is not the place to introduce one. It is the same rule and the
+     same black as everything else, held still against the corner. */
+  .gh-badge {
+    position: fixed;
+    z-index: 10;
+    right: var(--edge);
+    bottom: calc(var(--edge) + env(safe-area-inset-bottom));
+    display: grid;
+    place-items: center;
+    width: var(--badge-size);
+    height: var(--badge-size);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--muted);
+    transition: border-color 0.18s, color 0.18s;
+  }
+
+  /* Nothing hovers on a phone, so the only state worth drawing is the press. */
+  .gh-badge:active {
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
+
+  .gh-badge-mark {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+/* A laptop narrow enough to be past the breakpoint still has a pointer. */
+@media (--compact) and (hover: hover) {
+  .gh-badge:hover {
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
+}

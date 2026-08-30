@@ -34,6 +34,16 @@
   /* Layout. The sidebar width doubles as the main content offset. */
   --sidebar-w: clamp(280px, 27vw, 390px);
   --content-max: 1080px;
+
+  /* The compact shell. Below the breakpoint the rail is replaced by two pinned
+     pieces — the header on the top edge, the GitHub badge on the bottom right —
+     and both the column and the pieces themselves have to agree on their size:
+     the column keeps its full height under the header and keeps the end of the
+     footer out from under the badge. Declared here rather than in either
+     stylesheet so there is one number to change. */
+  --edge: 20px;
+  --head-h: 52px;
+  --badge-size: 44px;
 }
 
 * {

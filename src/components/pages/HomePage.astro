@@ -1,5 +1,6 @@
 ---
 import AboutSection from '../about/AboutSection.astro';
+import GitHubBadge from '../shell/GitHubBadge.astro';
 import MobileHeader from '../shell/MobileHeader.astro';
 import SiteFooter from '../shell/SiteFooter.astro';
 import SiteSidebar from '../shell/SiteSidebar.astro';
@@ -21,10 +22,9 @@ const projects = await loadProjects(locale);
 <BaseLayout locale={locale} title={copy.site.title} description={copy.site.description}>
   <a class="skip" href="#projects">{copy.common.skipProjects}</a>
   <SiteSidebar locale={locale} />
+  <MobileHeader locale={locale} />
 
   <main>
-    <MobileHeader locale={locale} />
-
     <section class="mobile-intro">
       <p class="eyebrow">{copy.site.intro.eyebrow}</p>
       <h1>{copy.site.intro.heading}</h1>
@@ -35,4 +35,6 @@ const projects = await loadProjects(locale);
     <AboutSection locale={locale} />
     <SiteFooter locale={locale} />
   </main>
+
+  <GitHubBadge locale={locale} />
 </BaseLayout>

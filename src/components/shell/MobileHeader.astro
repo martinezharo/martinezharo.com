@@ -1,5 +1,4 @@
 ---
-import { site } from '../../config/site';
 import { getCopy, localizedPath, routeFromPath, type Locale } from '../../i18n';
 import './identity.css';
 import './mobile-header.css';
@@ -12,18 +11,27 @@ const { locale } = Astro.props;
 const copy = getCopy(locale);
 
 // With no rail below the breakpoint this header is the only navigation there
-// is, so any page that is not reachable by scrolling has to be named here.
+// is, so every page has to be named in it — and it stays on screen while the
+// page scrolls, because a rail that can be scrolled away is not a rail.
+//
+// GitHub is the exception: it leaves the site rather than moving around it, and
+// it lives in the badge pinned to the opposite corner (GitHubBadge.astro).
 const route = routeFromPath(Astro.url.pathname);
+const home = localizedPath(locale, '/');
+const onHome = route === '/';
 const stackPath = localizedPath(locale, '/stack');
 ---
 
 <header class="mobile-head">
-  <a class="identity" href={localizedPath(locale, '/')} aria-label={copy.navigation.home}>
-    <img src="/icon.svg" alt="" width="30" height="30" />
-    <span>{site.name}</span>
+  {/* The mark alone. On the two pages that have one, the name is the heading a
+      finger's width below this; on a project's page it is the project's. Either
+      way the bar was spending most of its width repeating what came next, and
+      the room is worth more than the second printing. */}
+  <a class="identity" href={home} aria-label={copy.navigation.home} aria-current={onHome ? 'page' : undefined}>
+    <img src="/icon.svg" alt="" width="28" height="28" />
   </a>
   <nav aria-label={copy.navigation.primary}>
+    <a href={home} aria-current={onHome ? 'page' : undefined}>{copy.navigation.home}</a>
     <a href={stackPath} aria-current={route === '/stack' ? 'page' : undefined}>{copy.navigation.stack}</a>
-    <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
   </nav>
 </header>

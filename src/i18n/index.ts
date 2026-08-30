@@ -48,6 +48,8 @@ export interface LocaleCopy {
     language: string;
     stack: string;
     github: string;
+    /** The badge shows the mark alone, so its name has to be spoken here. */
+    githubBadge: string;
   };
   common: {
     skipProjects: string;
@@ -183,6 +185,7 @@ const copies: Record<Locale, LocaleCopy> = {
       language: 'Language',
       stack: 'Stack',
       github: 'GitHub ↗',
+      githubBadge: 'GitHub profile (opens in a new tab)',
     },
     common: {
       skipProjects: 'Skip to projects',
@@ -337,6 +340,7 @@ const copies: Record<Locale, LocaleCopy> = {
       language: 'Idioma',
       stack: 'Stack',
       github: 'GitHub ↗',
+      githubBadge: 'Perfil de GitHub (se abre en una pestaña nueva)',
     },
     common: {
       skipProjects: 'Saltar a los proyectos',

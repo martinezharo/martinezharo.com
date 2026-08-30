@@ -36,9 +36,24 @@ main {
 
 @media (--compact) {
   /* No rail below the breakpoint, so the column takes the whole screen and the
-     mobile header stands in for it. */
+     mobile header stands in for it.
+
+     Two adjustments follow from the header and the badge being pinned rather
+     than drawn in the column. The header sits above `main` and takes its own
+     52px, so a full screen is what is left under it — without the subtraction
+     every short page ends in a 52px scroll that leads nowhere. And the badge
+     floats over whatever the bottom right corner of the screen happens to hold,
+     which at the end of the page is the copyright line: the last of the padding
+     is the room the badge needs to come to rest in nothing. */
   main {
+    min-height: calc(100vh - var(--head-h));
     margin-left: 0;
-    padding: 0 20px 30px;
+    padding: 0 var(--edge) calc(var(--edge) + var(--badge-size) + 12px);
+  }
+
+  /* Both skip links land inside the column, which now runs under the header.
+     Without this the heading they jump to arrives beneath it. */
+  main :target {
+    scroll-margin-top: calc(var(--head-h) + 12px);
   }
 }

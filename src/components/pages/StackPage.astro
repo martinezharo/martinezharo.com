@@ -1,4 +1,5 @@
 ---
+import GitHubBadge from '../shell/GitHubBadge.astro';
 import MobileHeader from '../shell/MobileHeader.astro';
 import SiteFooter from '../shell/SiteFooter.astro';
 import SiteSidebar from '../shell/SiteSidebar.astro';
@@ -18,10 +19,9 @@ const copy = getCopy(locale);
 <BaseLayout locale={locale} title={copy.stack.title} description={copy.stack.description}>
   <a class="skip" href="#stack">{copy.common.skipStack}</a>
   <SiteSidebar locale={locale} intro={copy.stack.intro} />
+  <MobileHeader locale={locale} />
 
   <main>
-    <MobileHeader locale={locale} />
-
     <section class="mobile-intro">
       <p class="eyebrow">{copy.stack.intro.eyebrow}</p>
       <h1>{copy.stack.intro.heading}</h1>
@@ -31,4 +31,6 @@ const copy = getCopy(locale);
     <StackLedger locale={locale} />
     <SiteFooter locale={locale} />
   </main>
+
+  <GitHubBadge locale={locale} />
 </BaseLayout>

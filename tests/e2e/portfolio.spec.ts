@@ -132,6 +132,47 @@ test('switches to the compact layout on mobile', async ({ page }) => {
   await expect(page.locator('.mobile-intro')).toBeVisible();
 });
 
+// The compact shell replaces the rail with two pinned pieces, and the whole
+// point of both is that they are still there once the page has moved.
+test('keeps the compact navigation reachable down the page', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  for (const path of ['/', '/stack']) {
+    await page.goto(path);
+
+    const header = page.locator('.mobile-head');
+    const badge = page.locator('.gh-badge');
+    // Home is a named entry rather than something you have to guess the mark
+    // for, and it is named on the page it leads away from too. The mark leads
+    // there as well, which is why the entries are counted in the nav alone.
+    const entries = header.locator('nav');
+    await expect(entries.getByRole('link', { name: 'Home', exact: true })).toBeVisible();
+    await expect(entries.getByRole('link', { name: 'Stack', exact: true })).toBeVisible();
+    await expect(badge).toHaveAttribute('href', 'https://github.com/martinezharo');
+
+    await page.mouse.wheel(0, 2000);
+    await expect(header).toBeInViewport();
+    await expect(badge).toBeInViewport();
+  }
+
+  // A project used to have `back` and nothing else below the breakpoint.
+  await page.goto('/');
+  await page.locator('[data-item]:visible a').first().click();
+  await expect(page.locator('.story')).toBeVisible();
+  await expect(page.locator('.mobile-head').getByRole('link', { name: 'Stack' })).toBeVisible();
+  await expect(page.locator('.gh-badge')).toBeInViewport();
+});
+
+// The rail on a wide screen already holds GitHub and never scrolls away, so the
+// badge would be the same address offered twice.
+test('leaves the GitHub badge to the compact layout', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  await expect(page.locator('.gh-badge')).toBeHidden();
+  await expect(page.locator('.side').getByRole('link', { name: /GitHub/ })).toBeVisible();
+});
+
 test('links every stack tool to its official website', async ({ page }) => {
   await page.goto('/stack');
 

@@ -5,24 +5,40 @@
 }
 
 @media (--compact) {
+  /* Sticky rather than fixed: it holds the top of the screen for the whole
+     page, and still takes its own room in the flow so nothing has to be pushed
+     down by hand. The fill is what the page scrolls behind — on a black plane
+     it shows as nothing but the hairline it already had. The stacking order
+     stays under the filter menus (14, 15) and the skip link (20). */
   .mobile-head {
-    height: 76px;
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    height: var(--head-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 var(--edge);
     border-bottom: 1px solid var(--line);
-    font-size: 12px;
-  }
-
-  .mobile-head .identity {
+    background: var(--bg);
     font-size: 13px;
   }
 
-  /* The two entries share the right edge the GitHub link used to hold alone. */
+  /* Both entries name a page of this site. The GitHub link that used to share
+     this edge with Stack is the badge now, since it was the only one here that
+     led off the site. */
   .mobile-head nav {
     display: flex;
     gap: 18px;
     color: var(--muted);
+  }
+
+  /* Small labels on a bar this short are an easy thing to miss with a thumb, so
+     each one is given the height of the bar to be pressed anywhere within. */
+  .mobile-head nav a {
+    display: flex;
+    align-items: center;
+    height: var(--head-h);
   }
 
   .mobile-head nav a[aria-current='page'] {

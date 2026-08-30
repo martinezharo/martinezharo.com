@@ -1,0 +1,32 @@
+---
+import Icon from '../ui/Icon.astro';
+import { site } from '../../config/site';
+import { getCopy, type Locale } from '../../i18n';
+import './github-badge.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+
+// GitHub only below the breakpoint. Above it the rail already holds the link
+// and never leaves the screen, so a second one pinned to the corner would be
+// the same address offered twice.
+//
+// It is out of the header because it is not the same kind of thing as what the
+// header holds: Home and Stack move you around this site, this one leaves it.
+// Pinned to the corner opposite the bar, it is in reach of the thumb for the
+// whole page rather than for the first screen of it.
+---
+
+<a
+  class="gh-badge"
+  href={site.githubUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={copy.navigation.githubBadge}
+>
+  <Icon name="github" class="gh-badge-mark" />
+</a>

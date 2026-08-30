@@ -1,5 +1,7 @@
 ---
 import Icon from '../../components/ui/Icon.astro';
+import GitHubBadge from '../../components/shell/GitHubBadge.astro';
+import MobileHeader from '../../components/shell/MobileHeader.astro';
 import SiteFooter from '../../components/shell/SiteFooter.astro';
 import { getCopy, localizedPath, type Locale } from '../../i18n';
 import type { Project, ProjectDetail } from './model';
@@ -32,6 +34,13 @@ const story = readStory(project.history, projects, project.slug);
 ---
 
 <a class="skip" href="#story">{copy.common.skipStory}</a>
+
+{/* Below the breakpoint the rail stops being a rail and runs down the page with
+    everything else, which used to leave a project with `back` as its only way
+    out — the rest of the site was reachable only through the list. The header
+    is the same one the other two pages carry; `back` stays where it is, because
+    returning to the list you came from is not the same offer as the list. */}
+<MobileHeader locale={locale} />
 
 <aside class="project-rail">
   <a class="back" href={localizedPath(locale, '/')}><span class="back-mark" aria-hidden="true">←</span>{copy.detail.back}</a>
@@ -112,3 +121,5 @@ const story = readStory(project.history, projects, project.slug);
 
   <SiteFooter locale={locale} />
 </main>
+
+<GitHubBadge locale={locale} />
