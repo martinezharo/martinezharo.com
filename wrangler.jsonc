@@ -5,6 +5,14 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
   "routes": [{ "pattern": "martinezharo.com", "custom_domain": true }],
+  // The site answers at its own address and nowhere else, so the workers.dev
+  // route stays off. Preview URLs are the exception: a build from a branch
+  // uploads a version rather than deploying one, and a version with no address
+  // is a deployment nobody can look at. Stating both here is what keeps the
+  // pair from moving when the Worker is recreated somewhere else — the default
+  // for `preview_urls` is whatever `workers_dev` is, which would be off.
+  "workers_dev": false,
+  "preview_urls": true,
   // The portfolio reads the same database the previous site wrote: only the
   // `projects` table, and only for reading. `remote` points local dev and
   // preview at the real database too — a local D1 would start empty, and an
