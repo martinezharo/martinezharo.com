@@ -481,3 +481,30 @@ test('falls back to the list\'s own order when your filter leaves the project ou
   await expect(page.locator('.next')).toBeVisible();
   await expect(page.locator('.next-name')).toHaveText(order[index + 1].name);
 });
+
+// The row that leads to a project's own site wears that site's mark. Finding it
+// means reading someone else's page, which is far too slow to do while
+// rendering, so the mark is a request of its own — and the drawn globe stays
+// underneath for the sites that have none to give.
+test('wears the linked site\'s own mark on the visit row', async ({ page }) => {
+  await page.goto('/projects/klipcode');
+
+  const mark = page.locator('.rail-link-favicon').first();
+  await expect(mark).toHaveAttribute('src', '/projects/klipcode/icon');
+  // Loaded, rather than merely asked for: a mark that failed leaves the icon.
+  await expect
+    .poll(() => mark.evaluate((img: HTMLImageElement) => img.naturalWidth))
+    .toBeGreaterThan(0);
+  await expect(page.locator('.rail-link-icon').first()).not.toHaveClass(/is-drawn/);
+
+  const icon = await page.request.get('/projects/klipcode/icon');
+  expect(icon.status()).toBe(200);
+  expect(icon.headers()['content-type']).toMatch(/^image\//);
+});
+
+// A project with nowhere to send anyone has no mark to serve either, and the
+// 404 is what the row's fallback is written against.
+test('answers with nothing for a project that links nowhere', async ({ page }) => {
+  const icon = await page.request.get('/projects/elitebara/icon');
+  expect(icon.status()).toBe(404);
+});

@@ -62,7 +62,27 @@ const story = readStory(project.history, projects, project.slug);
       {
         links.map((link) => (
           <a class="rail-link" href={link.href} target="_blank" rel="noopener noreferrer">
-            <Icon name={link.icon} class="rail-link-mark" />
+            {/* The site's own mark sits on top of the drawn one. Whether it
+                exists is only known once it has been asked for, so the icon
+                stays underneath and the image takes itself out of the way
+                when the site turns out to have nothing to show. */}
+            {link.favicon ? (
+              <span class="rail-link-mark rail-link-icon">
+                <Icon name={link.icon} class="rail-link-glyph" />
+                <img
+                  class="rail-link-favicon"
+                  src={link.favicon}
+                  alt=""
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.closest('.rail-link-icon').classList.add('is-drawn')"
+                />
+              </span>
+            ) : (
+              <Icon name={link.icon} class="rail-link-mark" />
+            )}
             <span class="rail-link-label">{link.label}</span>
             <span class="rail-link-arrow" aria-hidden="true">
               ↗

@@ -7,6 +7,13 @@ export interface ProjectLink {
   icon: IconName;
   label: string;
   href: string;
+  /**
+   * The site's own mark, served from this origin, for the rows that lead
+   * somewhere with one. It is drawn over the icon and falls back to it: the
+   * address is all the row carries, so whether the site has a favicon at all
+   * is only known once the browser has asked for it.
+   */
+  favicon?: string;
 }
 
 /**
@@ -17,13 +24,21 @@ export interface ProjectLink {
  *
  * Both rows say what pressing them does rather than where they land: an address
  * is for the browser's status bar, and a verb is what makes a row on a hairline
- * read as something to press.
+ * read as something to press. The mark is the exception: where the site has a
+ * favicon of its own it stands in for the drawn globe, because the one thing a
+ * row leading off the site can say at a glance is which site it leads to.
  */
 export function projectLinks(project: ProjectDetail, locale: Locale): ProjectLink[] {
   const copy = getCopy(locale).detail;
   const links: ProjectLink[] = [];
 
-  if (project.url) links.push({ icon: 'globe', label: copy.visitSite, href: project.url });
+  if (project.url)
+    links.push({
+      icon: 'globe',
+      label: copy.visitSite,
+      href: project.url,
+      favicon: `/projects/${project.slug}/icon`,
+    });
   if (project.repo) links.push({ icon: 'github', label: copy.viewSource, href: project.repo });
 
   return links;
