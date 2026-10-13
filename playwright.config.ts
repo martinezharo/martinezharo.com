@@ -19,12 +19,10 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },
-  // The build is a Worker now, so the tests run against the Workers runtime and
-  // the real D1 database rather than a static file server. This is `wrangler
-  // dev` on the config the adapter emits rather than `astro preview`, which
-  // daemonizes itself and would look like an early exit here.
+  // Exercise the built Worker with synthetic local D1 fixtures. Tests must
+  // never consume production quotas or depend on records edited in the panel.
   webServer: {
-    command: `pnpm exec wrangler dev -c dist/server/wrangler.json --port ${port}`,
+    command: 'node scripts/test-server.mjs',
     url: origin,
     reuseExistingServer: false,
     timeout: 60_000,

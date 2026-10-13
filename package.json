@@ -13,7 +13,7 @@
     "check": "wrangler types && astro check",
     "preview": "astro preview",
     "deploy": "astro build && wrangler deploy -c dist/server/wrangler.json",
-    "test:e2e": "astro build && playwright test",
+    "test:e2e": "ASTRO_LOCAL_BINDINGS=1 astro build && playwright test",
     "astro": "astro"
   },
   "dependencies": {
