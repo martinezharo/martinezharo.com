@@ -38,6 +38,9 @@ const structuredData = pageStructuredData(Astro.site, canonical.href, locale, ti
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
+    {/* Google Search gets a supported raster icon without a theme condition. */}
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48 96x96" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="96x96" />
     <link rel="icon" href="/icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="dark" />
