@@ -36,10 +36,11 @@
       "allowed_sender_addresses": ["contact@martinezharo.com"]
     }
   ],
-  // The public half of the form's Turnstile pair. Empty keeps the form off the
-  // page and offers the address instead; the secret half is the
-  // TURNSTILE_SECRET_KEY Worker secret, set outside this file.
+  // The public half of the form's Turnstile pair (widget "martinezharo.com
+  // contact form", valid on martinezharo.com and olma.workers.dev previews).
+  // Emptied, it keeps the form off the page and offers the address instead.
+  // The secret half is the TURNSTILE_SECRET_KEY Worker secret.
   "vars": {
-    "TURNSTILE_SITE_KEY": ""
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAFVeVi21_l_96Nii"
   }
 }

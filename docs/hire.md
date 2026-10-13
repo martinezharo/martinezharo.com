@@ -25,23 +25,19 @@ Turnstile token, and sends the message to `site.email` from
 `contact@martinezharo.com` through the `EMAIL` binding, with the sender as
 reply-to. A hidden honeypot field is accepted and discarded.
 
-The form only renders when `TURNSTILE_SITE_KEY` is set; until then the section
-offers the address instead. To turn it on:
+The form only renders when `TURNSTILE_SITE_KEY` is set; emptied, the section
+offers the address instead. Current setup:
 
-1. **Email Sending.** In the Cloudflare dashboard, open Compute > Email Service >
-   Email Sending and onboard `martinezharo.com`. This adds the `cf-bounce`
-   records (MX, SPF, DKIM, DMARC) next to the existing Email Routing ones.
-2. **Turnstile.** Create a widget for `martinezharo.com` (managed mode is
-   fine; the form renders it with `appearance: interaction-only`). Put the site
-   key in `vars.TURNSTILE_SITE_KEY` in `wrangler.jsonc`, and store the secret:
+- **Email Sending** is enabled for `martinezharo.com` (Compute > Email Service >
+  Email Sending), with its `cf-bounce` records next to the Email Routing ones.
+- **Turnstile** widget "martinezharo.com contact form", managed mode, valid on
+  `martinezharo.com` and `olma.workers.dev` (so branch previews work). Its site
+  key is `vars.TURNSTILE_SITE_KEY` in `wrangler.jsonc`; its secret is the
+  `TURNSTILE_SECRET_KEY` Worker secret.
 
-   ```sh
-   pnpm exec wrangler secret put TURNSTILE_SECRET_KEY
-   ```
-
-   Preview URLs use a different hostname; add it to the widget's hostnames if
-   the form should work there too.
-3. Deploy, then send a test message from the page.
+To rotate the secret while a preview version is the latest upload, use
+`wrangler versions secret put TURNSTILE_SECRET_KEY` (plain `secret put` refuses
+because it would deploy that preview); the next deploy inherits it.
 
 If the secret is missing every message is refused with `challenge`; if the
 binding cannot send, the form answers `unavailable` and points at the address.
