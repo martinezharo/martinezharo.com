@@ -99,3 +99,16 @@ test('HTML publishes linked data and Markdown discovery safely, including after 
   graph = (await data())['@graph'];
   expect(graph.find((node: { '@type': string }) => node['@type'] === 'CreativeWork').description).toContain('</script>');
 });
+
+test('share cards use the profile image, or the project\'s own once it has one', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/home\.png$/);
+
+  await page.goto('/projects/rankmaker');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/projects\/rankmaker\.png$/);
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /\/og\/projects\/rankmaker\.png$/);
+
+  await page.goto('/projects/fewya');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/home\.png$/);
+});

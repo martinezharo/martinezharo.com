@@ -2,6 +2,8 @@
 import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/geist';
 import '../styles/global.css';
+import { site } from '../config/site';
+import { PROJECTS_WITH_CARD } from '../features/discovery/cards';
 import { LOCALES, localizedPath, routeFromPath, type Locale } from '../i18n';
 import type { ProjectDetail } from '../features/projects/model';
 import { markdownPath } from '../features/discovery/urls';
@@ -27,6 +29,14 @@ const alternates = LOCALES.map((code) => ({
   code,
   href: new URL(localizedPath(code, route), Astro.site).href,
 }));
+// A project is shared as its own card once it has one, everything else as the
+// profile's. The image is read from wherever the page itself was served, so a
+// branch preview shows its own cards rather than ones the live site does not
+// have yet.
+const image = new URL(
+  project && PROJECTS_WITH_CARD.has(project.slug) ? `/og/projects/${project.slug}.png` : '/og/home.png',
+  Astro.url,
+).href;
 const structuredData = pageStructuredData(Astro.site, canonical.href, locale, title, description, project);
 ---
 
@@ -46,6 +56,19 @@ const structuredData = pageStructuredData(Astro.site, canonical.href, locale, ti
     <meta name="color-scheme" content="dark" />
 
     <link rel="canonical" href={canonical.href} />
+    <meta property="og:type" content={project ? 'article' : 'website'} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:locale" content={locale === 'es' ? 'es_ES' : 'en_US'} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
     {alternates.map(({ code, href }) => <link rel="alternate" hreflang={code} href={href} />)}
     {/* English is what a reader of neither language gets. */}
     <link rel="alternate" hreflang="x-default" href={new URL(localizedPath('en', route), Astro.site).href} />
