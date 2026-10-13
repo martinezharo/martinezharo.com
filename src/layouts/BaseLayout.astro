@@ -28,8 +28,10 @@ const alternates = LOCALES.map((code) => ({
   code,
   href: new URL(localizedPath(code, route), Astro.site).href,
 }));
-// A project is shared as its own card, everything else as the profile's.
-const image = new URL(project ? `/og/projects/${project.slug}.png` : '/og/home.png', Astro.site).href;
+// A project is shared as its own card, everything else as the profile's. The
+// image is read from wherever the page itself was served, so a branch preview
+// shows its own cards rather than ones the live site does not have yet.
+const image = new URL(project ? `/og/projects/${project.slug}.png` : '/og/home.png', Astro.url).href;
 const structuredData = pageStructuredData(Astro.site, canonical.href, locale, title, description, project);
 ---
 
