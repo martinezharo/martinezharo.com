@@ -18,6 +18,6 @@ const [project, projects] = await Promise.all([loadProject(slug, locale), loadPr
 if (!project) return new Response(copy.errors.projectNotFound, { status: 404 });
 ---
 
-<BaseLayout locale={locale} title={`${project.name} — ${site.name}`} description={project.blurb || copy.site.description}>
+<BaseLayout locale={locale} title={`${project.name} — ${site.name}`} description={project.blurb || copy.site.description} project={project}>
   <ProjectPage project={project} projects={projects} locale={locale} />
 </BaseLayout>
