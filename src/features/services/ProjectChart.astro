@@ -1,0 +1,48 @@
+---
+import { getCopy, localizedPath, type Locale } from '../../i18n';
+import type { Project } from '../projects/model';
+import { formatPrice } from './model';
+import { quoteProjects } from './quotes';
+import './chart.css';
+
+interface Props {
+  locale: Locale;
+  projects: Project[];
+}
+
+const { locale, projects } = Astro.props;
+const copy = getCopy(locale);
+const quotes = quoteProjects(projects);
+const highest = Math.max(1, ...quotes.map((quote) => quote.price));
+---
+
+{
+  quotes.length > 0 && (
+    <section class="chart" id="quotes">
+      <h2>{copy.servicesPage.quotes.heading}</h2>
+      <p class="chart-lede">{copy.servicesPage.quotes.lede}</p>
+
+      <ol class="chart-bars">
+        {quotes.map(({ project, price }) => {
+          const amount = formatPrice(price, locale);
+          return (
+            <li style={`--share: ${price / highest}`}>
+              <a
+                href={localizedPath(locale, `/projects/${project.slug}`)}
+                aria-label={copy.servicesPage.quotes.priceLabel(project.name, amount)}
+              >
+                <span class="chart-column">
+                  <span class="chart-price">{amount}</span>
+                  <span class="chart-bar">
+                    <img src={project.logo} alt="" width="40" height="40" />
+                  </span>
+                </span>
+                <span class="chart-name">{project.name}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  )
+}

@@ -9,7 +9,7 @@ function xml(value: string): string {
 }
 
 export function sitemap(origin: URL | undefined, projects: readonly Project[]): string {
-  const routes = ['/', '/stack', ...projects.map((project) => projectPath(project.slug))];
+  const routes = ['/', '/stack', '/services', ...projects.map((project) => projectPath(project.slug))];
   const entries = routes.flatMap((route) => {
     const alternates = [...LOCALES.map((locale) => ({
       language: locale,

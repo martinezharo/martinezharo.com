@@ -3,6 +3,8 @@ import { getCopy, LOCALES, localizedPath, type Locale } from '../../i18n';
 import type { Project, ProjectDetail } from '../projects/model';
 import { formatProjectRange } from '../projects/model';
 import { STACK } from '../stack/model';
+import { SERVICES, formatPrice } from '../services/model';
+import { quoteProjects } from '../services/quotes';
 import { absoluteUrl, markdownPath, projectPath } from './urls';
 
 function text(value: string): string {
@@ -28,6 +30,7 @@ export function llms(origin: URL | undefined, projects: readonly Project[]): str
     ...LOCALES.flatMap((locale) => [
       `- ${link(`Profile (${locale})`, absoluteUrl(markdownPath(locale, '/'), origin))}: Biography, contact, and current project list.`,
       `- ${link(`Stack (${locale})`, absoluteUrl(markdownPath(locale, '/stack'), origin))}: Tools and links to their official websites.`,
+      `- ${link(`Services (${locale})`, absoluteUrl(markdownPath(locale, '/services'), origin))}: Services, indicative prices, and how to get in touch.`,
     ]),
     '## Projects',
     ...projects.flatMap((project) => LOCALES.map((locale) =>
@@ -47,7 +50,7 @@ export function profileMarkdown(origin: URL | undefined, locale: Locale, project
     source(origin, locale, '/'),
     `## ${text(copy.about.heading)}`,
     copy.about.body,
-    `Contact: ${site.email}\nGitHub: ${site.githubUrl}`,
+    `Contact: ${site.email}\nServices: ${absoluteUrl(markdownPath(locale, '/services'), origin)}\nGitHub: ${site.githubUrl}`,
     `## ${text(copy.projects.heading)}`,
     ...projects.map((project) => [
       `- ${link(project.name, absoluteUrl(markdownPath(locale, projectPath(project.slug)), origin))}: ${text(project.blurb)}`,
@@ -68,6 +71,42 @@ export function stackMarkdown(origin: URL | undefined, locale: Locale): string {
       `## ${text(copy.stack.categories[category.key])}`,
       ...category.tools.map((tool) => `- ${link(tool.name, tool.url)}`),
     ]),
+  ].join('\n\n') + '\n';
+}
+
+export function servicesMarkdown(origin: URL | undefined, locale: Locale, projects: readonly Project[]): string {
+  const copy = getCopy(locale);
+  const words = copy.servicesPage;
+  const quotes = quoteProjects(projects);
+  return [
+    `# ${text(words.title)}`,
+    `> ${text(words.description)}`,
+    source(origin, locale, '/services'),
+    `## ${text(words.services.heading)}`,
+    text(words.services.note),
+    ...SERVICES.flatMap((service) => {
+      const item = words.services.items[service.key];
+      return [
+        `### ${text(item.name)}`,
+        text(item.pitch),
+        service.tiers.map((tier) => {
+          const meta = [words.services.delivery(tier.days)];
+          if (tier.revisions !== null) meta.push(words.services.revisions(tier.revisions));
+          return `- ${text(item.tiers[tier.key].name)}: ${formatPrice(tier.price, locale)} (${meta.join(', ')}). ${text(item.tiers[tier.key].description)}`;
+        }).join('\n'),
+        `${text(words.services.includesLabel)}:\n${item.includes.map((line) => `- ${text(line)}`).join('\n')}`,
+        ...(item.excludes ? [text(item.excludes)] : []),
+      ];
+    }),
+    ...(quotes.length ? [
+      `## ${text(words.quotes.heading)}`,
+      text(words.quotes.lede),
+      quotes.map(({ project, price, duration }) =>
+        `- ${link(project.name, absoluteUrl(markdownPath(locale, projectPath(project.slug)), origin))}: ${formatPrice(price, locale)} · ${words.quotes.duration[duration]}`,
+      ).join('\n'),
+    ] : []),
+    `## ${text(words.contact.heading)}`,
+    `${text(words.contact.lede)}\n\nEmail: ${site.email}\nFiverr: ${site.fiverrUrl}`,
   ].join('\n\n') + '\n';
 }
 

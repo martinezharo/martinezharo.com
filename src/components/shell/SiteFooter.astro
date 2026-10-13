@@ -1,5 +1,5 @@
 ---
-import { mailto, site } from '../../config/site';
+import { site } from '../../config/site';
 import {
   LOCALE_NAMES,
   LOCALE_QUERY,
@@ -29,13 +29,18 @@ const year = new Date().getFullYear();
 // browser header and bounces straight back — the switch would do nothing. The
 // middleware records the choice and redirects to the bare address.
 const other = alternateLocale(locale);
-const otherHref = `${localizedPath(other, routeFromPath(Astro.url.pathname))}?${LOCALE_QUERY}=${other}`;
+const route = routeFromPath(Astro.url.pathname);
+const otherHref = `${localizedPath(other, route)}?${LOCALE_QUERY}=${other}`;
+
+// The invitation leads to the form. On the services page the form is already a
+// scroll away, so the link goes straight to it rather than reloading the page.
+const contactHref = route === '/services' ? '#contact' : `${localizedPath(locale, '/services')}#contact`;
 ---
 
 <footer>
   <p class="invitation">
     {copy.footer.prompt}{' '}
-    <a href={mailto}>{site.email}</a>
+    <a href={contactHref}>{copy.footer.cta}</a>
   </p>
   <div class="meta">
     <a class="language" href={otherHref} hreflang={other} lang={other} rel="alternate" aria-label={copy.navigation.language}>

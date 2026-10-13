@@ -1,5 +1,5 @@
 ---
-import { mailto, site } from '../../config/site';
+import { site } from '../../config/site';
 import { getCopy, localizedPath, routeFromPath, type Locale } from '../../i18n';
 import './identity.css';
 import './sidebar.css';
@@ -18,7 +18,7 @@ const { locale, intro } = Astro.props;
 const copy = getCopy(locale);
 const railIntro = intro ?? copy.site.intro;
 
-// Both nav entries name a page, so each one has to know whether it is the page
+// The site's own nav entries name a page, so each one has to know whether it is the page
 // you are already standing on. `routeFromPath` strips the locale prefix first,
 // so this is one question rather than one per language.
 const route = routeFromPath(Astro.url.pathname);
@@ -27,6 +27,9 @@ const onHome = route === '/';
 
 const stackPath = localizedPath(locale, '/stack');
 const onStack = route === '/stack';
+
+const servicesPath = localizedPath(locale, '/services');
+const onServices = route === '/services';
 ---
 
 <aside class="side">
@@ -44,11 +47,14 @@ const onStack = route === '/stack';
   <nav aria-label={copy.navigation.primary}>
     <a href={home} aria-current={onHome ? 'page' : undefined}>{copy.navigation.home}</a>
     <a href={stackPath} aria-current={onStack ? 'page' : undefined}>{copy.navigation.stack}</a>
+    <a href={servicesPath} aria-current={onServices ? 'page' : undefined}>{copy.navigation.services}</a>
     <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
   </nav>
 
   <div class="side-foot">
     <span class="availability"><i aria-hidden="true"></i>{copy.site.availability}</span>
-    <a href={mailto}>{site.email}</a>
+    {/* The availability line is the question; this is where it is answered.
+        On the services page itself the answer is the page, so the line stands alone. */}
+    {!onServices && <a href={servicesPath}>{copy.site.servicesCta}</a>}
   </div>
 </aside>

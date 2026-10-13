@@ -6,6 +6,14 @@ import { spawn, spawnSync } from 'node:child_process';
 const configPath = 'dist/server/wrangler.test.json';
 const config = JSON.parse(readFileSync('dist/server/wrangler.json', 'utf8'));
 config.d1_databases = config.d1_databases.map((database) => ({ ...database, remote: false }));
+// Cloudflare's published Turnstile test pair: a widget that always passes and a
+// secret that accepts its dummy token. The secret is a test value, not a real
+// one, so it can live here.
+config.vars = {
+  ...config.vars,
+  TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
+  TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA',
+};
 writeFileSync(configPath, JSON.stringify(config));
 const storage = '.wrangler/test-state';
 const seed = spawnSync('pnpm', [
