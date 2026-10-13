@@ -5,8 +5,8 @@ import SiteFooter from '../shell/SiteFooter.astro';
 import SiteSidebar from '../shell/SiteSidebar.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactForm from '../../features/hire/ContactForm.astro';
-import ProjectQuotes from '../../features/hire/ProjectQuotes.astro';
-import ServiceList from '../../features/hire/ServiceList.astro';
+import ProjectChart from '../../features/hire/ProjectChart.astro';
+import ServicePosters from '../../features/hire/ServicePosters.astro';
 import { loadProjects } from '../../features/projects/repository';
 import { getCopy, type Locale } from '../../i18n';
 import '../../styles/hire-page.css';
@@ -17,8 +17,8 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = getCopy(locale);
-// The same one query the home page makes: the quotes borrow each project's
-// name, logo and blurb rather than keeping a second copy of them.
+// The same one query the home page makes: the chart borrows each project's
+// name and logo rather than keeping a second copy of them.
 const projects = await loadProjects(locale);
 ---
 
@@ -34,8 +34,8 @@ const projects = await loadProjects(locale);
       <p class="intro-description">{copy.hire.intro.body}</p>
     </section>
 
-    <ServiceList locale={locale} />
-    <ProjectQuotes locale={locale} projects={projects} />
+    <ServicePosters locale={locale} />
+    <ProjectChart locale={locale} projects={projects} />
     <ContactForm locale={locale} />
     <SiteFooter locale={locale} />
   </main>

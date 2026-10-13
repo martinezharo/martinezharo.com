@@ -1,0 +1,72 @@
+---
+import { site } from '../../config/site';
+import { getCopy, type Locale } from '../../i18n';
+import { SERVICES, formatPrice, type ServiceKey } from './model';
+import './posters.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+const services = copy.hire.services;
+
+// One colour per service, so the three read as three posters on one wall. The
+// ink is the same hue taken nearly to black, which keeps every line of type on
+// its poster well past 7:1.
+const paint: Record<ServiceKey, { bg: string; ink: string }> = {
+  webApp: { bg: '#b49bff', ink: '#120b26' },
+  landing: { bg: '#ffd84d', ink: '#231a00' },
+  redesign: { bg: '#ff8ad0', ink: '#2a0a1e' },
+};
+---
+
+<section class="posters" id="services" aria-label={services.heading}>
+  {
+    SERVICES.map((service) => {
+      const words = services.items[service.key];
+      const colors = paint[service.key];
+      return (
+        <article class="poster" data-service={service.key} style={`--bg: ${colors.bg}; --ink: ${colors.ink}`}>
+          <div class="poster-head">
+            <h2>{words.name}</h2>
+            <p>{words.pitch}</p>
+            <a class="poster-ask" href="#contact" data-ask={service.key}>{services.ask}</a>
+          </div>
+          <p class="poster-from">
+            <span>{services.from}</span>
+            <strong>{formatPrice(service.tiers[0]!.price, locale)}</strong>
+          </p>
+          <ul class="poster-tiers">
+            {service.tiers.map((tier) => (
+              <li>
+                <span class="poster-tier-name">{words.tiers[tier.key].name}</span>
+                <span class="poster-tier-price">{formatPrice(tier.price, locale)}</span>
+                <span class="poster-tier-days">{services.delivery(tier.days)}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      );
+    })
+  }
+
+  <p class="posters-note">
+    {services.note}{' '}
+    <a href={site.fiverrUrl} target="_blank" rel="noopener noreferrer">{services.fiverr}</a>
+  </p>
+</section>
+
+<script>
+  // A poster's button names its service, so the form below arrives with that
+  // service already chosen. Delegated, so it survives the client router's swaps.
+  document.addEventListener('click', (event) => {
+    const ask = (event.target as HTMLElement).closest<HTMLElement>('[data-ask]');
+    if (!ask) return;
+    const choice = document.querySelector<HTMLInputElement>(
+      `[data-contact] [name=service][value="${ask.dataset.ask}"]`,
+    );
+    if (choice) choice.checked = true;
+  });
+</script>

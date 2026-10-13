@@ -35,6 +35,7 @@ export interface MetricCopy {
 
 export interface ServiceCopy {
   name: string;
+  /** One line under the name: what the service gets you. */
   pitch: string;
   includes: string[];
   /** What a package leaves out, said once under the packages. */
@@ -54,6 +55,9 @@ export interface HireCopy {
     heading: string;
     note: string;
     fiverr: string;
+    /** Before the lowest price on each poster. */
+    from: string;
+    ask: string;
     includesLabel: string;
     delivery(days: number): string;
     revisions(count: number): string;
@@ -309,15 +313,17 @@ const copies: Record<Locale, LocaleCopy> = {
       },
       services: {
         heading: 'What I can build for you',
-        note: 'Prices are indicative: every project is different. Tell me about yours and I will give you a fixed quote before starting.',
+        note: 'Indicative prices. Every project is different: you get a fixed quote before I start.',
         fiverr: 'Also on Fiverr ↗',
+        from: 'from',
+        ask: 'Get a quote',
         includesLabel: 'Always included',
         delivery: (days) => `${days} days`,
         revisions: (count) => `${count} revision${count === 1 ? '' : 's'}`,
         items: {
           webApp: {
             name: 'Web app',
-            pitch: "Have an idea for a web app? Tell me what it should do, even if you're not sure about the technical details. I'll design it, build it and get it online.",
+            pitch: 'Your idea as a live app, with domain and hosting.',
             includes: [
               'Built around your requirements, not a template',
               'Works on desktop, tablet and mobile',
@@ -343,7 +349,7 @@ const copies: Record<Locale, LocaleCopy> = {
           },
           landing: {
             name: 'Landing page',
-            pitch: 'A modern landing page for a product, a launch or a business: fast, clear, unmistakably yours, and built to turn a visit into a message.',
+            pitch: 'One page that turns visits into clients.',
             includes: [
               'An original design, not a theme',
               'Fast, accessible and responsive',
@@ -368,7 +374,7 @@ const copies: Record<Locale, LocaleCopy> = {
           },
           redesign: {
             name: 'Redesign',
-            pitch: 'Your site works, but the interface feels dated, inconsistent, awkward, or a little too much like AI slop. I improve it directly in your code, not in a mockup.',
+            pitch: 'Your site, clearer, consistent and nicer to use, fixed in your own code.',
             includes: [
               'Hierarchy, spacing, typography and consistency',
               'Usability and responsiveness',
@@ -394,7 +400,7 @@ const copies: Record<Locale, LocaleCopy> = {
       },
       quotes: {
         heading: 'What my projects would cost',
-        lede: 'What I would charge for each of my own projects if a client ordered it today. A sense of scale, not a price list.',
+        lede: 'If a client ordered them today.',
         count: (projects) => `${projects} project${projects === 1 ? '' : 's'}`,
         duration: { weeks: '1–4 weeks', months: '1–3 months' },
         priceLabel: (name, price) => `${name}: about ${price}`,
@@ -594,15 +600,17 @@ const copies: Record<Locale, LocaleCopy> = {
       },
       services: {
         heading: 'Lo que puedo hacer por ti',
-        note: 'Los precios son orientativos: cada proyecto es único. Cuéntame el tuyo y te daré un presupuesto cerrado antes de empezar.',
+        note: 'Precios orientativos. Cada proyecto es único: te doy un precio cerrado antes de empezar.',
         fiverr: 'También en Fiverr ↗',
+        from: 'desde',
+        ask: 'Pedir presupuesto',
         includesLabel: 'Siempre incluido',
         delivery: (days) => `${days} días`,
         revisions: (count) => `${count} ${count === 1 ? 'revisión' : 'revisiones'}`,
         items: {
           webApp: {
             name: 'Aplicación web',
-            pitch: '¿Tienes una idea para una aplicación web? Cuéntame qué debe hacer, aunque no tengas claros los detalles técnicos. Yo la diseño, la desarrollo y la pongo en marcha.',
+            pitch: 'Tu idea convertida en una app online, con dominio y hosting.',
             includes: [
               'Hecha a partir de tus requisitos, no de una plantilla',
               'Funciona en ordenador, tablet y móvil',
@@ -628,7 +636,7 @@ const copies: Record<Locale, LocaleCopy> = {
           },
           landing: {
             name: 'Landing page',
-            pitch: 'Una landing page moderna para un producto, un lanzamiento o un negocio: rápida, clara, inconfundiblemente tuya y pensada para que una visita acabe en un mensaje.',
+            pitch: 'Una página que convierte visitas en clientes.',
             includes: [
               'Un diseño original, no un tema',
               'Rápida, accesible y adaptada a cualquier pantalla',
@@ -653,7 +661,7 @@ const copies: Record<Locale, LocaleCopy> = {
           },
           redesign: {
             name: 'Rediseño',
-            pitch: 'Tu web funciona, pero la interfaz se ve anticuada, incoherente, incómoda o demasiado «hecha con IA». La mejoro directamente en tu código, no en un mockup.',
+            pitch: 'Tu web, más clara, coherente y agradable de usar, mejorada en tu propio código.',
             includes: [
               'Jerarquía, espaciado, tipografía y coherencia',
               'Usabilidad y adaptación a cualquier pantalla',
@@ -678,8 +686,8 @@ const copies: Record<Locale, LocaleCopy> = {
         },
       },
       quotes: {
-        heading: 'Cuánto costarían mis proyectos',
-        lede: 'Lo que cobraría por cada uno de mis propios proyectos si hoy me lo encargara un cliente. Una idea de la escala, no una tarifa.',
+        heading: 'Lo que costarían mis proyectos',
+        lede: 'Si hoy me los encargara un cliente.',
         count: (projects) => `${projects} proyecto${projects === 1 ? '' : 's'}`,
         duration: { weeks: '1–4 semanas', months: '1–3 meses' },
         priceLabel: (name, price) => `${name}: unos ${price}`,

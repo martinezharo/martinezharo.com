@@ -18,18 +18,26 @@ test('every page leads to the hire page instead of a bare address', async ({ pag
   await expect(page.locator('footer .invitation a')).toHaveAttribute('href', '#contact');
 });
 
-test('lists the services with indicative prices and what my projects would cost', async ({ page }) => {
+test('lists the services as posters, with indicative prices and what my projects would cost', async ({ page }) => {
   await page.goto('/es/hire');
 
-  await expect(page.locator('.service')).toHaveCount(3);
-  await expect(page.locator('.tier')).toHaveCount(9);
-  await expect(page.locator('.services-note')).toContainText('orientativos');
-  await expect(page.locator('.service h3')).toHaveText(['Aplicación web', 'Landing page', 'Rediseño']);
+  const posters = page.locator('.poster');
+  await expect(posters).toHaveCount(3);
+  await expect(posters.locator('h2')).toHaveText(['Aplicación web', 'Landing page', 'Rediseño']);
+  await expect(posters.locator('.poster-tiers li')).toHaveCount(9);
+  await expect(page.locator('.posters-note')).toContainText('orientativos');
 
   // Only quoted projects the portfolio actually renders, dearest first.
-  const quotes = page.locator('.quote');
-  await expect(quotes.locator('.quote-name')).toHaveText(['Fewya', 'Rankmaker']);
-  await expect(quotes.first()).toHaveAttribute('href', '/es/projects/fewya');
+  const bars = page.locator('.chart-bars a');
+  await expect(bars.locator('.chart-name')).toHaveText(['Fewya', 'Rankmaker']);
+  await expect(bars.first()).toHaveAttribute('href', '/es/projects/fewya');
+});
+
+test("a poster's button brings its service down to the form", async ({ page }) => {
+  await page.goto('/hire');
+  await page.locator('.poster[data-service="redesign"] .poster-ask').click();
+  await expect(page).toHaveURL(/#contact$/);
+  await expect(page.locator('[data-contact] [name=service][value=redesign]')).toBeChecked();
 });
 
 test('sends the contact form through the API', async ({ page }) => {

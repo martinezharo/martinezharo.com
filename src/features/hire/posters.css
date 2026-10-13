@@ -1,0 +1,179 @@
+/* The services as three posters: a block of colour each, the name and one line
+   on the left, the lowest price set as large as the column allows on the right,
+   and the three packages along the bottom. The price is the one loud thing on
+   each poster; everything else is set small so it stays that way. */
+
+.posters {
+  display: grid;
+  gap: 16px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+.poster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'head from'
+    'tiers tiers';
+  gap: 28px 32px;
+  align-items: end;
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: 28px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.poster-head {
+  grid-area: head;
+  align-self: start;
+}
+
+.poster-head h2 {
+  margin: 0 0 8px;
+  font-size: clamp(30px, 3.4vw, 48px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.poster-head p {
+  max-width: 34ch;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  opacity: 0.78;
+}
+
+/* Inverted on its poster: the ink becomes the fill and the poster's colour the
+   type, so the button belongs to the poster it sits on. */
+.poster-ask {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform 0.2s;
+}
+
+.poster-ask:hover {
+  transform: scale(1.04);
+}
+
+.poster-ask:focus-visible {
+  outline-color: var(--ink);
+}
+
+.poster-from {
+  grid-area: from;
+  display: grid;
+  justify-items: end;
+  margin: 0;
+}
+
+.poster-from span {
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.poster-from strong {
+  font-size: clamp(64px, 9vw, 150px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.82;
+  letter-spacing: -0.075em;
+}
+
+.poster-tiers {
+  grid-area: tiers;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  list-style: none;
+}
+
+.poster-tiers li {
+  display: grid;
+  gap: 2px;
+  padding: 14px 14px 0 0;
+}
+
+.poster-tier-name {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.poster-tier-price {
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+
+.poster-tier-days {
+  font-size: 12.5px;
+  opacity: 0.7;
+}
+
+.posters-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.posters-note a {
+  color: var(--text);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.posters-note a:hover,
+.posters-note a:focus-visible {
+  color: var(--accent);
+}
+
+/* Under 790px of column the price drops below the name and the button runs the
+   width of the poster, where a thumb can find it. */
+@container page (width < 790px) {
+  .poster {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'from'
+      'tiers';
+    gap: 20px;
+  }
+
+  .poster-head {
+    display: grid;
+  }
+
+  .poster-ask {
+    order: 3;
+    display: block;
+    text-align: center;
+  }
+
+  .poster-from {
+    justify-items: start;
+  }
+
+  .poster-tier-price {
+    font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-ask {
+    transition: none;
+  }
+}
