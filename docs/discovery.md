@@ -19,4 +19,4 @@ After deployment, verify `/robots.txt`, `/sitemap.xml`, `/llms.txt`, a Markdown 
 
 For favicon changes, verify both raster URLs return HTTP 200 with an image content type and request indexing of the canonical home page in Search Console. [Google's favicon guidelines](https://developers.google.com/search/docs/appearance/favicon-in-search) require a crawlable square icon in a supported format; SVG is not listed. Google may take several days to several weeks to recrawl and process the icon, and display is not guaranteed.
 
-Open Graph and Twitter Cards are intentionally outside this change.
+Open Graph and Twitter Cards use a 1200×630 image: `/og/home.png` for the profile and `/og/projects/{slug}.png` for a project. Only the Rankmaker card exists so far; the other projects need theirs before this ships.
