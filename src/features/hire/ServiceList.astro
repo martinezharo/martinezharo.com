@@ -1,0 +1,64 @@
+---
+import { site } from '../../config/site';
+import { getCopy, type Locale } from '../../i18n';
+import { SERVICES, formatPrice } from './model';
+import './services.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+const services = copy.hire.services;
+---
+
+<section class="services" id="services">
+  <div class="section-head">
+    <h2>{services.heading}</h2>
+    <a class="services-fiverr" href={site.fiverrUrl} target="_blank" rel="noopener noreferrer">
+      {services.fiverr}
+    </a>
+  </div>
+
+  <p class="services-note"><i aria-hidden="true"></i>{services.note}</p>
+
+  <ol class="service-list">
+    {
+      SERVICES.map((service, index) => {
+        const words = services.items[service.key];
+        return (
+          <li class="service" data-service={service.key}>
+            <header class="service-head">
+              <span class="service-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{words.name}</h3>
+              <p class="service-pitch">{words.pitch}</p>
+            </header>
+
+            <ul class="tiers">
+              {service.tiers.map((tier) => (
+                <li class="tier" data-tier={tier.key}>
+                  <span class="tier-name">{words.tiers[tier.key].name}</span>
+                  <span class="tier-price">{formatPrice(tier.price, locale)}</span>
+                  <span class="tier-meta">
+                    {services.delivery(tier.days)}
+                    {tier.revisions !== null && ` · ${services.revisions(tier.revisions)}`}
+                  </span>
+                  <p class="tier-description">{words.tiers[tier.key].description}</p>
+                </li>
+              ))}
+            </ul>
+
+            <div class="service-includes">
+              <span class="service-label">{services.includesLabel}</span>
+              <ul>
+                {words.includes.map((item) => <li>{item}</li>)}
+              </ul>
+              {words.excludes && <p class="service-excludes">{words.excludes}</p>}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+</section>

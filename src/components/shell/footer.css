@@ -35,16 +35,15 @@ footer a {
   text-underline-offset: 4px;
 }
 
-/* The address is the invitation, so it says what it is rather than what to do
-   with it, and it carries the full text colour. The rule under it sits at the
-   muted weight so it reads as a mark on the address instead of a second line
-   of type. It is never dimmer than that: this is the one thing in the footer
+/* The link is the invitation, and it carries the full text colour. The rule
+   under it sits at the muted weight so it reads as a mark on the words instead
+   of a second line of type. It is never dimmer than that: this is the one thing in the footer
    with something to ask, and the affordance has to survive without a cursor
    on it. */
 .invitation a {
   text-decoration-color: var(--muted);
   transition: color 0.2s, text-decoration-color 0.2s;
-  /* Broken across two lines an address stops looking like one. The sentence
+  /* Broken across two lines the link stops looking like one. The sentence
      wraps ahead of it instead. */
   white-space: nowrap;
 }

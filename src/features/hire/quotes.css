@@ -1,0 +1,209 @@
+@import '../../styles/section-head.css';
+
+/* What my own projects would cost, as a ledger of the portfolio itself: the
+   project on the left, how long it would take, and the price over a bar drawn
+   against the dearest of them, so the column reads as proportions first. */
+
+.quotes {
+  max-width: var(--content-max);
+  margin: clamp(72px, 9vw, 120px) auto 0;
+}
+
+.quotes-count {
+  color: var(--faint);
+  font-size: 12px;
+}
+
+.quotes-lede {
+  max-width: 640px;
+  margin: 0 0 26px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.quote-list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.quote-list > li {
+  border-bottom: 1px solid var(--line);
+}
+
+.quote {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 120px 220px;
+  align-items: center;
+  min-height: 84px;
+  padding: 16px 14px 16px 0;
+}
+
+.quote::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  width: 2px;
+  height: 0;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
+}
+
+.quote:hover::before,
+.quote:focus-visible::before {
+  height: 56%;
+  opacity: 1;
+}
+
+.quote-logo {
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.quote-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quote-copy {
+  display: grid;
+  gap: 3px;
+  padding-right: 24px;
+}
+
+.quote-name {
+  font-size: 17px;
+  font-weight: 570;
+  letter-spacing: -0.03em;
+  transition: color 0.2s;
+}
+
+.quote-blurb {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quote-duration {
+  color: var(--faint);
+  font-size: 12px;
+}
+
+.quote-price {
+  display: grid;
+  gap: 8px;
+}
+
+.quote-amount {
+  font-size: 20px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  text-align: right;
+}
+
+.quote-track {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--track);
+}
+
+.quote-fill {
+  display: block;
+  width: calc(var(--share) * 100%);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--muted);
+  transition: background-color 0.2s;
+}
+
+.quote:hover .quote-name,
+.quote:focus-visible .quote-name {
+  color: var(--accent);
+}
+
+.quote:hover .quote-fill,
+.quote:focus-visible .quote-fill {
+  background: var(--accent);
+}
+
+/* Colour is spent on the row being read, as in the stack. There is no such
+   moment without a pointer, so a touch screen gets the marks in colour. */
+@media (hover: hover) {
+  .quote-logo img {
+    filter: grayscale(1) contrast(0.85);
+    opacity: 0.62;
+    transition: filter 0.25s, opacity 0.25s;
+  }
+
+  .quote:hover .quote-logo img,
+  .quote:focus-visible .quote-logo img {
+    filter: none;
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .quote::before {
+    content: none;
+  }
+
+  .quote:active {
+    opacity: 0.65;
+  }
+}
+
+@container page (width < 790px) {
+  .quote {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'logo copy price'
+      'logo duration price';
+    gap: 2px 0;
+    padding-right: 0;
+  }
+
+  .quote-logo {
+    grid-area: logo;
+  }
+
+  .quote-copy {
+    grid-area: copy;
+    padding-right: 16px;
+  }
+
+  .quote-blurb {
+    display: none;
+  }
+
+  .quote-duration {
+    grid-area: duration;
+  }
+
+  .quote-price {
+    grid-area: price;
+    width: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote::before,
+  .quote-name,
+  .quote-fill,
+  .quote-logo img {
+    transition: none;
+  }
+}

@@ -6,6 +6,8 @@ import type {
   SortField,
 } from '../features/projects/model';
 import type { CategoryKey } from '../features/stack/model';
+import type { ContactError, ContactService } from '../features/hire/contact';
+import type { QuoteDuration, ServiceKey, TierKey } from '../features/hire/model';
 
 export const LOCALES = ['en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -31,6 +33,58 @@ export interface MetricCopy {
   hint: string;
 }
 
+export interface ServiceCopy {
+  name: string;
+  pitch: string;
+  includes: string[];
+  /** What a package leaves out, said once under the packages. */
+  excludes?: string;
+  tiers: Record<TierKey, { name: string; description: string }>;
+}
+
+export interface HireCopy {
+  title: string;
+  description: string;
+  intro: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  services: {
+    heading: string;
+    note: string;
+    fiverr: string;
+    includesLabel: string;
+    delivery(days: number): string;
+    revisions(count: number): string;
+    items: Record<ServiceKey, ServiceCopy>;
+  };
+  quotes: {
+    heading: string;
+    lede: string;
+    count(projects: number): string;
+    duration: Record<QuoteDuration, string>;
+    priceLabel(name: string, price: string): string;
+  };
+  contact: {
+    heading: string;
+    lede: string;
+    name: string;
+    email: string;
+    service: string;
+    services: Record<ContactService, string>;
+    message: string;
+    messagePlaceholder: string;
+    submit: string;
+    sending: string;
+    sent: string;
+    errors: Record<ContactError, string>;
+    /** Precedes the address, for anyone who would rather write directly. */
+    direct: string;
+    noscript: string;
+  };
+}
+
 export interface LocaleCopy {
   site: {
     title: string;
@@ -41,12 +95,15 @@ export interface LocaleCopy {
       body: string;
     };
     availability: string;
+    /** The rail's way to the hire page, under the availability line. */
+    hireCta: string;
   };
   navigation: {
     home: string;
     primary: string;
     language: string;
     stack: string;
+    hire: string;
     github: string;
     /** The badge shows the mark alone, so its name has to be spoken here. */
     githubBadge: string;
@@ -55,6 +112,7 @@ export interface LocaleCopy {
     skipProjects: string;
     skipStory: string;
     skipStack: string;
+    skipServices: string;
     close: string;
     builtWith: string;
     officialWebsite(name: string): string;
@@ -80,7 +138,9 @@ export interface LocaleCopy {
   };
   footer: {
     prompt: string;
+    cta: string;
   };
+  hire: HireCopy;
   errors: {
     notFound: string;
     projectNotFound: string;
@@ -177,12 +237,14 @@ const copies: Record<Locale, LocaleCopy> = {
         body: "What I enjoy most is the interface: clean to look at and good to use. Underneath that, I'm always asking myself how to make the app faster, safer, more accessible.",
       },
       availability: 'Around for interesting work',
+      hireCta: 'Services and prices →',
     },
     navigation: {
       home: 'Home',
       primary: 'Primary navigation',
       language: 'Language',
       stack: 'Stack',
+      hire: 'Hire',
       github: 'GitHub ↗',
       githubBadge: 'GitHub profile (opens in a new tab)',
     },
@@ -190,6 +252,7 @@ const copies: Record<Locale, LocaleCopy> = {
       skipProjects: 'Skip to projects',
       skipStory: 'Skip to the story',
       skipStack: 'Skip to the stack',
+      skipServices: 'Skip to the services',
       close: 'Close',
       builtWith: 'Built with',
       officialWebsite: (name) => `Visit the official ${name} website (opens in a new tab)`,
@@ -233,6 +296,134 @@ const copies: Record<Locale, LocaleCopy> = {
     },
     footer: {
       prompt: 'Need something built?',
+      cta: "Let's talk",
+    },
+    hire: {
+      title: 'Hire me — Oliver Martínez Haro',
+      description:
+        'Web apps, landing pages and interface redesigns by Oliver Martínez Haro: what each service includes, indicative prices, and a form to tell him about your project.',
+      intro: {
+        eyebrow: 'Work with me',
+        heading: 'You need it,\nI build it.',
+        body: 'Web apps, landing pages and redesigns, built around what you actually need and launched on your own domain.',
+      },
+      services: {
+        heading: 'What I can build for you',
+        note: 'Prices are indicative: every project is different. Tell me about yours and I will give you a fixed quote before starting.',
+        fiverr: 'Also on Fiverr ↗',
+        includesLabel: 'Always included',
+        delivery: (days) => `${days} days`,
+        revisions: (count) => `${count} revision${count === 1 ? '' : 's'}`,
+        items: {
+          webApp: {
+            name: 'Web app',
+            pitch: "Have an idea for a web app? Tell me what it should do, even if you're not sure about the technical details. I'll design it, build it and get it online.",
+            includes: [
+              'Built around your requirements, not a template',
+              'Works on desktop, tablet and mobile',
+              "Free hosting on Cloudflare's ongoing free plan",
+              'Your domain connected (or a new one registered, +$15)',
+              'The full source code, in a GitHub repository under your account',
+            ],
+            excludes: 'Domain renewals, paid third-party services and ongoing maintenance are not included.',
+            tiers: {
+              basic: {
+                name: 'Mini',
+                description: 'A simple web app with one core feature and up to 2 pages.',
+              },
+              standard: {
+                name: 'Business',
+                description: 'Up to 3 core features and 4 pages, with a database and content upload.',
+              },
+              premium: {
+                name: 'Advanced',
+                description: 'Up to 5 core features and 6 pages, with a database and integrations.',
+              },
+            },
+          },
+          landing: {
+            name: 'Landing page',
+            pitch: 'A modern landing page for a product, a launch or a business: fast, clear, unmistakably yours, and built to turn a visit into a message.',
+            includes: [
+              'An original design, not a theme',
+              'Fast, accessible and responsive',
+              "Free hosting on Cloudflare's ongoing free plan",
+              'Your domain connected',
+              'The full source code, in a GitHub repository under your account',
+            ],
+            tiers: {
+              basic: {
+                name: 'Essential',
+                description: 'One page with up to 5 sections, ready to share.',
+              },
+              standard: {
+                name: 'Launch',
+                description: 'Up to 8 sections, custom animations, a contact form and basic SEO.',
+              },
+              premium: {
+                name: 'Signature',
+                description: 'Up to 12 sections in two languages, with analytics and performance tuning.',
+              },
+            },
+          },
+          redesign: {
+            name: 'Redesign',
+            pitch: 'Your site works, but the interface feels dated, inconsistent, awkward, or a little too much like AI slop. I improve it directly in your code, not in a mockup.',
+            includes: [
+              'Hierarchy, spacing, typography and consistency',
+              'Usability and responsiveness',
+              'HTML/CSS, TypeScript, React, Tailwind, Astro, Next.js and similar stacks',
+            ],
+            excludes: 'Backend systems, payments and API integrations are not included unless agreed separately.',
+            tiers: {
+              basic: {
+                name: 'Refresh',
+                description: 'A small part of the interface: a section, a component, a form or the navigation.',
+              },
+              standard: {
+                name: 'Redesign',
+                description: 'A larger part of the interface, with better consistency, usability and responsiveness.',
+              },
+              premium: {
+                name: 'Overhaul',
+                description: 'A complex interface, made consistent from end to end with a smoother experience.',
+              },
+            },
+          },
+        },
+      },
+      quotes: {
+        heading: 'What my projects would cost',
+        lede: 'What I would charge for each of my own projects if a client ordered it today. A sense of scale, not a price list.',
+        count: (projects) => `${projects} project${projects === 1 ? '' : 's'}`,
+        duration: { weeks: '1–4 weeks', months: '1–3 months' },
+        priceLabel: (name, price) => `${name}: about ${price}`,
+      },
+      contact: {
+        heading: 'Tell me about your project',
+        lede: "A few lines are enough. I'll reply with questions or a quote.",
+        name: 'Name',
+        email: 'Email',
+        service: 'What do you need?',
+        services: {
+          webApp: 'Web app',
+          landing: 'Landing page',
+          redesign: 'Redesign',
+          other: 'Something else',
+        },
+        message: 'Your project',
+        messagePlaceholder: 'What it is, who it is for, and when you would like it ready.',
+        submit: 'Send',
+        sending: 'Sending…',
+        sent: "Thanks! Your message is on its way. I'll get back to you soon.",
+        errors: {
+          invalid: 'Check the fields: a name, a valid email and a few words about the project.',
+          challenge: 'The spam check did not pass. Give it a moment and try again.',
+          unavailable: 'The message could not be sent right now. Please write to me directly.',
+        },
+        direct: 'Prefer email?',
+        noscript: 'The form needs JavaScript. You can write to me directly instead.',
+      },
     },
     errors: {
       notFound: 'Not found',
@@ -331,12 +522,14 @@ const copies: Record<Locale, LocaleCopy> = {
         body: 'Lo que más disfruto son las interfaces: que se vean limpias y que dé gusto usarlas. Y por debajo, siempre me estoy preguntando cómo hacer la app más rápida, más segura, más accesible.',
       },
       availability: 'Disponible para proyectos interesantes',
+      hireCta: 'Servicios y precios →',
     },
     navigation: {
       home: 'Inicio',
       primary: 'Navegación principal',
       language: 'Idioma',
       stack: 'Stack',
+      hire: 'Contratar',
       github: 'GitHub ↗',
       githubBadge: 'Perfil de GitHub (se abre en una pestaña nueva)',
     },
@@ -344,6 +537,7 @@ const copies: Record<Locale, LocaleCopy> = {
       skipProjects: 'Saltar a los proyectos',
       skipStory: 'Saltar a la historia',
       skipStack: 'Saltar al stack',
+      skipServices: 'Saltar a los servicios',
       close: 'Cerrar',
       builtWith: 'Construido con',
       officialWebsite: (name) => `Visitar la web oficial de ${name} (se abre en una pestaña nueva)`,
@@ -387,6 +581,134 @@ const copies: Record<Locale, LocaleCopy> = {
     },
     footer: {
       prompt: '¿Tienes algo entre manos?',
+      cta: 'Hablemos',
+    },
+    hire: {
+      title: 'Contrátame — Oliver Martínez Haro',
+      description:
+        'Aplicaciones web, landing pages y rediseños de interfaz de Oliver Martínez Haro: qué incluye cada servicio, precios orientativos y un formulario para contarle tu proyecto.',
+      intro: {
+        eyebrow: 'Trabaja conmigo',
+        heading: 'Lo necesitas,\nlo hago.',
+        body: 'Aplicaciones web, landing pages y rediseños, hechos a partir de lo que de verdad necesitas y publicados en tu propio dominio.',
+      },
+      services: {
+        heading: 'Lo que puedo hacer por ti',
+        note: 'Los precios son orientativos: cada proyecto es único. Cuéntame el tuyo y te daré un presupuesto cerrado antes de empezar.',
+        fiverr: 'También en Fiverr ↗',
+        includesLabel: 'Siempre incluido',
+        delivery: (days) => `${days} días`,
+        revisions: (count) => `${count} ${count === 1 ? 'revisión' : 'revisiones'}`,
+        items: {
+          webApp: {
+            name: 'Aplicación web',
+            pitch: '¿Tienes una idea para una aplicación web? Cuéntame qué debe hacer, aunque no tengas claros los detalles técnicos. Yo la diseño, la desarrollo y la pongo en marcha.',
+            includes: [
+              'Hecha a partir de tus requisitos, no de una plantilla',
+              'Funciona en ordenador, tablet y móvil',
+              'Hosting gratuito en el plan gratuito permanente de Cloudflare',
+              'Tu dominio conectado (o uno nuevo registrado, +15 US$)',
+              'Todo el código fuente, en un repositorio de GitHub a tu nombre',
+            ],
+            excludes: 'No incluye renovaciones del dominio, servicios de terceros de pago ni mantenimiento continuo.',
+            tiers: {
+              basic: {
+                name: 'Mini',
+                description: 'Una aplicación sencilla con una funcionalidad principal y hasta 2 páginas.',
+              },
+              standard: {
+                name: 'Negocio',
+                description: 'Hasta 3 funcionalidades principales y 4 páginas, con base de datos y carga de contenido.',
+              },
+              premium: {
+                name: 'Avanzada',
+                description: 'Hasta 5 funcionalidades principales y 6 páginas, con base de datos e integraciones.',
+              },
+            },
+          },
+          landing: {
+            name: 'Landing page',
+            pitch: 'Una landing page moderna para un producto, un lanzamiento o un negocio: rápida, clara, inconfundiblemente tuya y pensada para que una visita acabe en un mensaje.',
+            includes: [
+              'Un diseño original, no un tema',
+              'Rápida, accesible y adaptada a cualquier pantalla',
+              'Hosting gratuito en el plan gratuito permanente de Cloudflare',
+              'Tu dominio conectado',
+              'Todo el código fuente, en un repositorio de GitHub a tu nombre',
+            ],
+            tiers: {
+              basic: {
+                name: 'Esencial',
+                description: 'Una página con hasta 5 secciones, lista para compartir.',
+              },
+              standard: {
+                name: 'Lanzamiento',
+                description: 'Hasta 8 secciones, animaciones a medida, formulario de contacto y SEO básico.',
+              },
+              premium: {
+                name: 'A medida',
+                description: 'Hasta 12 secciones en dos idiomas, con analítica y optimización del rendimiento.',
+              },
+            },
+          },
+          redesign: {
+            name: 'Rediseño',
+            pitch: 'Tu web funciona, pero la interfaz se ve anticuada, incoherente, incómoda o demasiado «hecha con IA». La mejoro directamente en tu código, no en un mockup.',
+            includes: [
+              'Jerarquía, espaciado, tipografía y coherencia',
+              'Usabilidad y adaptación a cualquier pantalla',
+              'HTML/CSS, TypeScript, React, Tailwind, Astro, Next.js y stacks similares',
+            ],
+            excludes: 'No incluye backend, pagos ni integraciones con APIs, salvo que lo acordemos aparte.',
+            tiers: {
+              basic: {
+                name: 'Retoque',
+                description: 'Una parte pequeña de la interfaz: una sección, un componente, un formulario o la navegación.',
+              },
+              standard: {
+                name: 'Rediseño',
+                description: 'Una parte grande de la interfaz, con más coherencia, usabilidad y adaptación a pantallas.',
+              },
+              premium: {
+                name: 'Renovación',
+                description: 'Una interfaz compleja, coherente de principio a fin y con una experiencia más fluida.',
+              },
+            },
+          },
+        },
+      },
+      quotes: {
+        heading: 'Cuánto costarían mis proyectos',
+        lede: 'Lo que cobraría por cada uno de mis propios proyectos si hoy me lo encargara un cliente. Una idea de la escala, no una tarifa.',
+        count: (projects) => `${projects} proyecto${projects === 1 ? '' : 's'}`,
+        duration: { weeks: '1–4 semanas', months: '1–3 meses' },
+        priceLabel: (name, price) => `${name}: unos ${price}`,
+      },
+      contact: {
+        heading: 'Cuéntame tu proyecto',
+        lede: 'Con unas líneas basta. Te responderé con preguntas o con un presupuesto.',
+        name: 'Nombre',
+        email: 'Email',
+        service: '¿Qué necesitas?',
+        services: {
+          webApp: 'Aplicación web',
+          landing: 'Landing page',
+          redesign: 'Rediseño',
+          other: 'Otra cosa',
+        },
+        message: 'Tu proyecto',
+        messagePlaceholder: 'Qué es, para quién es y para cuándo te gustaría tenerlo.',
+        submit: 'Enviar',
+        sending: 'Enviando…',
+        sent: '¡Gracias! Tu mensaje está en camino. Te responderé pronto.',
+        errors: {
+          invalid: 'Revisa los campos: un nombre, un email válido y unas palabras sobre el proyecto.',
+          challenge: 'No se ha superado la comprobación antispam. Espera un momento y vuelve a intentarlo.',
+          unavailable: 'Ahora mismo no se ha podido enviar el mensaje. Escríbeme directamente, por favor.',
+        },
+        direct: '¿Prefieres el email?',
+        noscript: 'El formulario necesita JavaScript. Puedes escribirme directamente.',
+      },
     },
     errors: {
       notFound: 'No encontrado',

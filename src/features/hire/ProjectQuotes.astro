@@ -1,0 +1,59 @@
+---
+import { getCopy, localizedPath, type Locale } from '../../i18n';
+import type { Project } from '../projects/model';
+import { formatPrice } from './model';
+import { quoteProjects } from './quotes';
+import './quotes.css';
+
+interface Props {
+  locale: Locale;
+  projects: Project[];
+}
+
+const { locale, projects } = Astro.props;
+const copy = getCopy(locale);
+const quotes = quoteProjects(projects);
+const highest = Math.max(1, ...quotes.map((quote) => quote.price));
+---
+
+{
+  quotes.length > 0 && (
+    <section class="quotes" id="quotes">
+      <div class="section-head">
+        <h2>{copy.hire.quotes.heading}</h2>
+        <span class="quotes-count">{copy.hire.quotes.count(quotes.length)}</span>
+      </div>
+      <p class="quotes-lede">{copy.hire.quotes.lede}</p>
+
+      <ul class="quote-list">
+        {quotes.map(({ project, price, duration }) => {
+          const amount = formatPrice(price, locale);
+          return (
+            <li>
+              <a
+                class="quote"
+                href={localizedPath(locale, `/projects/${project.slug}`)}
+                aria-label={copy.hire.quotes.priceLabel(project.name, amount)}
+              >
+                <span class="quote-logo"><img src={project.logo} alt="" loading="lazy" width="36" height="36" /></span>
+                <span class="quote-copy">
+                  <span class="quote-name">{project.name}</span>
+                  <span class="quote-blurb">{project.blurb}</span>
+                </span>
+                <span class="quote-duration">{copy.hire.quotes.duration[duration]}</span>
+                <span class="quote-price">
+                  <span class="quote-amount">{amount}</span>
+                  {/* The bar is the price against the dearest project here, so
+                      the column reads as proportions before it reads as numbers. */}
+                  <span class="quote-track" aria-hidden="true">
+                    <span class="quote-fill" style={`--share: ${price / highest}`} />
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )
+}

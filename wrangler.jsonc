@@ -25,5 +25,21 @@
       "database_id": "1bbfb1cd-32ef-4e71-82f3-1cdf7110d570",
       "remote": true
     }
-  ]
+  ],
+  // The hire page's contact form. It sends through Cloudflare Email Service,
+  // only ever from the one address below and to the site's own address, so
+  // the domain has to be onboarded for Email Sending (docs/hire.md). Not
+  // remote: in local dev and tests a send is simulated rather than delivered.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_sender_addresses": ["contact@martinezharo.com"]
+    }
+  ],
+  // The public half of the form's Turnstile pair. Empty keeps the form off the
+  // page and offers the address instead; the secret half is the
+  // TURNSTILE_SECRET_KEY Worker secret, set outside this file.
+  "vars": {
+    "TURNSTILE_SITE_KEY": ""
+  }
 }

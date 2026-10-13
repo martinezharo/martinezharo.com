@@ -22,7 +22,7 @@ test('robots advertises a sitemap of every public page and its translations', as
       })),
     }));
   }, document);
-  const expected = ['/', '/stack', '/projects/fewya', '/projects/rankmaker', '/projects/kenobismo', '/projects/unsafe'];
+  const expected = ['/', '/stack', '/hire', '/projects/fewya', '/projects/rankmaker', '/projects/kenobismo', '/projects/unsafe'];
   const paths = expected.flatMap((path) => [path, path === '/' ? '/es' : `/es${path}`]);
   expect(entries.map((entry) => entry.url).sort()).toEqual(paths.map((path) => `${production}${path}`).sort());
   for (const entry of entries) {
@@ -41,7 +41,7 @@ test('agents can discover and fetch the same profile, stack and project stories'
   expect(body).toContain(`${production}/es/projects/fewya.md`);
   expect(body).not.toContain('/hidden');
   const urls = [...body.matchAll(/\]\(<(https:\/\/martinezharo\.com\/[^>]+\.md)>\)/g)].map((match) => match[1]);
-  expect(urls.length).toBe(12);
+  expect(urls.length).toBe(14);
   for (const url of urls) {
     const response = await request.get(new URL(url).pathname);
     expect(response.status(), url).toBe(200);

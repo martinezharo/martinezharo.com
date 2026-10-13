@@ -137,7 +137,7 @@ test('switches to the compact layout on mobile', async ({ page }) => {
 test('keeps the compact navigation reachable down the page', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
-  for (const path of ['/', '/stack']) {
+  for (const path of ['/', '/stack', '/hire']) {
     await page.goto(path);
 
     const header = page.locator('.mobile-head');
@@ -148,6 +148,7 @@ test('keeps the compact navigation reachable down the page', async ({ page }) =>
     const entries = header.locator('nav');
     await expect(entries.getByRole('link', { name: 'Home', exact: true })).toBeVisible();
     await expect(entries.getByRole('link', { name: 'Stack', exact: true })).toBeVisible();
+    await expect(entries.getByRole('link', { name: 'Hire', exact: true })).toBeVisible();
     await expect(badge).toHaveAttribute('href', 'https://github.com/martinezharo');
 
     await page.mouse.wheel(0, 2000);

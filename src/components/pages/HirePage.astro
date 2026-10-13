@@ -1,0 +1,44 @@
+---
+import GitHubBadge from '../shell/GitHubBadge.astro';
+import MobileHeader from '../shell/MobileHeader.astro';
+import SiteFooter from '../shell/SiteFooter.astro';
+import SiteSidebar from '../shell/SiteSidebar.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../../features/hire/ContactForm.astro';
+import ProjectQuotes from '../../features/hire/ProjectQuotes.astro';
+import ServiceList from '../../features/hire/ServiceList.astro';
+import { loadProjects } from '../../features/projects/repository';
+import { getCopy, type Locale } from '../../i18n';
+import '../../styles/hire-page.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+// The same one query the home page makes: the quotes borrow each project's
+// name, logo and blurb rather than keeping a second copy of them.
+const projects = await loadProjects(locale);
+---
+
+<BaseLayout locale={locale} title={copy.hire.title} description={copy.hire.description}>
+  <a class="skip" href="#services">{copy.common.skipServices}</a>
+  <SiteSidebar locale={locale} intro={copy.hire.intro} />
+  <MobileHeader locale={locale} />
+
+  <main>
+    <section class="mobile-intro">
+      <p class="eyebrow">{copy.hire.intro.eyebrow}</p>
+      <h1>{copy.hire.intro.heading}</h1>
+      <p class="intro-description">{copy.hire.intro.body}</p>
+    </section>
+
+    <ServiceList locale={locale} />
+    <ProjectQuotes locale={locale} projects={projects} />
+    <ContactForm locale={locale} />
+    <SiteFooter locale={locale} />
+  </main>
+
+  <GitHubBadge locale={locale} />
+</BaseLayout>

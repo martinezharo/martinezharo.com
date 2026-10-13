@@ -1,0 +1,113 @@
+---
+import { mailto, site } from '../../config/site';
+import { getCopy, type Locale } from '../../i18n';
+import { CONTACT_SERVICES, LIMITS, turnstileSiteKey } from './contact';
+import './contact.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getCopy(locale);
+const words = copy.hire.contact;
+
+// Without a Turnstile key the endpoint refuses everything, so a form would only
+// collect messages to throw away. The section still answers the question it
+// asks, with the address instead.
+const siteKey = turnstileSiteKey();
+---
+
+<section class="contact" id="contact">
+  <div class="contact-intro">
+    <h2>{words.heading}</h2>
+    <p>{words.lede}</p>
+    <p class="contact-direct">
+      {words.direct}{' '}
+      <a href={mailto}>{site.email}</a>
+    </p>
+  </div>
+
+  {
+    siteKey && (
+      <form
+        class="contact-form"
+        data-contact
+        data-site-key={siteKey}
+        data-locale={locale}
+        data-messages={JSON.stringify({ sending: words.sending, sent: words.sent, ...words.errors })}
+        novalidate
+      >
+        <input type="hidden" name="locale" value={locale} />
+
+        <fieldset class="contact-services">
+          <legend>{words.service}</legend>
+          <div class="contact-chips">
+            {CONTACT_SERVICES.map((service, index) => (
+              <label class="contact-chip">
+                <input type="radio" name="service" value={service} checked={index === 0} />
+                <span>{words.services[service]}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="contact-pair">
+          <label class="contact-field">
+            <span>{words.name}</span>
+            <input name="name" type="text" autocomplete="name" required maxlength={LIMITS.name} />
+          </label>
+          <label class="contact-field">
+            <span>{words.email}</span>
+            <input name="email" type="email" autocomplete="email" required maxlength={LIMITS.email} />
+          </label>
+        </div>
+
+        <label class="contact-field">
+          <span>{words.message}</span>
+          <textarea
+            name="message"
+            rows="6"
+            required
+            minlength={LIMITS.messageMin}
+            maxlength={LIMITS.message}
+            placeholder={words.messagePlaceholder}
+          />
+        </label>
+
+        {/* Hidden from people and from assistive technology; only a script filling
+            every field it finds puts anything here. */}
+        <label class="contact-trap" aria-hidden="true">
+          Website
+          <input name="website" type="text" tabindex="-1" autocomplete="off" />
+        </label>
+
+        <div class="contact-challenge" data-turnstile />
+
+        <div class="contact-actions">
+          <button class="contact-submit" type="submit" disabled data-submit>
+            <span>{words.submit}</span>
+            <span aria-hidden="true">→</span>
+          </button>
+          <p class="contact-status" role="status" aria-live="polite" data-status />
+        </div>
+
+        <noscript>
+          <p class="contact-noscript">{words.noscript}</p>
+        </noscript>
+      </form>
+    )
+  }
+</section>
+
+<script>
+  import { initContactForm } from './client';
+
+  // Armed per arrival, revoked on the way out: see ProjectShowcase.astro.
+  document.addEventListener('astro:page-load', () => {
+    const onThisPage = new AbortController();
+    document.addEventListener('astro:before-swap', () => onThisPage.abort(), { once: true });
+
+    initContactForm(document.querySelector<HTMLFormElement>('[data-contact]'), onThisPage.signal);
+  });
+</script>

@@ -53,7 +53,7 @@
   transition: color 0.2s, text-decoration-color 0.2s;
 }
 
-/* The footer carries this same address, and the rail is fixed, so on the home
+/* The footer carries the same invitation, and the rail is fixed, so on the home
    page both are on screen once the page is scrolled to the end. Pointing at one
    and then the other should be the same gesture: the accent and the rule at 60%
    come from the footer rather than from the 45% a story link uses, even though
