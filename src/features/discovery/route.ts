@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { hireMarkdown, profileMarkdown, projectMarkdown, stackMarkdown } from './markdown';
+import { servicesMarkdown, profileMarkdown, projectMarkdown, stackMarkdown } from './markdown';
 import { discoveryResponse } from './response';
 import { loadProject, loadProjects } from '../projects/repository';
 import { isPrefixedLocale } from '../../i18n';
@@ -15,8 +15,8 @@ export const markdownRoute: APIRoute = (context) => discoveryResponse(context, '
   if (context.url.pathname.endsWith('/stack.md')) {
     return stackMarkdown(context.site, locale);
   }
-  if (context.url.pathname.endsWith('/hire.md')) {
-    return hireMarkdown(context.site, locale, await loadProjects(locale));
+  if (context.url.pathname.endsWith('/services.md')) {
+    return servicesMarkdown(context.site, locale, await loadProjects(locale));
   }
   return profileMarkdown(context.site, locale, await loadProjects(locale));
 });

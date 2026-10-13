@@ -1,25 +1,25 @@
 import { expect, test } from '@playwright/test';
 
-test('every page leads to the hire page instead of a bare address', async ({ page }) => {
+test('every page leads to the services page instead of a bare address', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
-  await expect(page.locator('.side nav').getByRole('link', { name: 'Hire', exact: true })).toHaveAttribute('href', '/hire');
-  await expect(page.locator('.side-foot').getByRole('link')).toHaveAttribute('href', '/hire');
-  await expect(page.locator('footer .invitation a')).toHaveAttribute('href', '/hire#contact');
+  await expect(page.locator('.side nav').getByRole('link', { name: 'Services', exact: true })).toHaveAttribute('href', '/services');
+  await expect(page.locator('.side-foot').getByRole('link')).toHaveAttribute('href', '/services');
+  await expect(page.locator('footer .invitation a')).toHaveAttribute('href', '/services#contact');
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
 
   await page.goto('/es/stack');
-  await expect(page.locator('footer .invitation a')).toHaveAttribute('href', '/es/hire#contact');
+  await expect(page.locator('footer .invitation a')).toHaveAttribute('href', '/es/services#contact');
 
-  await page.goto('/hire');
-  await expect(page.locator('.side nav a[aria-current="page"]')).toHaveText('Hire');
+  await page.goto('/services');
+  await expect(page.locator('.side nav a[aria-current="page"]')).toHaveText('Services');
   // On the page itself the invitation points down the page, not back to it.
   await expect(page.locator('footer .invitation a')).toHaveAttribute('href', '#contact');
 });
 
 test('lists the services as posters, with indicative prices and what my projects would cost', async ({ page }) => {
-  await page.goto('/es/hire');
+  await page.goto('/es/services');
 
   const posters = page.locator('.poster');
   await expect(posters).toHaveCount(3);
@@ -34,14 +34,14 @@ test('lists the services as posters, with indicative prices and what my projects
 });
 
 test("a poster's button brings its service down to the form", async ({ page }) => {
-  await page.goto('/hire');
+  await page.goto('/services');
   await page.locator('.poster[data-service="redesign"] .poster-ask').click();
   await expect(page).toHaveURL(/#contact$/);
   await expect(page.locator('[data-contact] [name=service][value=redesign]')).toBeChecked();
 });
 
 test('sends the contact form through the API', async ({ page }) => {
-  await page.goto('/hire');
+  await page.goto('/services');
   const form = page.locator('[data-contact]');
 
   await form.getByRole('radio', { name: 'Landing page' }).check({ force: true });

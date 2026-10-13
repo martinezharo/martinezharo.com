@@ -1,13 +1,13 @@
-# Hire page and contact form
+# Services page and contact form
 
-`/hire` (and `/es/hire`) lists the services, their indicative prices, what the
+`/services` (and `/es/services`) lists the services, their indicative prices, what the
 portfolio's own projects would cost, and a contact form. The rail, the mobile
 header and the footer link to it; the email address now lives only on that
 page, in the Markdown documents and in the structured data.
 
 ## Prices
 
-`src/features/hire/model.ts` holds every figure:
+`src/features/services/model.ts` holds every figure:
 
 - `SERVICES`: the web app and redesign packages mirror the Fiverr gigs of the
   same name; the landing page packages have no gig behind them. Prices are in
@@ -16,7 +16,7 @@ page, in the Markdown documents and in the structured data.
   Fiverr portfolio, keyed by the project's slug. A slug missing from the
   database drops out of the list.
 
-The words for each service and package live in `src/i18n/index.ts` under `hire`.
+The words for each service and package live in `src/i18n/index.ts` under `servicesPage`.
 
 ## Contact form
 

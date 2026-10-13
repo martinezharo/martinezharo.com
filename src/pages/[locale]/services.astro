@@ -1,11 +1,11 @@
 ---
-import HirePage from '../../components/pages/HirePage.astro';
+import ServicesPage from '../../components/pages/ServicesPage.astro';
 import { isPrefixedLocale } from '../../i18n';
 
 // Only prefixed locales route here. English lives unprefixed at the root, so
-// `/en/hire` is left to the middleware to redirect rather than answered twice.
+// `/en/services` is left to the middleware to redirect rather than answered twice.
 const locale = isPrefixedLocale(Astro.params.locale) ? Astro.params.locale : null;
 if (!locale) return new Response(null, { status: 404 });
 ---
 
-<HirePage locale={locale} />
+<ServicesPage locale={locale} />

@@ -19,8 +19,8 @@ const highest = Math.max(1, ...quotes.map((quote) => quote.price));
 {
   quotes.length > 0 && (
     <section class="chart" id="quotes">
-      <h2>{copy.hire.quotes.heading}</h2>
-      <p class="chart-lede">{copy.hire.quotes.lede}</p>
+      <h2>{copy.servicesPage.quotes.heading}</h2>
+      <p class="chart-lede">{copy.servicesPage.quotes.lede}</p>
 
       <ol class="chart-bars">
         {quotes.map(({ project, price }) => {
@@ -29,7 +29,7 @@ const highest = Math.max(1, ...quotes.map((quote) => quote.price));
             <li style={`--share: ${price / highest}`}>
               <a
                 href={localizedPath(locale, `/projects/${project.slug}`)}
-                aria-label={copy.hire.quotes.priceLabel(project.name, amount)}
+                aria-label={copy.servicesPage.quotes.priceLabel(project.name, amount)}
               >
                 <span class="chart-column">
                   <span class="chart-price">{amount}</span>

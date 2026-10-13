@@ -1,5 +1,5 @@
 /**
- * What can be hired, and what it costs.
+ * What can be bought, and what it costs.
  *
  * The web app and the redesign mirror the two Fiverr gigs of the same name,
  * package for package; the landing page has no gig behind it. Prices are in US

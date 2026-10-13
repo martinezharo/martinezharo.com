@@ -20,7 +20,7 @@ const route = routeFromPath(Astro.url.pathname);
 const home = localizedPath(locale, '/');
 const onHome = route === '/';
 const stackPath = localizedPath(locale, '/stack');
-const hirePath = localizedPath(locale, '/hire');
+const servicesPath = localizedPath(locale, '/services');
 ---
 
 <header class="mobile-head">
@@ -34,6 +34,6 @@ const hirePath = localizedPath(locale, '/hire');
   <nav aria-label={copy.navigation.primary}>
     <a href={home} aria-current={onHome ? 'page' : undefined}>{copy.navigation.home}</a>
     <a href={stackPath} aria-current={route === '/stack' ? 'page' : undefined}>{copy.navigation.stack}</a>
-    <a href={hirePath} aria-current={route === '/hire' ? 'page' : undefined}>{copy.navigation.hire}</a>
+    <a href={servicesPath} aria-current={route === '/services' ? 'page' : undefined}>{copy.navigation.services}</a>
   </nav>
 </header>

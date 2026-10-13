@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { parseContact, sendContact, verifyHuman, type ContactError } from '../../features/hire/contact';
+import { parseContact, sendContact, verifyHuman, type ContactError } from '../../features/services/contact';
 import { isLocale } from '../../i18n';
 
 function reply(status: number, error?: ContactError): Response {

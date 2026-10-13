@@ -22,7 +22,7 @@ test('robots advertises a sitemap of every public page and its translations', as
       })),
     }));
   }, document);
-  const expected = ['/', '/stack', '/hire', '/projects/fewya', '/projects/rankmaker', '/projects/kenobismo', '/projects/unsafe'];
+  const expected = ['/', '/stack', '/services', '/projects/fewya', '/projects/rankmaker', '/projects/kenobismo', '/projects/unsafe'];
   const paths = expected.flatMap((path) => [path, path === '/' ? '/es' : `/es${path}`]);
   expect(entries.map((entry) => entry.url).sort()).toEqual(paths.map((path) => `${production}${path}`).sort());
   for (const entry of entries) {

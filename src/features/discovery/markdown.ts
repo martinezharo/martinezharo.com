@@ -3,8 +3,8 @@ import { getCopy, LOCALES, localizedPath, type Locale } from '../../i18n';
 import type { Project, ProjectDetail } from '../projects/model';
 import { formatProjectRange } from '../projects/model';
 import { STACK } from '../stack/model';
-import { SERVICES, formatPrice } from '../hire/model';
-import { quoteProjects } from '../hire/quotes';
+import { SERVICES, formatPrice } from '../services/model';
+import { quoteProjects } from '../services/quotes';
 import { absoluteUrl, markdownPath, projectPath } from './urls';
 
 function text(value: string): string {
@@ -30,7 +30,7 @@ export function llms(origin: URL | undefined, projects: readonly Project[]): str
     ...LOCALES.flatMap((locale) => [
       `- ${link(`Profile (${locale})`, absoluteUrl(markdownPath(locale, '/'), origin))}: Biography, contact, and current project list.`,
       `- ${link(`Stack (${locale})`, absoluteUrl(markdownPath(locale, '/stack'), origin))}: Tools and links to their official websites.`,
-      `- ${link(`Hire (${locale})`, absoluteUrl(markdownPath(locale, '/hire'), origin))}: Services, indicative prices, and how to get in touch.`,
+      `- ${link(`Services (${locale})`, absoluteUrl(markdownPath(locale, '/services'), origin))}: Services, indicative prices, and how to get in touch.`,
     ]),
     '## Projects',
     ...projects.flatMap((project) => LOCALES.map((locale) =>
@@ -50,7 +50,7 @@ export function profileMarkdown(origin: URL | undefined, locale: Locale, project
     source(origin, locale, '/'),
     `## ${text(copy.about.heading)}`,
     copy.about.body,
-    `Contact: ${site.email}\nServices: ${absoluteUrl(markdownPath(locale, '/hire'), origin)}\nGitHub: ${site.githubUrl}`,
+    `Contact: ${site.email}\nServices: ${absoluteUrl(markdownPath(locale, '/services'), origin)}\nGitHub: ${site.githubUrl}`,
     `## ${text(copy.projects.heading)}`,
     ...projects.map((project) => [
       `- ${link(project.name, absoluteUrl(markdownPath(locale, projectPath(project.slug)), origin))}: ${text(project.blurb)}`,
@@ -74,14 +74,14 @@ export function stackMarkdown(origin: URL | undefined, locale: Locale): string {
   ].join('\n\n') + '\n';
 }
 
-export function hireMarkdown(origin: URL | undefined, locale: Locale, projects: readonly Project[]): string {
+export function servicesMarkdown(origin: URL | undefined, locale: Locale, projects: readonly Project[]): string {
   const copy = getCopy(locale);
-  const words = copy.hire;
+  const words = copy.servicesPage;
   const quotes = quoteProjects(projects);
   return [
     `# ${text(words.title)}`,
     `> ${text(words.description)}`,
-    source(origin, locale, '/hire'),
+    source(origin, locale, '/services'),
     `## ${text(words.services.heading)}`,
     text(words.services.note),
     ...SERVICES.flatMap((service) => {

@@ -26,9 +26,9 @@
       "remote": true
     }
   ],
-  // The hire page's contact form. It sends through Cloudflare Email Service,
+  // The services page's contact form. It sends through Cloudflare Email Service,
   // only ever from the one address below and to the site's own address, so
-  // the domain has to be onboarded for Email Sending (docs/hire.md). Not
+  // the domain has to be onboarded for Email Sending (docs/services.md). Not
   // remote: in local dev and tests a send is simulated rather than delivered.
   "send_email": [
     {

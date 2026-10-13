@@ -10,7 +10,7 @@ import { SERVICE_KEYS, type ServiceKey } from './model';
  * It sends through the `EMAIL` binding (Cloudflare Email Service), from an
  * address on this domain, and only to `site.email`. Turnstile stands between
  * the form and the binding; without its secret the endpoint refuses every
- * message rather than relaying unchecked ones. docs/hire.md has the setup.
+ * message rather than relaying unchecked ones. docs/services.md has the setup.
  */
 
 export const LIMITS = { name: 100, email: 254, message: 5000, messageMin: 10 } as const;

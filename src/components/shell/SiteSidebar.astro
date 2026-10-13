@@ -28,8 +28,8 @@ const onHome = route === '/';
 const stackPath = localizedPath(locale, '/stack');
 const onStack = route === '/stack';
 
-const hirePath = localizedPath(locale, '/hire');
-const onHire = route === '/hire';
+const servicesPath = localizedPath(locale, '/services');
+const onServices = route === '/services';
 ---
 
 <aside class="side">
@@ -47,14 +47,14 @@ const onHire = route === '/hire';
   <nav aria-label={copy.navigation.primary}>
     <a href={home} aria-current={onHome ? 'page' : undefined}>{copy.navigation.home}</a>
     <a href={stackPath} aria-current={onStack ? 'page' : undefined}>{copy.navigation.stack}</a>
-    <a href={hirePath} aria-current={onHire ? 'page' : undefined}>{copy.navigation.hire}</a>
+    <a href={servicesPath} aria-current={onServices ? 'page' : undefined}>{copy.navigation.services}</a>
     <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">{copy.navigation.github}</a>
   </nav>
 
   <div class="side-foot">
     <span class="availability"><i aria-hidden="true"></i>{copy.site.availability}</span>
     {/* The availability line is the question; this is where it is answered.
-        On the hire page itself the answer is the page, so the line stands alone. */}
-    {!onHire && <a href={hirePath}>{copy.site.hireCta}</a>}
+        On the services page itself the answer is the page, so the line stands alone. */}
+    {!onServices && <a href={servicesPath}>{copy.site.servicesCta}</a>}
   </div>
 </aside>

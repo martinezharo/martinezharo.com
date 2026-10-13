@@ -6,8 +6,8 @@ import type {
   SortField,
 } from '../features/projects/model';
 import type { CategoryKey } from '../features/stack/model';
-import type { ContactError, ContactService } from '../features/hire/contact';
-import type { QuoteDuration, ServiceKey, TierKey } from '../features/hire/model';
+import type { ContactError, ContactService } from '../features/services/contact';
+import type { QuoteDuration, ServiceKey, TierKey } from '../features/services/model';
 
 export const LOCALES = ['en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -43,7 +43,7 @@ export interface ServiceCopy {
   tiers: Record<TierKey, { name: string; description: string }>;
 }
 
-export interface HireCopy {
+export interface ServicesPageCopy {
   title: string;
   description: string;
   intro: {
@@ -99,15 +99,15 @@ export interface LocaleCopy {
       body: string;
     };
     availability: string;
-    /** The rail's way to the hire page, under the availability line. */
-    hireCta: string;
+    /** The rail's way to the services page, under the availability line. */
+    servicesCta: string;
   };
   navigation: {
     home: string;
     primary: string;
     language: string;
     stack: string;
-    hire: string;
+    services: string;
     github: string;
     /** The badge shows the mark alone, so its name has to be spoken here. */
     githubBadge: string;
@@ -144,7 +144,7 @@ export interface LocaleCopy {
     prompt: string;
     cta: string;
   };
-  hire: HireCopy;
+  servicesPage: ServicesPageCopy;
   errors: {
     notFound: string;
     projectNotFound: string;
@@ -241,14 +241,14 @@ const copies: Record<Locale, LocaleCopy> = {
         body: "What I enjoy most is the interface: clean to look at and good to use. Underneath that, I'm always asking myself how to make the app faster, safer, more accessible.",
       },
       availability: 'Around for interesting work',
-      hireCta: 'Services and prices →',
+      servicesCta: 'Services and prices →',
     },
     navigation: {
       home: 'Home',
       primary: 'Primary navigation',
       language: 'Language',
       stack: 'Stack',
-      hire: 'Hire',
+      services: 'Services',
       github: 'GitHub ↗',
       githubBadge: 'GitHub profile (opens in a new tab)',
     },
@@ -302,8 +302,8 @@ const copies: Record<Locale, LocaleCopy> = {
       prompt: 'Need something built?',
       cta: "Let's talk",
     },
-    hire: {
-      title: 'Hire me — Oliver Martínez Haro',
+    servicesPage: {
+      title: 'Services — Oliver Martínez Haro',
       description:
         'Web apps, landing pages and interface redesigns by Oliver Martínez Haro: what each service includes, indicative prices, and a form to tell him about your project.',
       intro: {
@@ -528,14 +528,14 @@ const copies: Record<Locale, LocaleCopy> = {
         body: 'Lo que más disfruto son las interfaces: que se vean limpias y que dé gusto usarlas. Y por debajo, siempre me estoy preguntando cómo hacer la app más rápida, más segura, más accesible.',
       },
       availability: 'Disponible para proyectos interesantes',
-      hireCta: 'Servicios y precios →',
+      servicesCta: 'Servicios y precios →',
     },
     navigation: {
       home: 'Inicio',
       primary: 'Navegación principal',
       language: 'Idioma',
       stack: 'Stack',
-      hire: 'Contratar',
+      services: 'Servicios',
       github: 'GitHub ↗',
       githubBadge: 'Perfil de GitHub (se abre en una pestaña nueva)',
     },
@@ -589,8 +589,8 @@ const copies: Record<Locale, LocaleCopy> = {
       prompt: '¿Tienes algo entre manos?',
       cta: 'Hablemos',
     },
-    hire: {
-      title: 'Contrátame — Oliver Martínez Haro',
+    servicesPage: {
+      title: 'Servicios — Oliver Martínez Haro',
       description:
         'Aplicaciones web, landing pages y rediseños de interfaz de Oliver Martínez Haro: qué incluye cada servicio, precios orientativos y un formulario para contarle tu proyecto.',
       intro: {

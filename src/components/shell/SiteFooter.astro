@@ -32,9 +32,9 @@ const other = alternateLocale(locale);
 const route = routeFromPath(Astro.url.pathname);
 const otherHref = `${localizedPath(other, route)}?${LOCALE_QUERY}=${other}`;
 
-// The invitation leads to the form. On the hire page the form is already a
+// The invitation leads to the form. On the services page the form is already a
 // scroll away, so the link goes straight to it rather than reloading the page.
-const contactHref = route === '/hire' ? '#contact' : `${localizedPath(locale, '/hire')}#contact`;
+const contactHref = route === '/services' ? '#contact' : `${localizedPath(locale, '/services')}#contact`;
 ---
 
 <footer>

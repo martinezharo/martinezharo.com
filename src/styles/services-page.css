@@ -1,6 +1,6 @@
 @import './rail-page.css';
 @import './mobile-intro.css';
 
-/* The hire page is the rail-page frame plus the intro that stands in for the
+/* The services page is the rail-page frame plus the intro that stands in for the
    rail on a small screen. Its three sections bring their own stylesheets from
-   features/hire. */
+   features/services. */

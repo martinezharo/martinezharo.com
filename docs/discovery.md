@@ -3,9 +3,9 @@
 The canonical origin is `site` in `astro.config.mjs`. English pages use unprefixed URLs; Spanish pages use `/es`. The layout publishes canonical URLs, reciprocal language alternatives, a Markdown alternative, the sitemap, and `/llms.txt`.
 
 - `/robots.txt` is generated at build time, allows public crawlers, and advertises `/sitemap.xml`.
-- `/sitemap.xml` lists the home page, stack, hire page, and every renderable project in both languages. It uses the same repository filtering as the portfolio. There is no reliable content-update timestamp, so it omits `lastmod`.
-- `/llms.txt` is a concise index of the profile, stack, hire, and project Markdown pages in both languages.
-- `/index.md`, `/stack.md`, `/hire.md`, and `/projects/{slug}.md` have Spanish counterparts under `/es`. They reuse the public copy, tools, and project records, including translation fallback. Missing or incomplete projects return 404.
+- `/sitemap.xml` lists the home page, stack, services page, and every renderable project in both languages. It uses the same repository filtering as the portfolio. There is no reliable content-update timestamp, so it omits `lastmod`.
+- `/llms.txt` is a concise index of the profile, stack, services, and project Markdown pages in both languages.
+- `/index.md`, `/stack.md`, `/services.md`, and `/projects/{slug}.md` have Spanish counterparts under `/es`. They reuse the public copy, tools, and project records, including translation fallback. Missing or incomplete projects return 404.
 - HTML includes JSON-LD for the person, website, page, and (on project pages) the creative work. Portfolio scores are not marked up as customer ratings. JSON is escaped for safe embedding in HTML.
 - Every HTML page declares `/favicon.png` (96 × 96) and `/favicon.ico` (16, 32, 48 and 96 pixels) without media conditions. These raster assets reproduce `public/icon.svg` on an opaque black background so the mark stays visible on either search theme. The theme-specific SVG icons remain available for browser tabs. If the mark changes, regenerate both raster files and keep their URLs stable.
 
