@@ -1,0 +1,93 @@
+---
+import GitHubBadge from '../../components/shell/GitHubBadge.astro';
+import MobileHeader from '../../components/shell/MobileHeader.astro';
+import SiteFooter from '../../components/shell/SiteFooter.astro';
+import SiteSidebar from '../../components/shell/SiteSidebar.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../hire/ContactForm.astro';
+import { loadProjects } from '../projects/repository';
+import { getCopy, localizedPath, type Locale } from '../../i18n';
+import Configurator from './Configurator.astro';
+import PriceScale from './PriceScale.astro';
+import Poster from './Poster.astro';
+import Sizes from './Sizes.astro';
+import { MOCKUPS, type Mockup } from './copy';
+import '../../styles/hire-page.css';
+
+
+interface Props {
+  locale: Locale;
+  variant: Mockup;
+}
+
+const { locale, variant } = Astro.props;
+const copy = getCopy(locale);
+const projects = await loadProjects(locale);
+const labels: Record<Mockup, string> = { configurador: '1 · Configurador', tallas: '2 · Tallas', cartel: '3 · Cartel' };
+---
+
+<BaseLayout locale={locale} title={`${copy.hire.title} (${variant})`} description={copy.hire.description}>
+  <a class="skip" href="#services">{copy.common.skipServices}</a>
+  <SiteSidebar locale={locale} intro={{ eyebrow: copy.hire.intro.eyebrow, heading: copy.hire.intro.heading }} />
+  <MobileHeader locale={locale} />
+
+  <main>
+    {/* Only on the mockups: a way to flip between the three proposals. */}
+    <nav class="mock-switch" aria-label="Mockups">
+      {MOCKUPS.map((name) => (
+        <a href={localizedPath(locale, `/hire/${name}`)} aria-current={name === variant ? 'page' : undefined}>
+          {labels[name]}
+        </a>
+      ))}
+    </nav>
+
+    <section class="mobile-intro">
+      <p class="eyebrow">{copy.hire.intro.eyebrow}</p>
+      <h1>{copy.hire.intro.heading}</h1>
+    </section>
+
+    {variant === 'configurador' && (
+      <>
+        <Configurator locale={locale} />
+        <PriceScale locale={locale} projects={projects} />
+      </>
+    )}
+    {variant === 'tallas' && <Sizes locale={locale} projects={projects} />}
+    {variant === 'cartel' && <Poster locale={locale} projects={projects} />}
+
+    <ContactForm locale={locale} />
+    <SiteFooter locale={locale} />
+  </main>
+
+  <GitHubBadge locale={locale} />
+</BaseLayout>
+
+<style>
+  .mock-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: var(--content-max);
+    margin: 0 auto 40px;
+  }
+
+  .mock-switch a {
+    padding: 6px 12px;
+    border: 1px dashed #3a3a44;
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .mock-switch a[aria-current='page'] {
+    border-style: solid;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @media (width <= 780px) {
+    .mock-switch {
+      margin: 16px 0 0;
+    }
+  }
+</style>

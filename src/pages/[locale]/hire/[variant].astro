@@ -1,0 +1,11 @@
+---
+import MockupPage from '../../../features/hire-mockups/MockupPage.astro';
+import { MOCKUPS, type Mockup } from '../../../features/hire-mockups/copy';
+import { isPrefixedLocale } from '../../../i18n';
+
+const locale = isPrefixedLocale(Astro.params.locale) ? Astro.params.locale : null;
+const variant = MOCKUPS.find((name) => name === Astro.params.variant) as Mockup | undefined;
+if (!locale || !variant) return new Response(null, { status: 404 });
+---
+
+<MockupPage locale={locale} variant={variant} />

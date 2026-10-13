@@ -1,0 +1,218 @@
+---
+import { localizedPath, type Locale } from '../../i18n';
+import type { Project } from '../projects/model';
+import { formatPrice } from '../hire/model';
+import { quoteProjects } from '../hire/quotes';
+import { mockCopy } from './copy';
+
+interface Props {
+  locale: Locale;
+  projects: Project[];
+}
+
+const { locale, projects } = Astro.props;
+const m = mockCopy(locale);
+const quotes = quoteProjects(projects);
+const top = Math.ceil(Math.max(1, ...quotes.map((q) => q.price)) / 500) * 500;
+// Projects that cost the same share one pin rather than drawing over each other.
+const pins = [...new Set(quotes.map((q) => q.price))]
+  .sort((a, b) => a - b)
+  .map((price) => ({ price, items: quotes.filter((q) => q.price === price) }));
+const ticks = Array.from({ length: top / 500 + 1 }, (_, i) => i * 500);
+---
+
+{
+  quotes.length > 0 && (
+    <section class="scale">
+      <h2>{m.scaleTitle}</h2>
+      <p class="scale-line">{m.scaleLine}</p>
+
+      <div class="scale-track">
+        {pins.map((pin, index) => (
+          <div class="scale-pin" style={`--x: ${pin.price / top}; --lift: ${index % 2}`}>
+            <div class="scale-heads">
+              {pin.items.map(({ project }) => (
+                <a href={localizedPath(locale, `/projects/${project.slug}`)} title={project.name}>
+                  <img src={project.logo} alt={project.name} width="44" height="44" loading="lazy" />
+                </a>
+              ))}
+            </div>
+            <span class="scale-names">{pin.items.map((q) => q.project.name).join(' / ')}</span>
+            <span class="scale-stem" />
+            <span class="scale-price">{formatPrice(pin.price, locale)}</span>
+          </div>
+        ))}
+        <div class="scale-axis" aria-hidden="true">
+          {ticks.map((tick) => (
+            <span style={`--x: ${tick / top}`}>{formatPrice(tick, locale)}</span>
+          ))}
+        </div>
+      </div>
+
+      <ul class="scale-list">
+        {quotes.map(({ project, price }) => (
+          <li style={`--share: ${price / top}`}>
+            <img src={project.logo} alt="" width="32" height="32" loading="lazy" />
+            <span class="scale-list-name">{project.name}</span>
+            <span class="scale-list-price">{formatPrice(price, locale)}</span>
+            <span class="scale-list-bar" />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .scale {
+    max-width: var(--content-max);
+    margin: clamp(80px, 10vw, 140px) auto 0;
+  }
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+  }
+
+  .scale-line {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .scale-track {
+    position: relative;
+    height: 300px;
+    margin: 30px 22px 0;
+  }
+
+  .scale-pin {
+    position: absolute;
+    bottom: 34px;
+    left: calc(var(--x) * 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-50%);
+  }
+
+  .scale-heads {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .scale-heads a {
+    display: block;
+    border-radius: 12px;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .scale-heads a:hover {
+    transform: translateY(-3px) scale(1.06);
+  }
+
+  .scale-heads img {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px #2a2a32;
+  }
+
+  .scale-names {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .scale-stem {
+    width: 1px;
+    height: calc(26px + var(--lift) * 56px);
+    margin-top: 6px;
+    background: linear-gradient(var(--line-strong), var(--accent));
+  }
+
+  .scale-price {
+    position: absolute;
+    bottom: -30px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #0a0812;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .scale-axis {
+    position: absolute;
+    right: 0;
+    bottom: 34px;
+    left: 0;
+    height: 2px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, #26252e, var(--accent));
+  }
+
+  .scale-axis span {
+    position: absolute;
+    top: 46px;
+    left: calc(var(--x) * 100%);
+    color: var(--faint);
+    font-size: 11px;
+    transform: translateX(-50%);
+  }
+
+  .scale-list {
+    display: none;
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @container page (width < 790px) {
+    .scale-track {
+      display: none;
+    }
+
+    .scale-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .scale-list li {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr) auto;
+      grid-template-rows: auto 6px;
+      gap: 6px 12px;
+      align-items: center;
+    }
+
+    .scale-list img {
+      grid-row: 1 / span 2;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+
+    .scale-list-name {
+      font-weight: 560;
+    }
+
+    .scale-list-price {
+      font-weight: 650;
+    }
+
+    .scale-list-bar {
+      grid-column: 2 / -1;
+      width: calc(var(--share) * 100%);
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #4b3f7a, var(--accent));
+    }
+  }
+</style>

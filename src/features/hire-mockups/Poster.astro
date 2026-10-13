@@ -1,0 +1,365 @@
+---
+import { getCopy, localizedPath, type Locale } from '../../i18n';
+import type { Project } from '../projects/model';
+import { SERVICES, formatPrice, type ServiceKey } from '../hire/model';
+import { quoteProjects } from '../hire/quotes';
+import { mockCopy } from './copy';
+
+interface Props {
+  locale: Locale;
+  projects: Project[];
+}
+
+const { locale, projects } = Astro.props;
+const copy = getCopy(locale).hire.services;
+const m = mockCopy(locale);
+const quotes = quoteProjects(projects);
+const top = Math.max(1, ...quotes.map((q) => q.price));
+
+// One colour per service, so the three read as three posters on one wall.
+const paint: Record<ServiceKey, { bg: string; ink: string }> = {
+  webApp: { bg: '#b49bff', ink: '#120b26' },
+  landing: { bg: '#ffd84d', ink: '#231a00' },
+  redesign: { bg: '#ff8ad0', ink: '#2a0a1e' },
+};
+---
+
+<section class="pst" id="services">
+  {
+    SERVICES.map((service) => {
+      const words = copy.items[service.key];
+      const from = service.tiers[0]!;
+      const colors = paint[service.key];
+      return (
+        <article class="pst-card" style={`--bg: ${colors.bg}; --ink: ${colors.ink}`}>
+          <div class="pst-top">
+            <h2>{words.name}</h2>
+            <p>{m.lines[service.key]}</p>
+            <a class="pst-ask" href="#contact" data-ask={service.key}>{m.ask}</a>
+          </div>
+          <p class="pst-big">
+            <span class="pst-from">{m.from}</span>
+            <span class="pst-amount">{formatPrice(from.price, locale)}</span>
+          </p>
+          <ul class="pst-tiers">
+            {service.tiers.map((tier) => (
+              <li>
+                <span class="pst-tier-name">{words.tiers[tier.key].name}</span>
+                <span class="pst-tier-price">{formatPrice(tier.price, locale)}</span>
+                <span class="pst-tier-days">{m.days(tier.days)}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      );
+    })
+  }
+
+  <p class="pst-note">{m.note}</p>
+
+  {
+    quotes.length > 0 && (
+      <div class="pst-chart-wrap">
+        <h2 class="pst-chart-title">{m.scaleTitle}</h2>
+        <p class="pst-chart-line">{m.scaleLine}</p>
+        <ol class="pst-chart">
+          {quotes.map(({ project, price }) => (
+            <li style={`--share: ${price / top}`}>
+              <a href={localizedPath(locale, `/projects/${project.slug}`)}>
+                <span class="pst-bar">
+                  <span class="pst-bar-price">{formatPrice(price, locale)}</span>
+                  <img src={project.logo} alt="" loading="lazy" />
+                </span>
+                <span class="pst-bar-name">{project.name}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )
+  }
+</section>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const ask = (event.target as HTMLElement).closest<HTMLElement>('[data-ask]');
+    if (!ask) return;
+    const radio = document.querySelector<HTMLInputElement>(`[data-contact] [name=service][value="${ask.dataset.ask}"]`);
+    if (radio) radio.checked = true;
+  });
+</script>
+
+<style>
+  .pst {
+    display: grid;
+    gap: 16px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+  }
+
+  .pst-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'top big'
+      'tiers tiers';
+    gap: 28px 32px;
+    align-items: end;
+    padding: clamp(24px, 3vw, 40px);
+    border-radius: 28px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  .pst-top {
+    grid-area: top;
+    align-self: start;
+  }
+
+  .pst-top h2 {
+    margin: 0 0 8px;
+    font-size: clamp(30px, 3.4vw, 48px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.055em;
+  }
+
+  .pst-top p {
+    max-width: 30ch;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.45;
+    opacity: 0.78;
+  }
+
+  .pst-big {
+    grid-area: big;
+    display: grid;
+    justify-items: end;
+    margin: 0;
+  }
+
+  .pst-from {
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .pst-amount {
+    font-size: clamp(64px, 9vw, 150px);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.82;
+    letter-spacing: -0.075em;
+  }
+
+  .pst-tiers {
+    grid-area: tiers;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    border-top: 2px solid color-mix(in srgb, var(--ink) 25%, transparent);
+    list-style: none;
+  }
+
+  .pst-tiers li {
+    display: grid;
+    gap: 2px;
+    padding: 14px 14px 0 0;
+  }
+
+  .pst-tier-name {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .pst-tier-price {
+    font-size: 24px;
+    font-weight: 750;
+    letter-spacing: -0.04em;
+  }
+
+  .pst-tier-days {
+    font-size: 12.5px;
+    opacity: 0.7;
+  }
+
+  .pst-ask {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: transform 0.2s;
+  }
+
+  .pst-ask:hover {
+    transform: scale(1.04);
+  }
+
+  .pst-ask:focus-visible {
+    outline-color: var(--ink);
+  }
+
+  .pst-note {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .pst-chart-wrap {
+    margin-top: clamp(70px, 9vw, 120px);
+  }
+
+  .pst-chart-title {
+    margin: 0 0 6px;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+  }
+
+  .pst-chart-line {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* Bars stand on one baseline and the logo rides on top of each, so the
+     chart is read as faces at different heights before it is read as money. */
+  .pst-chart {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: 12px;
+    align-items: end;
+    height: 380px;
+    margin: 0;
+    padding: 0;
+    border-bottom: 2px solid var(--line-strong);
+    list-style: none;
+  }
+
+  .pst-chart li,
+  .pst-chart a {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  .pst-bar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(18% + var(--share) * 72%);
+    padding-top: 12px;
+    border-radius: 16px 16px 4px 4px;
+    background: linear-gradient(180deg, #b49bff, #3c2f6e);
+    transition: filter 0.2s;
+  }
+
+  .pst-chart a:hover .pst-bar {
+    filter: brightness(1.15);
+  }
+
+  .pst-bar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    object-fit: cover;
+    box-shadow: 0 6px 18px -8px rgb(0 0 0 / 80%);
+  }
+
+  .pst-bar-price {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+
+  .pst-bar-name {
+    position: absolute;
+    margin-top: 0;
+    transform: translateY(calc(100% + 10px));
+    color: var(--muted);
+    font-size: 12.5px;
+    text-align: center;
+  }
+
+  .pst-chart a {
+    position: relative;
+    align-items: stretch;
+  }
+
+  .pst-chart a .pst-bar-name {
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .pst-chart-wrap {
+    padding-bottom: 34px;
+  }
+
+  @container page (width < 790px) {
+    .pst-card {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'top'
+        'big'
+        'tiers';
+      gap: 20px;
+    }
+
+    .pst-big {
+      justify-items: start;
+    }
+
+    .pst-tier-price {
+      font-size: 19px;
+    }
+
+    .pst-ask {
+      display: block;
+      text-align: center;
+    }
+
+    .pst-top {
+      display: grid;
+    }
+
+    .pst-top .pst-ask {
+      order: 3;
+    }
+
+    .pst-chart {
+      height: 300px;
+      gap: 6px;
+    }
+
+    .pst-bar img {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+    }
+
+    .pst-bar-price {
+      font-size: 12px;
+    }
+
+    .pst-bar-name {
+      font-size: 10.5px;
+    }
+  }
+</style>

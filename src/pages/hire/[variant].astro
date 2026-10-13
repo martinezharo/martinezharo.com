@@ -1,0 +1,9 @@
+---
+import MockupPage from '../../features/hire-mockups/MockupPage.astro';
+import { MOCKUPS, type Mockup } from '../../features/hire-mockups/copy';
+
+const variant = MOCKUPS.find((name) => name === Astro.params.variant) as Mockup | undefined;
+if (!variant) return new Response(null, { status: 404 });
+---
+
+<MockupPage locale="en" variant={variant} />

@@ -29,7 +29,7 @@ const stackPath = localizedPath(locale, '/stack');
 const onStack = route === '/stack';
 
 const hirePath = localizedPath(locale, '/hire');
-const onHire = route === '/hire';
+const onHire = route === '/hire' || route.startsWith('/hire/');
 ---
 
 <aside class="side">

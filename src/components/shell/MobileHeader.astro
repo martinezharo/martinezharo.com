@@ -34,6 +34,6 @@ const hirePath = localizedPath(locale, '/hire');
   <nav aria-label={copy.navigation.primary}>
     <a href={home} aria-current={onHome ? 'page' : undefined}>{copy.navigation.home}</a>
     <a href={stackPath} aria-current={route === '/stack' ? 'page' : undefined}>{copy.navigation.stack}</a>
-    <a href={hirePath} aria-current={route === '/hire' ? 'page' : undefined}>{copy.navigation.hire}</a>
+    <a href={hirePath} aria-current={route === '/hire' || route.startsWith('/hire/') ? 'page' : undefined}>{copy.navigation.hire}</a>
   </nav>
 </header>

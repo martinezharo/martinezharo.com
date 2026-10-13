@@ -1,0 +1,268 @@
+---
+import type { ServiceKey } from '../hire/model';
+
+interface Props {
+  kind: ServiceKey;
+  class?: string;
+}
+
+const { kind, class: className } = Astro.props;
+---
+
+{/* Drawn in CSS so each service has a picture of what it is: an app's window,
+    a long landing page, and a screen split into before and after. */}
+<span class:list={['ill', `ill-${kind}`, className]} aria-hidden="true">
+  {kind === 'webApp' && (
+    <span class="ill-window">
+      <span class="ill-bar"><i /><i /><i /></span>
+      <span class="ill-app">
+        <span class="ill-side"><b /><b /><b /><b /></span>
+        <span class="ill-main">
+          <span class="ill-stat" /><span class="ill-stat" /><span class="ill-stat" />
+          <span class="ill-chart"><b style="--h:40%" /><b style="--h:70%" /><b style="--h:55%" /><b style="--h:90%" /><b style="--h:65%" /></span>
+        </span>
+      </span>
+    </span>
+  )}
+  {kind === 'landing' && (
+    <span class="ill-window">
+      <span class="ill-bar"><i /><i /><i /></span>
+      <span class="ill-page">
+        <span class="ill-hero"><b /><b /><span class="ill-btn" /></span>
+        <span class="ill-row"><b /><b /><b /></span>
+        <span class="ill-lines"><b /><b /></span>
+      </span>
+    </span>
+  )}
+  {kind === 'redesign' && (
+    <span class="ill-window">
+      <span class="ill-bar"><i /><i /><i /></span>
+      <span class="ill-split">
+        <span class="ill-before"><b /><b /><b /><b /></span>
+        <span class="ill-after"><span class="ill-btn" /><b /><b /></span>
+      </span>
+    </span>
+  )}
+</span>
+
+<style>
+  .ill {
+    --ink: #f2f2f2;
+    --dim: #2c2c34;
+    --tint: rgb(180 155 255);
+
+    display: block;
+    aspect-ratio: 4 / 3;
+    width: 100%;
+  }
+
+  .ill-window {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid #34343c;
+    border-radius: 10px;
+    background: #0d0d12;
+  }
+
+  .ill-bar {
+    display: flex;
+    flex: none;
+    gap: 4px;
+    padding: 7px 9px;
+    border-bottom: 1px solid #22222a;
+  }
+
+  .ill-bar i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3a3a44;
+  }
+
+  b {
+    display: block;
+    border-radius: 3px;
+    background: var(--dim);
+  }
+
+  .ill-app {
+    display: grid;
+    flex: 1;
+    grid-template-columns: 24% 1fr;
+    gap: 8px;
+    padding: 9px;
+  }
+
+  .ill-side {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding-right: 8px;
+    border-right: 1px solid #22222a;
+  }
+
+  .ill-side b {
+    height: 6px;
+  }
+
+  .ill-side b:first-child {
+    background: var(--tint);
+  }
+
+  .ill-main {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto 1fr;
+    gap: 7px;
+  }
+
+  .ill-stat {
+    height: 22px;
+    border-radius: 5px;
+    background: #1b1b22;
+  }
+
+  .ill-chart {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: end;
+    gap: 7%;
+    padding: 8px 10px 0;
+    border-radius: 5px;
+    background: #15151b;
+  }
+
+  .ill-chart b {
+    flex: 1;
+    height: var(--h);
+    border-radius: 3px 3px 0 0;
+    background: var(--tint);
+    opacity: 0.85;
+  }
+
+  .ill-page {
+    display: grid;
+    flex: 1;
+    grid-template-rows: 1.4fr auto auto;
+    gap: 9px;
+    padding: 10px 12px;
+  }
+
+  .ill-hero {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 6px;
+    border-radius: 6px;
+    background: linear-gradient(140deg, rgb(180 155 255 / 35%), rgb(255 122 198 / 25%));
+  }
+
+  .ill-hero b:nth-child(1) {
+    width: 62%;
+    height: 9px;
+    background: var(--ink);
+  }
+
+  .ill-hero b:nth-child(2) {
+    width: 42%;
+    height: 5px;
+    background: rgb(242 242 242 / 50%);
+  }
+
+  .ill-btn {
+    display: block;
+    width: 34px;
+    height: 11px;
+    border-radius: 6px;
+    background: var(--ink);
+  }
+
+  .ill-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .ill-row b {
+    height: 22px;
+    border-radius: 5px;
+    background: #1b1b22;
+  }
+
+  .ill-lines {
+    display: grid;
+    gap: 5px;
+  }
+
+  .ill-lines b {
+    height: 5px;
+  }
+
+  .ill-lines b:last-child {
+    width: 70%;
+  }
+
+  .ill-split {
+    position: relative;
+    display: grid;
+    flex: 1;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ill-split::after {
+    content: '';
+    position: absolute;
+    inset: -10% auto -10% 50%;
+    width: 2px;
+    background: var(--ink);
+    transform: rotate(8deg);
+  }
+
+  .ill-before {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 10px;
+    background: repeating-linear-gradient(45deg, #121218 0 6px, #0f0f14 6px 12px);
+  }
+
+  .ill-before b {
+    height: 7px;
+    background: #4a3f30;
+  }
+
+  .ill-before b:nth-child(2) {
+    width: 60%;
+    margin-left: 18%;
+    background: #3d4a3a;
+  }
+
+  .ill-before b:nth-child(3) {
+    width: 80%;
+    height: 14px;
+    background: #503a48;
+  }
+
+  .ill-after {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 7px;
+    padding: 12px;
+  }
+
+  .ill-after b {
+    width: 80%;
+    height: 6px;
+  }
+
+  .ill-after b:last-child {
+    width: 55%;
+  }
+
+  .ill-after .ill-btn {
+    background: var(--tint);
+  }
+</style>
