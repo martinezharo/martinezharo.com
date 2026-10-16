@@ -75,12 +75,12 @@ export interface ProjectQuote {
  * simply drops out of the list.
  */
 export const PROJECT_QUOTES: ProjectQuote[] = [
-  { slug: 'fewya', price: 1500, duration: 'months' },
-  { slug: 'rankmaker', price: 750, duration: 'weeks' },
-  { slug: 'klipcode', price: 500, duration: 'weeks' },
-  { slug: 'sendself', price: 400, duration: 'weeks' },
-  { slug: 'oliverp', price: 400, duration: 'weeks' },
-  { slug: 'akin', price: 150, duration: 'weeks' },
+  { slug: 'fewya', price: 500, duration: 'months' },
+  { slug: 'rankmaker', price: 250, duration: 'weeks' },
+  { slug: 'klipcode', price: 150, duration: 'weeks' },
+  { slug: 'sendself', price: 100, duration: 'weeks' },
+  { slug: 'oliverp', price: 100, duration: 'weeks' },
+  { slug: 'akin', price: 60, duration: 'weeks' },
 ];
 
 export function formatPrice(price: number, locale: string): string {
