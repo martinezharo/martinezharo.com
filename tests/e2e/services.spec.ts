@@ -27,10 +27,12 @@ test('lists the services as posters, with indicative prices and what my projects
   await expect(posters.locator('.poster-tiers li')).toHaveCount(9);
   await expect(page.locator('.posters-note')).toContainText('orientativos');
 
-  // Only quoted projects the portfolio actually renders, dearest first.
+  // Only quoted projects the portfolio actually renders, dearest first, with
+  // this site at the end pointing home.
   const bars = page.locator('.chart-bars a');
-  await expect(bars.locator('.chart-name')).toHaveText(['Fewya', 'Rankmaker']);
+  await expect(bars.locator('.chart-name')).toHaveText(['Fewya', 'Rankmaker', 'Esta web']);
   await expect(bars.first()).toHaveAttribute('href', '/es/projects/fewya');
+  await expect(bars.last()).toHaveAttribute('href', '/es');
 });
 
 test("a poster's button brings its service down to the form", async ({ page }) => {

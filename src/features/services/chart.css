@@ -81,6 +81,10 @@
   box-shadow: 0 6px 18px -8px rgb(0 0 0 / 80%);
 }
 
+.chart-bar img[data-plate] {
+  background: #000;
+}
+
 .chart-name {
   overflow: hidden;
   color: var(--muted);

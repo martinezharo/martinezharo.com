@@ -83,6 +83,17 @@ export const PROJECT_QUOTES: ProjectQuote[] = [
   { slug: 'akin', price: 60, duration: 'weeks' },
 ];
 
+/**
+ * This site, quoted like the rest. It is not a row in the portfolio database,
+ * so it carries its own logo and points at the home page instead of a project
+ * page; its name is a word and lives in the i18n bundle. The logo is a bare
+ * glyph with no background of its own, so it gets a black plate to sit on.
+ */
+export const SITE_QUOTE = { price: 50, duration: 'weeks', logo: '/icon.svg', path: '/', plate: true } as const satisfies Omit<
+  ProjectQuote,
+  'slug'
+> & { logo: string; path: string; plate: boolean };
+
 export function formatPrice(price: number, locale: string): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',

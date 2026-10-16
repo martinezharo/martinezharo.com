@@ -77,7 +77,7 @@ export function stackMarkdown(origin: URL | undefined, locale: Locale): string {
 export function servicesMarkdown(origin: URL | undefined, locale: Locale, projects: readonly Project[]): string {
   const copy = getCopy(locale);
   const words = copy.servicesPage;
-  const quotes = quoteProjects(projects);
+  const quotes = quoteProjects(projects, words.quotes.thisSite);
   return [
     `# ${text(words.title)}`,
     `> ${text(words.description)}`,
@@ -101,8 +101,8 @@ export function servicesMarkdown(origin: URL | undefined, locale: Locale, projec
     ...(quotes.length ? [
       `## ${text(words.quotes.heading)}`,
       text(words.quotes.lede),
-      quotes.map(({ project, price, duration }) =>
-        `- ${link(project.name, absoluteUrl(markdownPath(locale, projectPath(project.slug)), origin))}: ${formatPrice(price, locale)} · ${words.quotes.duration[duration]}`,
+      quotes.map(({ name, path, price, duration }) =>
+        `- ${link(name, absoluteUrl(markdownPath(locale, path), origin))}: ${formatPrice(price, locale)} · ${words.quotes.duration[duration]}`,
       ).join('\n'),
     ] : []),
     `## ${text(words.contact.heading)}`,

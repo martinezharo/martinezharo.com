@@ -67,6 +67,7 @@ export interface ServicesPageCopy {
     heading: string;
     lede: string;
     count(projects: number): string;
+    thisSite: string;
     duration: Record<QuoteDuration, string>;
     priceLabel(name: string, price: string): string;
   };
@@ -402,6 +403,7 @@ const copies: Record<Locale, LocaleCopy> = {
         heading: 'What my projects would cost',
         lede: 'If a client ordered them today.',
         count: (projects) => `${projects} project${projects === 1 ? '' : 's'}`,
+        thisSite: 'This site',
         duration: { weeks: '1–4 weeks', months: '1–3 months' },
         priceLabel: (name, price) => `${name}: about ${price}`,
       },
@@ -689,6 +691,7 @@ const copies: Record<Locale, LocaleCopy> = {
         heading: 'Lo que costarían mis proyectos',
         lede: 'Si hoy me los encargara un cliente.',
         count: (projects) => `${projects} proyecto${projects === 1 ? '' : 's'}`,
+        thisSite: 'Esta web',
         duration: { weeks: '1–4 semanas', months: '1–3 meses' },
         priceLabel: (name, price) => `${name}: unos ${price}`,
       },

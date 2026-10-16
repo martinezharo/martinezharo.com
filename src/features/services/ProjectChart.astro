@@ -12,7 +12,7 @@ interface Props {
 
 const { locale, projects } = Astro.props;
 const copy = getCopy(locale);
-const quotes = quoteProjects(projects);
+const quotes = quoteProjects(projects, copy.servicesPage.quotes.thisSite);
 const highest = Math.max(1, ...quotes.map((quote) => quote.price));
 ---
 
@@ -23,21 +23,21 @@ const highest = Math.max(1, ...quotes.map((quote) => quote.price));
       <p class="chart-lede">{copy.servicesPage.quotes.lede}</p>
 
       <ol class="chart-bars">
-        {quotes.map(({ project, price }) => {
+        {quotes.map(({ name, logo, path, price, plate }) => {
           const amount = formatPrice(price, locale);
           return (
             <li style={`--share: ${price / highest}`}>
               <a
-                href={localizedPath(locale, `/projects/${project.slug}`)}
-                aria-label={copy.servicesPage.quotes.priceLabel(project.name, amount)}
+                href={localizedPath(locale, path)}
+                aria-label={copy.servicesPage.quotes.priceLabel(name, amount)}
               >
                 <span class="chart-column">
                   <span class="chart-price">{amount}</span>
                   <span class="chart-bar">
-                    <img src={project.logo} alt="" width="40" height="40" />
+                    <img src={logo} alt="" width="40" height="40" data-plate={plate || undefined} />
                   </span>
                 </span>
-                <span class="chart-name">{project.name}</span>
+                <span class="chart-name">{name}</span>
               </a>
             </li>
           );
