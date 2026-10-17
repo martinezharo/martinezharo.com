@@ -2,6 +2,7 @@
 import { mailto, site } from '../../config/site';
 import { getCopy, type Locale } from '../../i18n';
 import { CONTACT_SERVICES, LIMITS, turnstileSiteKey } from './contact';
+import { paint } from './paint';
 import './contact.css';
 
 interface Props {
@@ -16,6 +17,13 @@ const words = copy.servicesPage.contact;
 // collect messages to throw away. The section still answers the question it
 // asks, with the address instead.
 const siteKey = turnstileSiteKey();
+
+// The card takes the colour of the service that is ticked: one rule per
+// service, written from the same palette as the posters above.
+const picks = CONTACT_SERVICES.map(
+  (service) =>
+    `.contact:has([name=service][value="${service}"]:checked){--pick:${paint[service].bg};--pick-ink:${paint[service].ink}}`,
+).join('');
 ---
 
 <section class="contact" id="contact">
@@ -44,7 +52,7 @@ const siteKey = turnstileSiteKey();
           <legend>{words.service}</legend>
           <div class="contact-chips">
             {CONTACT_SERVICES.map((service, index) => (
-              <label class="contact-chip">
+              <label class="contact-chip" style={`--bg: ${paint[service].bg}; --ink: ${paint[service].ink}`}>
                 <input type="radio" name="service" value={service} checked={index === 0} />
                 <span>{words.services[service]}</span>
               </label>
@@ -99,6 +107,8 @@ const siteKey = turnstileSiteKey();
     )
   }
 </section>
+
+<style is:inline set:html={picks} />
 
 <script>
   import { initContactForm } from './client';

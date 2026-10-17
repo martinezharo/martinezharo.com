@@ -1,7 +1,8 @@
 ---
 import { site } from '../../config/site';
 import { getCopy, type Locale } from '../../i18n';
-import { SERVICES, formatPrice, type ServiceKey } from './model';
+import { SERVICES, formatPrice } from './model';
+import { paint } from './paint';
 import './posters.css';
 
 interface Props {
@@ -11,15 +12,6 @@ interface Props {
 const { locale } = Astro.props;
 const copy = getCopy(locale);
 const services = copy.servicesPage.services;
-
-// One colour per service, so the three read as three posters on one wall. The
-// ink is the same hue taken nearly to black, which keeps every line of type on
-// its poster well past 7:1.
-const paint: Record<ServiceKey, { bg: string; ink: string }> = {
-  webApp: { bg: '#b49bff', ink: '#120b26' },
-  landing: { bg: '#ffd84d', ink: '#231a00' },
-  redesign: { bg: '#ff8ad0', ink: '#2a0a1e' },
-};
 ---
 
 <section class="posters" id="services" aria-label={services.heading}>

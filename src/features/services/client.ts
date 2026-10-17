@@ -53,6 +53,17 @@ export function initContactForm(form: HTMLFormElement | null, signal: AbortSigna
     status.dataset.tone = tone;
   };
 
+  // The message box grows with its text. CSS does it where field-sizing is
+  // supported; elsewhere its height follows the text's on every keystroke.
+  const textarea = form.querySelector<HTMLTextAreaElement>('textarea')!;
+  const grow = CSS.supports('field-sizing', 'content')
+    ? () => {}
+    : () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight + textarea.offsetHeight - textarea.clientHeight}px`;
+      };
+  textarea.addEventListener('input', grow, { signal });
+
   // The button waits for a token: a message sent without one is refused.
   const ready = () => {
     submit.disabled = token === '';
@@ -114,6 +125,7 @@ export function initContactForm(form: HTMLFormElement | null, signal: AbortSigna
         say(messages[error] ?? messages.unavailable, 'error');
       } else {
         form.reset();
+        grow();
         form.dataset.state = 'sent';
         say(messages.sent, 'success');
       }
