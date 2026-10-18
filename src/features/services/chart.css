@@ -139,6 +139,60 @@
   }
 }
 
+/* On a phone seven columns leave each one too narrow for its price and name,
+   so the chart lies on its side: one row per project, the name against the
+   baseline on the left, the logo riding the tip of the bar and the price past
+   it. Every project keeps its place. */
+@container page (width < 560px) {
+  .chart-bars {
+    grid-auto-flow: row;
+    gap: 8px;
+  }
+
+  .chart-bars a {
+    grid-template-areas: 'name column';
+    grid-template-columns: 74px minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+  }
+
+  .chart-name {
+    grid-area: name;
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .chart-column,
+  .chart-bars li:last-child .chart-column {
+    grid-area: column;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin: -4px 0;
+    padding: 4px 0;
+    border-bottom: 0;
+    border-left: 2px solid var(--line-strong);
+  }
+
+  .chart-price {
+    order: 1;
+    margin: 0 0 0 8px;
+    font-size: 13px;
+  }
+
+  .chart-bar {
+    flex: none;
+    justify-content: flex-end;
+    align-items: center;
+    align-self: auto;
+    /* The longest bar stops short of the edge by the room its price needs. */
+    width: calc(16% + var(--share) * (84% - 76px));
+    height: 40px;
+    padding: 0 6px 0 0;
+    border-radius: 3px 10px 10px 3px;
+    background: linear-gradient(90deg, #3c2f6e, #b49bff);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chart-bar,
   .chart-name {
