@@ -1,0 +1,92 @@
+---
+interface Props { locale: string }
+const { locale } = Astro.props;
+---
+
+<div
+  class="page-scrollbar"
+  role="scrollbar"
+  aria-label={locale === 'es' ? 'Desplazamiento de página' : 'Page scroll'}
+  aria-controls="site-document"
+  aria-orientation="vertical"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+  tabindex="0"
+  hidden
+><span></span></div>
+
+<script>
+  function setupScrollbar() {
+    const track = document.querySelector<HTMLElement>('.page-scrollbar');
+    const thumb = track?.querySelector('span');
+    if (!track || !thumb) return;
+
+    const root = document.documentElement;
+    const enabled = matchMedia('(pointer: fine) and (forced-colors: none)');
+    const controller = new AbortController();
+    const { signal } = controller;
+    const thumbHeight = 48;
+    let frame = 0;
+    let dragOffset: number | null = null;
+
+    const maximum = () => Math.max(0, root.scrollHeight - root.clientHeight);
+    const travel = () => Math.max(1, innerHeight - thumbHeight);
+    function update() {
+      frame = 0;
+      const max = maximum();
+      const active = enabled.matches && max > 0;
+      track!.hidden = !active;
+      root.toggleAttribute('data-page-scrollbar', active);
+      const progress = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+      thumb!.style.transform = `translateY(${progress * travel()}px)`;
+      track!.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+    }
+    function scheduleUpdate() {
+      if (!frame) frame = requestAnimationFrame(update);
+    }
+    function scrollToPointer(y: number) {
+      window.scrollTo(0, ((y - (dragOffset ?? thumbHeight / 2)) / travel()) * maximum());
+    }
+
+    track.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      dragOffset = event.target === thumb
+        ? event.clientY - thumb.getBoundingClientRect().top
+        : thumbHeight / 2;
+      track.setPointerCapture(event.pointerId);
+      track.focus({ preventScroll: true });
+      scrollToPointer(event.clientY);
+    }, { signal });
+    track.addEventListener('pointermove', (event) => {
+      if (dragOffset !== null) scrollToPointer(event.clientY);
+    }, { signal });
+    track.addEventListener('lostpointercapture', () => { dragOffset = null; }, { signal });
+    track.addEventListener('keydown', (event) => {
+      const targets: Record<string, number> = {
+        ArrowDown: scrollY + 40, ArrowUp: scrollY - 40,
+        PageDown: scrollY + innerHeight * 0.9, PageUp: scrollY - innerHeight * 0.9,
+        Home: 0, End: maximum(),
+      };
+      if (!(event.key in targets)) return;
+      event.preventDefault();
+      window.scrollTo(0, targets[event.key]);
+    }, { signal });
+
+    const observer = new ResizeObserver(scheduleUpdate);
+    observer.observe(document.body);
+    observer.observe(root);
+    window.addEventListener('scroll', scheduleUpdate, { passive: true, signal });
+    window.addEventListener('resize', scheduleUpdate, { signal });
+    enabled.addEventListener('change', scheduleUpdate, { signal });
+    document.addEventListener('astro:before-swap', () => {
+      controller.abort();
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+      root.removeAttribute('data-page-scrollbar');
+    }, { once: true });
+    update();
+  }
+  document.addEventListener('astro:page-load', setupScrollbar);
+</script>

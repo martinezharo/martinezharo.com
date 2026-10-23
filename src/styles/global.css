@@ -50,6 +50,59 @@
   box-sizing: border-box;
 }
 
+/* Inner panels retain native controls. The page indicator has a fixed short
+   thumb; native thumb length is otherwise controlled by the browser. */
+@media (forced-colors: none) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--bg);
+  }
+}
+
+.page-scrollbar {
+  display: none;
+}
+
+@media (pointer: fine) and (forced-colors: none) {
+  html[data-page-scrollbar] {
+    scrollbar-width: none;
+  }
+
+  html[data-page-scrollbar]::-webkit-scrollbar {
+    display: none;
+  }
+
+  .page-scrollbar {
+    display: block;
+    position: fixed;
+    z-index: 100;
+    inset: 0 0 0 auto;
+    width: 12px;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .page-scrollbar span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3px;
+    height: 48px;
+    border-radius: 999px;
+    background: var(--accent);
+    pointer-events: auto;
+  }
+
+  .page-scrollbar:focus-visible {
+    outline: none;
+  }
+
+  .page-scrollbar:focus-visible span {
+    outline: 1px solid var(--text);
+    outline-offset: 2px;
+  }
+}
+
 /* No `scroll-behavior: smooth` here. The client router restores a saved scroll
    position with a bare `scrollTo`, having just jumped the page to the top, and
    a smooth rule turns that pair into a long slide down the page every time you
