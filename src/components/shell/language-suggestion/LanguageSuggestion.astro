@@ -1,0 +1,174 @@
+---
+import Icon from '../../ui/Icon.astro';
+import PreviewBar from './PreviewBar.astro';
+import { alternateLocale, localizedPath, LOCALE_QUERY, routeFromPath, type Locale } from '../../../i18n';
+import { DEFAULT_VARIANT, NOTICE_QUERY, isVariant } from './variants';
+import './language-suggestion.css';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const other = alternateLocale(locale);
+
+// `?notice=<variant>` is the side-by-side preview: it picks the design and
+// shows it whatever the browser's language or an earlier dismissal says.
+const requested = Astro.url.searchParams.get(NOTICE_QUERY) ?? undefined;
+const preview = isVariant(requested);
+const variant = preview ? requested : DEFAULT_VARIANT;
+
+const target = new URL(Astro.url);
+target.pathname = localizedPath(other, routeFromPath(target.pathname));
+target.searchParams.delete(NOTICE_QUERY);
+target.searchParams.set(LOCALE_QUERY, other);
+const href = `${target.pathname}${target.search}`;
+
+// Each sentence is written in the language it offers, except `from`: the same
+// sentence in the page's own language, which the decode design translates.
+const copy = other === 'en'
+  ? {
+      label: 'Also available in English',
+      hint: 'This page is also in English',
+      from: 'Esta página también está en inglés',
+      greeting: 'Hello',
+      action: 'Switch to English',
+      dismiss: 'Dismiss language suggestion',
+    }
+  : {
+      label: 'También disponible en español',
+      hint: 'Esta página también está en español',
+      from: 'This page is also in Spanish',
+      greeting: 'Hola',
+      action: 'Cambiar a español',
+      dismiss: 'Cerrar sugerencia de idioma',
+    };
+---
+
+<language-suggestion data-locale={locale} data-variant={variant} data-preview={preview ? '' : undefined} hidden>
+  {variant === 'island' && (
+    <aside class="ls-island" lang={other} aria-label={copy.label}>
+      <div class="ls-island-body">
+        <span class="ls-island-code" aria-hidden="true">
+          <span>{locale.toUpperCase()}</span>
+          <span>{other.toUpperCase()}</span>
+        </span>
+        <p class="ls-island-hint">{copy.hint}</p>
+        <a class="ls-island-action" href={href} hreflang={other} data-astro-prefetch="false">{copy.action}</a>
+        <button type="button" class="ls-island-close" aria-label={copy.dismiss}><Icon name="clear" /></button>
+      </div>
+    </aside>
+  )}
+
+  {variant === 'decode' && (
+    <aside class="ls-decode" lang={other} aria-label={copy.label}>
+      <svg class="ls-decode-frame" aria-hidden="true"><rect width="100%" height="100%" rx="18" pathLength="1" /></svg>
+      <p class="ls-decode-line">
+        <span class="for-screen-readers">{copy.hint}</span>
+        <span class="ls-decode-text" aria-hidden="true" lang={locale} data-to={copy.hint}>{copy.from}</span>
+      </p>
+      <div class="ls-decode-actions">
+        <a class="ls-decode-action" href={href} hreflang={other} data-astro-prefetch="false">{copy.action}</a>
+        <button type="button" class="ls-decode-close" aria-label={copy.dismiss}><Icon name="clear" /></button>
+      </div>
+    </aside>
+  )}
+
+  {variant === 'hello' && (
+    <aside class="ls-hello" lang={other} aria-label={copy.label}>
+      <p class="ls-hello-word" aria-hidden="true">
+        {[...copy.greeting].map((letter, index) => <span style={`--i: ${index}`}>{letter}</span>)}
+      </p>
+      <p class="ls-hello-hint">{copy.hint}.</p>
+      <a class="ls-hello-action" href={href} hreflang={other} data-astro-prefetch="false">{copy.action}</a>
+      <button type="button" class="ls-hello-close" aria-label={copy.dismiss}><Icon name="clear" /></button>
+    </aside>
+  )}
+</language-suggestion>
+
+{preview && <PreviewBar current={variant} />}
+
+<script>
+  import { isLocale, LOCALE_COOKIE, preferredLocale } from '../../../i18n';
+  import { decode } from './decode';
+
+  const DISMISSED_KEY = 'language-suggestion-dismissed';
+  // Also keep the dismissal for client navigation when storage is unavailable.
+  let dismissed = false;
+
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  class LanguageSuggestion extends HTMLElement {
+    connectedCallback() {
+      const preview = this.hasAttribute('data-preview');
+      if (!preview && !this.wanted()) return;
+
+      const link = this.querySelector('a');
+      if (link) link.hash = location.hash;
+      this.hidden = false;
+
+      if (this.dataset.variant === 'island') this.measureIsland();
+      if (this.dataset.variant === 'decode') this.startDecode();
+      if (this.dataset.variant === 'hello') this.trackPointer();
+
+      this.querySelector('button')?.addEventListener('click', () => this.dismiss(preview), { once: true });
+    }
+
+    /** Only for a reader whose browser prefers the other language and who has not chosen or declined. */
+    private wanted(): boolean {
+      const chosen = document.cookie.split(';').some((part) => {
+        const [name, value] = part.trim().split('=');
+        return name === LOCALE_COOKIE && isLocale(value);
+      });
+      let storedDismissal = false;
+      try { storedDismissal = localStorage.getItem(DISMISSED_KEY) === '1'; } catch { /* Storage is optional. */ }
+      const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
+      const preferred = preferredLocale(languages.join(','));
+      return !chosen && !dismissed && !storedDismissal && preferred !== this.dataset.locale;
+    }
+
+    /** The pill grows to its content, which CSS cannot animate to on its own. */
+    private measureIsland() {
+      const island = this.querySelector<HTMLElement>('.ls-island');
+      const body = this.querySelector<HTMLElement>('.ls-island-body');
+      if (!island || !body) return;
+      // Again once the web font lands, or the pill keeps the fallback's width.
+      new ResizeObserver(() => island.style.setProperty('--ls-width', `${body.offsetWidth}px`)).observe(body);
+    }
+
+    private startDecode() {
+      const text = this.querySelector<HTMLElement>('.ls-decode-text');
+      if (!text?.dataset.to) return;
+      const to = text.dataset.to;
+      const finish = () => text.setAttribute('lang', this.querySelector('aside')?.lang ?? '');
+      if (reducedMotion()) { text.textContent = to; finish(); return; }
+      decode(text, to, { delay: 1150, duration: 1100 }).then(finish);
+    }
+
+    /** The border's light follows the pointer; without one it rests where the card was drawn from. */
+    private trackPointer() {
+      const card = this.querySelector<HTMLElement>('.ls-hello');
+      if (!card || !matchMedia('(hover: hover)').matches) return;
+      card.addEventListener('pointermove', (event) => {
+        const box = card.getBoundingClientRect();
+        card.style.setProperty('--x', `${event.clientX - box.left}px`);
+        card.style.setProperty('--y', `${event.clientY - box.top}px`);
+      });
+    }
+
+    private async dismiss(preview: boolean) {
+      if (!preview) {
+        dismissed = true;
+        try { localStorage.setItem(DISMISSED_KEY, '1'); } catch { /* Storage is optional. */ }
+      }
+      const returnFocus = this.contains(document.activeElement);
+      this.dataset.leaving = '';
+      // Wait for the exit animations only: the island's orbit never finishes.
+      const exits = this.getAnimations({ subtree: true })
+        .filter((animation) => animation instanceof CSSAnimation && animation.animationName.endsWith('-leave'));
+      await Promise.all(exits.map((animation) => animation.finished.catch(() => undefined)));
+      this.hidden = true;
+      delete this.dataset.leaving;
+      if (returnFocus) document.querySelector<HTMLAnchorElement>('a.language')?.focus({ preventScroll: true });
+    }
+  }
+
+  if (!customElements.get('language-suggestion')) customElements.define('language-suggestion', LanguageSuggestion);
+</script>

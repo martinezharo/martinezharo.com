@@ -1,0 +1,89 @@
+---
+import { LOCALE_NAMES, LOCALE_QUERY, LOCALES, localizedPath, routeFromPath, type Locale } from '../../../i18n';
+import { NOTICE_QUERY, VARIANT_NAMES, VARIANTS, type Variant } from './variants';
+
+// Only drawn under `?notice=`: a switcher for comparing the designs on the
+// real page. Every link reloads, so each design gets its own entrance.
+interface Props { current: Variant }
+const { current } = Astro.props;
+const route = routeFromPath(Astro.url.pathname);
+const currentLocale: Locale = Astro.url.pathname === '/es' || Astro.url.pathname.startsWith('/es/') ? 'es' : 'en';
+
+const withParams = (pathname: string, params: Record<string, string>) => {
+  const url = new URL(Astro.url);
+  url.pathname = pathname;
+  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+  return `${url.pathname}${url.search}${url.hash}`;
+};
+---
+
+<nav class="ls-preview" aria-label="Language notice designs">
+  <div class="ls-preview-group">
+    {VARIANTS.map((variant) => (
+      <a href={withParams(Astro.url.pathname, { [NOTICE_QUERY]: variant })} aria-current={variant === current ? 'true' : undefined} data-astro-reload>
+        {VARIANT_NAMES[variant]}
+      </a>
+    ))}
+  </div>
+  <a class="ls-preview-replay" href={withParams(Astro.url.pathname, {})} data-astro-reload>Replay</a>
+  <div class="ls-preview-group">
+    {LOCALES.map((locale) => (
+      <a
+        href={withParams(localizedPath(locale, route), { [LOCALE_QUERY]: locale })}
+        aria-current={locale === currentLocale ? 'true' : undefined}
+        aria-label={`Page in ${LOCALE_NAMES[locale]}`}
+        data-astro-reload
+      >
+        {locale.toUpperCase()}
+      </a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .ls-preview {
+    position: fixed;
+    z-index: 30;
+    top: 14px;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgb(0 0 0 / 80%);
+    backdrop-filter: blur(12px);
+    font-size: 12px;
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+
+  .ls-preview-group {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ls-preview a {
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: var(--muted);
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .ls-preview a:hover { color: var(--text); }
+
+  .ls-preview a[aria-current] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .ls-preview-replay {
+    border: 1px solid var(--line-strong);
+  }
+
+  /* Clear of the mobile header. */
+  @media (width <= 780px) {
+    .ls-preview { top: calc(var(--head-h) + 10px); }
+  }
+</style>

@@ -1,0 +1,475 @@
+@import '../../../styles/breakpoints.css';
+
+/* The one notice on the site that floats above the page, so it is the one
+   place glass, glow and motion are allowed: it has to be noticed once, and
+   then it goes away for good. */
+
+@property --ls-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+language-suggestion {
+  /* A spring that overshoots and settles, and a softer one for size. */
+  --ls-spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1);
+  --ls-spring-soft: linear(0, 0.0066, 0.0264 2.1%, 0.1062, 0.2316 7.1%, 0.5946 13.9%, 0.7816 18.1%, 0.9223 22.4%, 1.0209 26.9%, 1.0802 31.6%, 1.0996 35%, 1.1028 38.3%, 1.0933 42.6%, 1.0283 55.5%, 1.0018 63.4%, 0.9911 71.5%, 0.9922 85.1%, 1);
+  --ls-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ls-glass: rgb(10 9 14 / 78%);
+
+  position: fixed;
+  z-index: 15;
+  right: 28px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  max-width: calc(100vw - 40px);
+}
+
+@media (--compact) {
+  language-suggestion {
+    right: var(--edge);
+    left: var(--edge);
+    bottom: calc(var(--edge) + var(--badge-size) + 12px + env(safe-area-inset-bottom));
+    max-width: none;
+  }
+}
+
+/* Every close button is the same quiet circle. */
+:is(.ls-island-close, .ls-decode-close, .ls-hello-close) {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background 180ms, color 180ms;
+}
+
+:is(.ls-island-close, .ls-decode-close, .ls-hello-close):is(:hover, :focus-visible) {
+  background: rgb(255 255 255 / 7%);
+  color: var(--text);
+}
+
+language-suggestion :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Island ────────────────────────────────────────────────────────────────
+   A dot pops up under the content column and stretches into a pill, the way
+   a phone's island makes room for news. A point of light keeps circling its
+   rim so the eye finds it again. */
+
+language-suggestion[data-variant='island'] {
+  --ls-h: 54px;
+
+  right: auto;
+  left: calc(var(--sidebar-w) + (100% - var(--sidebar-w)) / 2);
+  translate: -50% 0;
+}
+
+.ls-island {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--ls-width, auto);
+  height: var(--ls-h);
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--ls-glass);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 8%),
+    0 30px 60px -30px #000,
+    0 18px 70px -26px rgb(var(--accent-rgb) / 55%);
+  animation:
+    ls-island-pop 620ms var(--ls-spring) 350ms both,
+    ls-island-open 1000ms var(--ls-spring-soft) 720ms both;
+}
+
+/* The rim light: a conic sweep masked down to the one-pixel edge. */
+.ls-island::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--ls-angle),
+    transparent 0deg 220deg,
+    rgb(var(--accent-rgb) / 60%) 300deg,
+    #fff 345deg,
+    transparent 360deg
+  );
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  animation: ls-orbit 5s linear infinite;
+}
+
+.ls-island:hover::before {
+  animation-duration: 2.2s;
+}
+
+.ls-island-body {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 0 7px;
+  white-space: nowrap;
+}
+
+.ls-island-body > * {
+  animation: ls-rise 520ms var(--ls-out) calc(1050ms + var(--d, 0ms)) both;
+}
+
+.ls-island-code {
+  display: block;
+  flex-shrink: 0;
+  width: calc(var(--ls-h) - 14px);
+  height: calc(var(--ls-h) - 14px);
+  overflow: hidden;
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 26%, #e4dbff, var(--accent) 48%, #7556ea);
+  box-shadow: 0 0 22px -4px rgb(var(--accent-rgb) / 70%);
+  color: #0d0718;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  line-height: calc(var(--ls-h) - 14px);
+  text-align: center;
+}
+
+/* The page's language rolls over into the one on offer. */
+.ls-island-code > span {
+  display: block;
+  animation: ls-roll 900ms var(--ls-spring) 1700ms both;
+}
+
+.ls-island-hint {
+  --d: 70ms;
+
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.ls-island-action {
+  --d: 140ms;
+
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--ls-h) - 14px);
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13.5px;
+  font-weight: 560;
+  transition: background 200ms, box-shadow 200ms;
+}
+
+.ls-island-action:is(:hover, :focus-visible) {
+  background: var(--accent);
+  box-shadow: 0 0 24px -4px rgb(var(--accent-rgb) / 80%);
+}
+
+.ls-island-close {
+  --d: 210ms;
+
+  width: calc(var(--ls-h) - 14px);
+  height: calc(var(--ls-h) - 14px);
+}
+
+language-suggestion[data-leaving] .ls-island {
+  animation: ls-island-leave 520ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+language-suggestion[data-leaving] .ls-island-body > * {
+  animation: ls-fade-leave 160ms ease-in both;
+}
+
+@media (--compact) {
+  /* Beside the GitHub badge and the same height, so the corner reads as one
+     row of things rather than two floating pieces. */
+  language-suggestion[data-variant='island'] {
+    --ls-h: var(--badge-size);
+
+    right: calc(var(--edge) + var(--badge-size) + 8px);
+    left: auto;
+    bottom: calc(var(--edge) + env(safe-area-inset-bottom));
+    max-width: calc(100% - var(--edge) * 2 - var(--badge-size) - 8px);
+    translate: none;
+  }
+
+  .ls-island-body { gap: 8px; padding: 0 4px; }
+  .ls-island-hint { display: none; }
+  .ls-island-action { padding: 0 14px; font-size: 13px; }
+  .ls-island-code { font-size: 11px; }
+}
+
+@keyframes ls-island-pop {
+  from { opacity: 0; scale: 0.2; }
+}
+
+@keyframes ls-island-open {
+  from { width: var(--ls-h); }
+  to { width: var(--ls-width); }
+}
+
+@keyframes ls-island-leave {
+  0% { width: var(--ls-width); opacity: 1; scale: 1; }
+  65% { width: var(--ls-h); opacity: 1; scale: 1; }
+  100% { width: var(--ls-h); opacity: 0; scale: 0.2; }
+}
+
+@keyframes ls-orbit {
+  to { --ls-angle: 360deg; }
+}
+
+@keyframes ls-roll {
+  to { translate: 0 -100%; }
+}
+
+/* ─── Decode ────────────────────────────────────────────────────────────────
+   The frame draws itself, then the sentence translates in place: each letter
+   flickers through the alphabet and lands in the other language. */
+
+.ls-decode {
+  position: relative;
+  width: 304px;
+  padding: 22px 16px 14px 22px;
+  border-radius: 18px;
+  background: var(--ls-glass);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 30px 60px -30px #000;
+  animation: ls-lift 700ms var(--ls-out) 300ms both;
+}
+
+.ls-decode-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ls-decode-frame rect {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1px;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 4px rgb(var(--accent-rgb) / 0%));
+  animation: ls-draw 1500ms cubic-bezier(0.65, 0, 0.35, 1) 380ms both;
+}
+
+/* Narrow enough that both sentences take two lines, so the card keeps its
+   height while one turns into the other. */
+.ls-decode-line {
+  max-width: 11em;
+  min-height: 2.5em;
+  margin: 0 6px 16px 0;
+  font-size: 24px;
+  font-weight: 520;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+
+.ls-decode-text {
+  color: var(--text);
+  animation: ls-ink 700ms ease 1150ms both;
+}
+
+.ls-glyph {
+  color: var(--accent);
+  text-shadow: 0 0 12px rgb(var(--accent-rgb) / 80%);
+}
+
+.ls-decode-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: ls-rise 520ms var(--ls-out) 2250ms both;
+}
+
+.ls-decode-action {
+  padding: 4px 0;
+  background: linear-gradient(currentColor 0 0) 0 100% / 0 1px no-repeat;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 540;
+  transition: background-size 380ms var(--ls-out), color 180ms;
+}
+
+.ls-decode-action:is(:hover, :focus-visible) {
+  background-size: 100% 1px;
+  color: #d4c7ff;
+}
+
+language-suggestion[data-leaving] .ls-decode {
+  animation: ls-card-leave 260ms ease-in both;
+}
+
+@media (--compact) {
+  .ls-decode { width: auto; }
+}
+
+@keyframes ls-draw {
+  0% { stroke: var(--accent); stroke-dashoffset: 1; filter: drop-shadow(0 0 4px rgb(var(--accent-rgb) / 90%)); }
+  70% { stroke: var(--accent); stroke-dashoffset: 0; filter: drop-shadow(0 0 4px rgb(var(--accent-rgb) / 90%)); }
+}
+
+@keyframes ls-ink {
+  from { color: var(--muted); }
+}
+
+/* ─── Hello ─────────────────────────────────────────────────────────────────
+   The greeting is the notice: the word stands up letter by letter, a sheen
+   of the accent runs through it, and the rim lights where the pointer is. */
+
+.ls-hello {
+  --x: 20%;
+  --y: 0%;
+
+  position: relative;
+  width: 296px;
+  padding: 20px 20px 20px 22px;
+  border-radius: 22px;
+  background:
+    radial-gradient(110% 70% at 0% 0%, rgb(var(--accent-rgb) / 14%), transparent 65%),
+    var(--ls-glass);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 7%),
+    0 30px 60px -30px #000;
+  animation: ls-lift 700ms var(--ls-out) 300ms both;
+}
+
+.ls-hello::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: radial-gradient(200px circle at var(--x) var(--y), rgb(var(--accent-rgb)), transparent 70%);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+.ls-hello-word {
+  position: relative;
+  display: flex;
+  margin: 0 0 10px -3px;
+  font-size: 68px;
+  font-weight: 620;
+  line-height: 1;
+  letter-spacing: -0.065em;
+  perspective: 500px;
+}
+
+.ls-hello-word > span {
+  display: block;
+  padding-bottom: 6px;
+  transform-origin: 50% 100%;
+}
+
+/* The sheen: a wave of the accent passes through the letters once they stand,
+   and again whenever the pointer comes back to the card. */
+.ls-hello-word > span {
+  animation:
+    ls-letter 1000ms var(--ls-spring-soft) calc(480ms + var(--i) * 75ms) both,
+    ls-sheen 900ms ease-in-out calc(1350ms + var(--i) * 90ms) both;
+}
+
+.ls-hello:hover .ls-hello-word > span {
+  animation:
+    ls-letter 1000ms var(--ls-spring-soft) calc(480ms + var(--i) * 75ms) both,
+    ls-sheen-again 900ms ease-in-out calc(var(--i) * 90ms) both;
+}
+
+.ls-hello-hint {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+  animation: ls-rise 520ms var(--ls-out) 1000ms both;
+}
+
+.ls-hello-action {
+  display: grid;
+  place-items: center;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 560;
+  transition: background 200ms, box-shadow 200ms;
+  animation: ls-rise 520ms var(--ls-out) 1100ms both;
+}
+
+.ls-hello-action:is(:hover, :focus-visible) {
+  background: var(--accent);
+  box-shadow: 0 10px 30px -10px rgb(var(--accent-rgb) / 80%);
+}
+
+.ls-hello-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+language-suggestion[data-leaving] .ls-hello {
+  animation: ls-card-leave 260ms ease-in both;
+}
+
+@media (--compact) {
+  .ls-hello { width: auto; }
+}
+
+@keyframes ls-letter {
+  from { opacity: 0; transform: translateY(0.4em) rotateX(-85deg); filter: blur(8px); }
+}
+
+@keyframes ls-sheen {
+  45% { color: var(--accent); text-shadow: 0 0 28px rgb(var(--accent-rgb) / 70%); }
+}
+
+@keyframes ls-sheen-again {
+  45% { color: var(--accent); text-shadow: 0 0 28px rgb(var(--accent-rgb) / 70%); }
+}
+
+/* ─── Shared ───────────────────────────────────────────────────────────── */
+
+@keyframes ls-lift {
+  from { opacity: 0; translate: 0 16px; scale: 0.97; }
+}
+
+@keyframes ls-rise {
+  from { opacity: 0; translate: 0 6px; filter: blur(4px); }
+}
+
+@keyframes ls-fade-leave {
+  to { opacity: 0; }
+}
+
+@keyframes ls-card-leave {
+  to { opacity: 0; translate: 0 10px; scale: 0.97; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  language-suggestion *,
+  language-suggestion *::before,
+  language-suggestion *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .ls-island-code > span { translate: 0 -100%; }
+  .ls-island { width: auto; }
+}

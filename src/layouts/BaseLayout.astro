@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import LanguageSuggestion from '../components/shell/language-suggestion/LanguageSuggestion.astro';
 import '@fontsource-variable/geist';
 import '../styles/global.css';
 import { site } from '../config/site';
@@ -84,5 +85,6 @@ const structuredData = pageStructuredData(Astro.site, canonical.href, locale, ti
   </head>
   <body>
     <slot />
+    <LanguageSuggestion locale={locale} />
   </body>
 </html>
