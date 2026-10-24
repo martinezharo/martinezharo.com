@@ -1,6 +1,7 @@
 ---
 import PageScrollbar from '../components/shell/PageScrollbar.astro';
 import { ClientRouter } from 'astro:transitions';
+import LanguageSuggestion from '../components/shell/LanguageSuggestion.astro';
 import '@fontsource-variable/geist';
 import '../styles/global.css';
 import { site } from '../config/site';
@@ -86,5 +87,6 @@ const structuredData = pageStructuredData(Astro.site, canonical.href, locale, ti
   <body id="site-document">
     <slot />
     <PageScrollbar locale={locale} />
+    <LanguageSuggestion locale={locale} />
   </body>
 </html>

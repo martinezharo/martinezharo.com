@@ -1,0 +1,242 @@
+@import '../../styles/breakpoints.css';
+
+/* The one thing on the site that floats over the page, so the one place glass,
+   glow and motion are allowed: it has to be noticed once, and then it goes
+   away for good.
+
+   A dot pops up under the content column and stretches into a pill, the way a
+   phone's island makes room for news, and a point of light keeps circling its
+   rim so the eye finds it again. */
+
+@property --pill-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+language-suggestion {
+  /* A spring that overshoots and settles, and a softer one for the width. */
+  --pill-spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1);
+  --pill-spring-soft: linear(0, 0.0066, 0.0264 2.1%, 0.1062, 0.2316 7.1%, 0.5946 13.9%, 0.7816 18.1%, 0.9223 22.4%, 1.0209 26.9%, 1.0802 31.6%, 1.0996 35%, 1.1028 38.3%, 1.0933 42.6%, 1.0283 55.5%, 1.0018 63.4%, 0.9911 71.5%, 0.9922 85.1%, 1);
+  --pill-h: 54px;
+  /* What sits inside the pill keeps 7px of air to the rim. */
+  --pill-inner: calc(var(--pill-h) - 14px);
+
+  position: fixed;
+  z-index: 15;
+  left: calc(var(--sidebar-w) + (100% - var(--sidebar-w)) / 2);
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  translate: -50% 0;
+}
+
+/* No `-webkit-backdrop-filter` beside the standard one: Lightning CSS folds the
+   pair into the prefixed property alone, which Chrome ignores. */
+.language-pill {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--pill-width, auto);
+  height: var(--pill-h);
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(10 9 14 / 78%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 8%),
+    0 30px 60px -30px #000,
+    0 18px 70px -26px rgb(var(--accent-rgb) / 55%);
+  animation:
+    pill-pop 620ms var(--pill-spring) 350ms both,
+    pill-open 1000ms var(--pill-spring-soft) 720ms both;
+}
+
+/* The rim light: a conic sweep masked down to the one-pixel edge. */
+.language-pill::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--pill-angle),
+    transparent 0deg 220deg,
+    rgb(var(--accent-rgb) / 60%) 300deg,
+    #fff 345deg,
+    transparent 360deg
+  );
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  animation: pill-orbit 5s linear infinite;
+}
+
+.language-pill:hover::before {
+  animation-duration: 2.2s;
+}
+
+.language-pill-body {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 0 7px;
+  white-space: nowrap;
+}
+
+.language-pill-body > * {
+  animation: pill-rise 520ms cubic-bezier(0.16, 1, 0.3, 1) calc(1050ms + var(--delay, 0ms)) both;
+}
+
+.language-pill-code {
+  display: block;
+  flex-shrink: 0;
+  width: var(--pill-inner);
+  height: var(--pill-inner);
+  overflow: hidden;
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 26%, #e4dbff, var(--accent) 48%, #7556ea);
+  box-shadow: 0 0 22px -4px rgb(var(--accent-rgb) / 70%);
+  color: #0d0718;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  line-height: var(--pill-inner);
+  text-align: center;
+}
+
+.language-pill-code > span {
+  display: block;
+  animation: pill-roll 900ms var(--pill-spring) 1700ms both;
+}
+
+.language-pill-hint {
+  --delay: 70ms;
+
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.language-pill-action {
+  --delay: 140ms;
+
+  display: inline-flex;
+  align-items: center;
+  height: var(--pill-inner);
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13.5px;
+  font-weight: 560;
+  transition: background 200ms, box-shadow 200ms;
+}
+
+.language-pill-action:is(:hover, :focus-visible) {
+  background: var(--accent);
+  box-shadow: 0 0 24px -4px rgb(var(--accent-rgb) / 80%);
+}
+
+.language-pill-close {
+  --delay: 210ms;
+
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--pill-inner);
+  height: var(--pill-inner);
+  padding: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background 180ms, color 180ms;
+}
+
+.language-pill-close:is(:hover, :focus-visible) {
+  background: rgb(255 255 255 / 7%);
+  color: var(--text);
+}
+
+language-suggestion :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+language-suggestion[data-leaving] .language-pill {
+  animation: pill-leave 520ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+language-suggestion[data-leaving] .language-pill-body > * {
+  animation: pill-fade-leave 160ms ease-in both;
+}
+
+@media (--compact) {
+  /* Beside the GitHub badge and the same height, so the corner reads as one
+     row of things rather than two floating pieces. */
+  language-suggestion {
+    --pill-h: var(--badge-size);
+
+    right: calc(var(--edge) + var(--badge-size) + 8px);
+    left: auto;
+    bottom: calc(var(--edge) + env(safe-area-inset-bottom));
+    max-width: calc(100% - var(--edge) * 2 - var(--badge-size) - 8px);
+    translate: none;
+  }
+
+  /* Six pixels of air around the chip, close to the desktop pill's seven,
+     rather than four that leave it pressed against the rim. */
+  .language-pill-body { gap: 8px; padding: 0 4px 0 6px; }
+
+  .language-pill-code {
+    width: calc(var(--pill-h) - 12px);
+    height: calc(var(--pill-h) - 12px);
+    font-size: 11px;
+    line-height: calc(var(--pill-h) - 12px);
+  }
+
+  .language-pill-hint { display: none; }
+  .language-pill-action { padding: 0 14px; font-size: 13px; }
+}
+
+@keyframes pill-pop {
+  from { opacity: 0; scale: 0.2; }
+}
+
+@keyframes pill-open {
+  from { width: var(--pill-h); }
+  to { width: var(--pill-width); }
+}
+
+@keyframes pill-orbit {
+  to { --pill-angle: 360deg; }
+}
+
+@keyframes pill-roll {
+  to { translate: 0 -100%; }
+}
+
+@keyframes pill-rise {
+  from { opacity: 0; translate: 0 6px; filter: blur(4px); }
+}
+
+@keyframes pill-leave {
+  0% { width: var(--pill-width); opacity: 1; scale: 1; }
+  65% { width: var(--pill-h); opacity: 1; scale: 1; }
+  100% { width: var(--pill-h); opacity: 0; scale: 0.2; }
+}
+
+@keyframes pill-fade-leave {
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  language-suggestion *,
+  language-suggestion *::before,
+  language-suggestion *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .language-pill { width: auto; }
+  .language-pill-code > span { translate: 0 -100%; }
+}
