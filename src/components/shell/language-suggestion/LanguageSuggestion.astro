@@ -130,7 +130,12 @@ const copy = other === 'en'
       const body = this.querySelector<HTMLElement>('.ls-island-body');
       if (!island || !body) return;
       // Again once the web font lands, or the pill keeps the fallback's width.
-      new ResizeObserver(() => island.style.setProperty('--ls-width', `${body.offsetWidth}px`)).observe(body);
+      // The layout size, unrounded and unscaled by the entrance, rounded up so
+      // the pill never clips the chip's edge.
+      new ResizeObserver(([entry]) => {
+        const width = entry.borderBoxSize?.[0]?.inlineSize ?? body.offsetWidth;
+        island.style.setProperty('--ls-width', `${Math.ceil(width)}px`);
+      }).observe(body);
     }
 
     private startDecode() {

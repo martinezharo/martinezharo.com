@@ -205,7 +205,16 @@ language-suggestion[data-leaving] .ls-island-body > * {
     translate: none;
   }
 
-  .ls-island-body { gap: 8px; padding: 0 4px; }
+  /* Six pixels of air around the chip, close to the desktop pill's seven,
+     rather than four that leave it pressed against the rim. */
+  .ls-island-body { gap: 8px; padding: 0 4px 0 6px; }
+
+  .ls-island-code {
+    width: calc(var(--ls-h) - 12px);
+    height: calc(var(--ls-h) - 12px);
+    line-height: calc(var(--ls-h) - 12px);
+  }
+
   .ls-island-hint { display: none; }
   .ls-island-action { padding: 0 14px; font-size: 13px; }
   .ls-island-code { font-size: 11px; }
