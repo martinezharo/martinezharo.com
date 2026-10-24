@@ -70,7 +70,6 @@
   padding-top: 12px;
   border-radius: 16px 16px 4px 4px;
   background: linear-gradient(180deg, #b49bff, #3c2f6e);
-  transition: filter 0.2s;
 }
 
 .chart-bar img {
@@ -95,14 +94,106 @@
   transition: color 0.2s;
 }
 
-.chart-bars a:hover .chart-bar,
-.chart-bars a:focus-visible .chart-bar {
-  filter: brightness(1.15);
+/* Pointing at a project spotlights it: its bar lights up and a sheen sweeps
+   down it, the logo hops off the top, the price turns violet and the floor
+   under it glows, while every other project steps back into grey. Keyboard
+   focus lights a column the same way. */
+.chart-bars li {
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    opacity 0.35s,
+    filter 0.35s;
 }
 
-.chart-bars a:hover .chart-name,
-.chart-bars a:focus-visible .chart-name {
+.chart-bar {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    filter 0.35s,
+    box-shadow 0.35s;
+}
+
+.chart-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    165deg,
+    transparent 30%,
+    rgb(255 255 255 / 34%) 50%,
+    transparent 70%
+  );
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
+.chart-bar img {
+  transition: transform 0.45s var(--spring);
+}
+
+.chart-price {
+  transition:
+    color 0.3s,
+    transform 0.45s var(--spring);
+}
+
+.chart-column {
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.chart-bars:has(li:hover, a:focus-visible) li:not(:hover, :has(a:focus-visible)) {
+  opacity: 0.35;
+  filter: grayscale(0.85);
+}
+
+.chart-bars a:focus-visible {
+  outline: none;
+}
+
+.chart-bars li:hover .chart-bar,
+.chart-bars li:has(a:focus-visible) .chart-bar {
+  filter: brightness(1.18) saturate(1.15);
+  box-shadow:
+    0 0 0 1px rgb(var(--accent-rgb) / 55%),
+    0 0 28px -4px rgb(var(--accent-rgb) / 55%),
+    0 24px 60px -18px rgb(var(--accent-rgb) / 70%);
+}
+
+.chart-bars li:hover .chart-bar::after,
+.chart-bars li:has(a:focus-visible) .chart-bar::after {
+  animation: chart-sheen 1s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
+
+.chart-bars li:hover .chart-bar img,
+.chart-bars li:has(a:focus-visible) .chart-bar img {
+  transform: translateY(-3px) scale(1.18) rotate(-4deg);
+}
+
+.chart-bars li:hover .chart-price,
+.chart-bars li:has(a:focus-visible) .chart-price {
+  color: var(--accent);
+  transform: translateY(-4px) scale(1.12);
+}
+
+.chart-bars li:hover .chart-column,
+.chart-bars li:has(a:focus-visible) .chart-column {
+  border-color: var(--accent);
+  box-shadow: 0 8px 14px -10px rgb(var(--accent-rgb) / 90%);
+}
+
+.chart-bars li:hover .chart-name,
+.chart-bars li:has(a:focus-visible) .chart-name {
   color: var(--text);
+}
+
+@keyframes chart-sheen {
+  to {
+    transform: translateY(100%);
+  }
 }
 
 @container page (width < 790px) {
@@ -175,6 +266,7 @@
 
   .chart-price {
     order: 1;
+    transform-origin: left center;
     margin: 0 0 0 8px;
     font-size: 13px;
   }
@@ -191,11 +283,60 @@
     border-radius: 3px 10px 10px 3px;
     background: linear-gradient(90deg, #3c2f6e, #b49bff);
   }
+
+  .chart-bar::after {
+    background: linear-gradient(
+      80deg,
+      transparent 30%,
+      rgb(255 255 255 / 34%) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+  }
+
+  .chart-bars li:hover .chart-bar::after,
+  .chart-bars li:has(a:focus-visible) .chart-bar::after {
+    animation-name: chart-sheen-across;
+  }
+
+  .chart-bars li:hover .chart-bar img,
+  .chart-bars li:has(a:focus-visible) .chart-bar img {
+    transform: scale(1.15) rotate(-4deg);
+  }
+
+  .chart-bars li:hover .chart-price,
+  .chart-bars li:has(a:focus-visible) .chart-price {
+    transform: translateX(4px) scale(1.1);
+  }
+
+  .chart-bars li:hover .chart-column,
+  .chart-bars li:has(a:focus-visible) .chart-column {
+    box-shadow: -8px 0 14px -10px rgb(var(--accent-rgb) / 90%);
+  }
+}
+
+@keyframes chart-sheen-across {
+  to {
+    transform: translateX(100%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .chart-bars li,
   .chart-bar,
+  .chart-bar img,
+  .chart-price,
+  .chart-column,
   .chart-name {
     transition: none;
+  }
+
+  .chart-bars li:is(:hover, :has(a:focus-visible)) .chart-bar::after {
+    animation: none;
+  }
+
+  .chart-bars li:is(:hover, :has(a:focus-visible)) .chart-bar img,
+  .chart-bars li:is(:hover, :has(a:focus-visible)) .chart-price {
+    transform: none;
   }
 }
