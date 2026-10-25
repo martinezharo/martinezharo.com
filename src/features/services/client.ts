@@ -99,7 +99,12 @@ export function initContactForm(form: HTMLFormElement | null, signal: AbortSigna
     'submit',
     async (event) => {
       event.preventDefault();
-      if (!form.reportValidity()) return say(messages.invalid, 'error');
+      // Native validation popups can keep reopening while an invalid field is
+      // edited. Report errors in the status line only on a submission attempt.
+      if (!form.checkValidity()) {
+        form.querySelector<HTMLElement>(':invalid')?.focus();
+        return say(messages.invalid, 'error');
+      }
       if (!token) return say(messages.challenge, 'error');
 
       submit.disabled = true;

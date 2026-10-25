@@ -60,6 +60,52 @@ test('sends the contact form through the API', async ({ page }) => {
   await expect(form.getByLabel('Name')).toHaveValue('');
 });
 
+test('validates on submission without native popups while editing', async ({ page }) => {
+  // Native validation bubbles are outside the DOM. Fail if the form asks the
+  // browser to show one, including after an unsuccessful submission.
+  await page.addInitScript(() => {
+    HTMLFormElement.prototype.reportValidity = () => {
+      throw new Error('Contact validation must stay inline');
+    };
+  });
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  const requests: string[] = [];
+  await page.route('**/api/contact', async (route) => {
+    requests.push(route.request().postData() ?? '');
+    await route.fulfill({ json: { ok: true } });
+  });
+  await page.goto('/services');
+  const form = page.locator('[data-contact]');
+  const status = form.locator('[data-status]');
+  const message = form.getByLabel('Your project');
+  const submit = form.getByRole('button', { name: /Send/ });
+  await expect(submit).toBeEnabled({ timeout: 15_000 });
+
+  await form.getByLabel('Name').fill('Ada');
+  await form.getByLabel('Email').fill('ada@example.com');
+  await message.pressSequentially('Hi Oli');
+  await expect(status).toBeEmpty();
+  expect(requests).toHaveLength(0);
+
+  await submit.click();
+  await expect(status).toHaveAttribute('data-tone', 'error');
+  await expect(status).not.toBeEmpty();
+  await expect(message).toBeFocused();
+  expect(requests).toHaveLength(0);
+
+  await message.pressSequentially('!');
+  await submit.click();
+  await expect(status).toHaveAttribute('data-tone', 'error');
+  expect(requests).toHaveLength(0);
+
+  await message.pressSequentially(' A small shop website.');
+  await submit.click();
+  await expect(status).toHaveAttribute('data-tone', 'success');
+  expect(requests).toHaveLength(1);
+  expect(errors).toEqual([]);
+});
+
 test('the contact API refuses incomplete and unchecked messages', async ({ request, baseURL }) => {
   const headers = { Origin: baseURL! };
   const invalid = await request.post('/api/contact', {
