@@ -42,6 +42,23 @@ because it would deploy that preview); the next deploy inherits it.
 If the secret is missing every message is refused with `challenge`; if the
 binding cannot send, the form answers `unavailable` and points at the address.
 
+## Promo funnel
+
+The page is promoted from RANKMAKER and Backrooms. Their links carry
+`utm_source`, `utm_medium=promo`, `utm_content` (placement), an optional
+`utm_term` (wording) and `promo_lang`. `src/features/promo/client.ts`, run on
+every page load from `BaseLayout.astro`, keeps them for seven days as a
+localStorage attribution, removes them from the URL and reports each step once
+to `POST /api/promo-event`: `arrive`, `stay-10s`, `stay-1m` and `stay-3m` of
+visible time in the arrival tab, and `contact` once the form is sent. The
+endpoint writes them to the `promo_events` Analytics Engine dataset through
+the `PROMO_ANALYTICS` binding, shared with the other sites of the funnel.
+
+While an attribution is live the form also sends `promo_*` fields, and the
+email gets a line like
+`Came from a promo: RANKMAKER (es) · results · wording your-ad-here · 2 days ago`.
+Malformed fields are left out of the email; they never refuse a message.
+
 ## Tests
 
 The E2E server uses Cloudflare's published always-pass Turnstile test keys and

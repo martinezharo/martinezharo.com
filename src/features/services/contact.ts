@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { site } from '../../config/site';
+import { describePromoOrigin, parsePromoOrigin } from '../promo/model';
 import { SERVICE_KEYS, type ServiceKey } from './model';
 
 /**
@@ -26,6 +27,8 @@ export interface ContactMessage {
   email: string;
   service: ContactService;
   message: string;
+  /** The promo the sender came from, when they did and said so in well-formed fields. */
+  promo: string | null;
 }
 
 const SENDER = { email: 'contact@martinezharo.com', name: 'martinezharo.com' };
@@ -62,7 +65,17 @@ export function parseContact(form: FormData): ContactMessage | null {
   if (!CONTACT_SERVICES.includes(service as ContactService)) return null;
   if (message.length < LIMITS.messageMin || message.length > LIMITS.message) return null;
 
-  return { name, email, service: service as ContactService, message };
+  // Read apart from the rest: a promo the form describes badly is left out of
+  // the message, never a reason to refuse it.
+  let promo: string | null = null;
+  try {
+    const origin = parsePromoOrigin((key) => form.get(key) ?? undefined);
+    promo = origin && describePromoOrigin(origin);
+  } catch {
+    promo = null;
+  }
+
+  return { name, email, service: service as ContactService, message, promo };
 }
 
 export async function verifyHuman(token: string, ip: string | null): Promise<boolean> {
@@ -95,6 +108,7 @@ export async function sendContact(contact: ContactMessage, locale: string): Prom
     `Email: ${contact.email}`,
     `Service: ${contact.service}`,
     `Language: ${locale}`,
+    ...(contact.promo ? [`Came from a promo: ${contact.promo}`] : []),
   ];
 
   try {
