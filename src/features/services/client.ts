@@ -1,7 +1,10 @@
 /**
  * The contact form in the browser: put the Turnstile check in place, send the
  * fields to /api/contact and say how it went in the form's own status line.
+ * A visitor who came from a promo sends which one along with the message.
  */
+
+import { promoContactFields, trackPromoStep } from '../promo/client';
 
 interface Turnstile {
   render(container: HTMLElement, options: Record<string, unknown>): string | undefined;
@@ -112,10 +115,12 @@ export function initContactForm(form: HTMLFormElement | null, signal: AbortSigna
       say(messages.sending);
 
       let error: keyof Messages | null = 'unavailable';
+      const body = new FormData(form);
+      for (const [name, value] of Object.entries(promoContactFields())) body.set(name, value);
       try {
         const response = await fetch('/api/contact', {
           method: 'POST',
-          body: new FormData(form),
+          body,
           headers: { Accept: 'application/json' },
           signal,
         });
@@ -133,6 +138,7 @@ export function initContactForm(form: HTMLFormElement | null, signal: AbortSigna
         grow();
         form.dataset.state = 'sent';
         say(messages.sent, 'success');
+        trackPromoStep('contact');
       }
 
       // A token is good for one check, so each attempt needs a fresh one.

@@ -36,6 +36,10 @@
       "allowed_sender_addresses": ["contact@martinezharo.com"]
     }
   ],
+  // Steps taken by visitors who arrived from a promo on the author's other
+  // sites (src/features/promo). The dataset is shared with them and read by
+  // the private promo-stats dashboard.
+  "analytics_engine_datasets": [{ "binding": "PROMO_ANALYTICS", "dataset": "promo_events" }],
   // The public half of the form's Turnstile pair (widget "martinezharo.com
   // contact form", valid on martinezharo.com and olma.workers.dev previews).
   // Emptied, it keeps the form off the page and offers the address instead.

@@ -88,5 +88,11 @@ const structuredData = pageStructuredData(Astro.site, canonical.href, locale, ti
     <slot />
     <PageScrollbar locale={locale} />
     <LanguageSuggestion locale={locale} />
+    <script>
+      import { startPromoTracking } from '../features/promo/client';
+
+      // The router fires this on the first load and after every navigation.
+      document.addEventListener('astro:page-load', startPromoTracking);
+    </script>
   </body>
 </html>
