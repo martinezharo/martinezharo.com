@@ -18,22 +18,27 @@ CREATE TABLE projects (
   short_description_es TEXT,
   history_en TEXT,
   history_es TEXT,
-  github_url TEXT
+  github_url TEXT,
+  short_description_de TEXT,
+  history_de TEXT
 );
 INSERT INTO projects VALUES
 ('fewya', 'Fewya', 1, '2020-01-01', NULL, 'https://example.com/fewya', '/icon.svg', 'marketplace', 5, 5, 5, 5, '["TypeScript","React"]',
  'A marketplace for new products from professional sellers.',
  'Un marketplace especializado en productos nuevos de vendedores profesionales.',
  'Before starting Octopus Control, I built this marketplace. This is synthetic test content.',
- 'Antes de empezar con Octopus Control, construí este marketplace. Synthetic test content.', NULL),
+ 'Antes de empezar con Octopus Control, construí este marketplace. Synthetic test content.', NULL,
+ 'Ein Marktplatz für neue Produkte von professionellen Verkäufern.',
+ 'Bevor ich Octopus Control startete, habe ich diesen Marktplatz gebaut. Synthetic test content.'),
 ('rankmaker', 'Rankmaker', 0, '2023-01-01', '2024-01-01', 'https://example.com/rankmaker', '/icon.svg', 'app', 4, 4, 4, 4, '["Astro","Cloudflare Workers"]',
- 'Build and share rankings.', 'Crea y comparte rankings.', 'A synthetic project story.', 'Synthetic translated story.', 'https://github.com/example/rankmaker'),
+ 'Build and share rankings.', 'Crea y comparte rankings.', 'A synthetic project story.', 'Synthetic translated story.', 'https://github.com/example/rankmaker',
+ 'Erstelle und teile Rankings.', 'Synthetische übersetzte Geschichte.'),
 ('kenobismo', 'Kenobismo', 0, '2018-01-01', '2019-01-01', NULL, '/icon.svg', 'brand', NULL, 3, 4, 3, '[]',
- 'A test brand without an interface.', 'Synthetic brand description.', NULL, NULL, NULL),
+ 'A test brand without an interface.', 'Synthetic brand description.', NULL, NULL, NULL, NULL, NULL),
 ('unsafe', 'Markup < & "quotes"', 1, '2024-01-01', NULL, NULL, '/icon.svg', 'app', 1, 1, 1, 1, '[]',
  'Literal </script><script id="injected">bad</script> & "quotes".', '',
  'First paragraph.
 
-Second paragraph.', NULL, NULL),
+Second paragraph.', NULL, NULL, NULL, NULL),
 ('hidden', 'Incomplete project', 1, NULL, NULL, NULL, '/icon.svg', NULL, NULL, NULL, NULL, NULL, '[]',
- 'This row must never be published.', NULL, NULL, NULL, NULL);
+ 'This row must never be published.', NULL, NULL, NULL, NULL, NULL, NULL);

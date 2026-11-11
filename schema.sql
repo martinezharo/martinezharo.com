@@ -1,8 +1,8 @@
 -- Cloudflare D1 schema for oliweb.
 --
--- This is a schema-only snapshot through migration 0005. It intentionally
+-- This is a schema-only snapshot through migration 0007. It intentionally
 -- excludes rows and Wrangler's internal tables. For a fresh local database,
--- run this as the complete bootstrap; do not replay migrations 0001-0005 on
+-- run this as the complete bootstrap; do not replay migrations 0001-0007 on
 -- top of a database initialized from this file:
 --   pnpm exec wrangler d1 execute oliweb --local --file=./schema.sql
 --
@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS projects (
   short_description_en  TEXT,
   history_es            TEXT,
   history_en            TEXT,
+  short_description_de  TEXT,
+  history_de            TEXT,
   github_url            TEXT,
   -- ecommerce | marketplace | app | tool | brand. NULL means the row has not
   -- been described yet, and the portfolio leaves it out of the showcase.

@@ -36,7 +36,7 @@ test('stays quiet for matching languages and manually chosen languages', async (
   const page = await context.newPage();
   await page.goto('/');
   await expect(page.locator('language-suggestion')).toBeHidden();
-  await page.getByRole('link', { name: 'Language', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Language' }).getByRole('link', { name: 'Español' }).click();
   await expect(page).toHaveURL(/\/es$/);
   await expect(page.locator('language-suggestion')).toBeHidden();
   await context.close();
@@ -57,6 +57,20 @@ test('offers Spanish on an English deep link on mobile with reduced motion', asy
   expect(clear).toBe(true);
   await note.getByRole('link').click();
   await expect(page).toHaveURL(/\/es\/stack$/);
+  await context.close();
+});
+
+test('offers the language the browser asks for, not just any other', async ({ browser }) => {
+  const context = await browser.newContext({ locale: 'de-DE' });
+  const page = await context.newPage();
+  await page.goto('/es/stack');
+  const note = page.locator('language-suggestion');
+  await expect(note.getByRole('link', { name: 'Zu Deutsch wechseln' })).toHaveAttribute('href', /\/de\/stack\?lang=de$/);
+  await expect(note.locator('aside')).toHaveCount(1);
+  await note.getByRole('link').click();
+  await expect(page).toHaveURL(/\/de\/stack$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await expect(page.locator('language-suggestion')).toBeHidden();
   await context.close();
 });
 

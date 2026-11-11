@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import {
+  DEFAULT_LOCALE,
   LOCALE_COOKIE,
   LOCALE_QUERY,
   isLocale,
@@ -77,19 +78,19 @@ function statedLocale(url: URL): Response | null {
 }
 
 /**
- * A reader who asked for Spanish gets Spanish, but only when they arrived at a
- * URL that named no language. Anything under `/projects/` or `/es/` was chosen,
- * and overriding a chosen address would leave no way to read the other version
- * — and would keep a crawler from ever seeing it.
+ * A reader who asked for another language than English gets it, but only when
+ * they arrived at a URL that named no language. Anything under `/projects/` or
+ * `/es/` was chosen, and overriding a chosen address would leave no way to read
+ * the other version — and would keep a crawler from ever seeing it.
  */
 function chooseLocale(url: URL, request: Request, chosen: Locale | undefined): Response | null {
   if (!negotiates(url.pathname)) return null;
   // A choice made in the switcher outranks the header it contradicts.
   const locale = chosen ?? preferredLocale(request.headers.get('accept-language'));
-  if (locale !== 'es') return null;
+  if (locale === DEFAULT_LOCALE) return null;
 
   const target = new URL(url);
-  target.pathname = localizedPath('es', url.pathname);
+  target.pathname = localizedPath(locale, url.pathname);
   return new Response(null, {
     status: 302,
     headers: {

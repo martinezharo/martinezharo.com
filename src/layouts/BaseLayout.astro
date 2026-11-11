@@ -6,7 +6,7 @@ import '@fontsource-variable/geist';
 import '../styles/global.css';
 import { site } from '../config/site';
 import { PROJECTS_WITH_CARD } from '../features/discovery/cards';
-import { LOCALES, localizedPath, routeFromPath, type Locale } from '../i18n';
+import { LOCALES, OPEN_GRAPH_LOCALES, localizedPath, routeFromPath, type Locale } from '../i18n';
 import type { ProjectDetail } from '../features/projects/model';
 import { markdownPath } from '../features/discovery/urls';
 import { pageStructuredData, serializeStructuredData } from '../features/discovery/structured-data';
@@ -20,11 +20,11 @@ interface Props {
 
 const { locale, title, description, project } = Astro.props;
 
-// Both languages of a page are the same route wearing a different prefix, so
+// Every language of a page is the same route wearing a different prefix, so
 // the address each one should be known by can be derived rather than passed
 // down. Without these two, English answers at more than one address and
-// nothing says which of them is the page — or that the Spanish version is a
-// translation rather than a second, competing page about the same project.
+// nothing says which of them is the page — or that the other languages are
+// translations rather than competing pages about the same project.
 const route = routeFromPath(Astro.url.pathname);
 const canonical = new URL(localizedPath(locale, route), Astro.site);
 const alternates = LOCALES.map((code) => ({
@@ -63,8 +63,7 @@ const structuredData = pageStructuredData(Astro.site, canonical.href, locale, ti
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
-    <meta property="og:locale" content={locale === 'es' ? 'es_ES' : 'en_US'} />
-    <meta property="og:image" content={image} />
+    <meta property="og:locale" content={OPEN_GRAPH_LOCALES[locale]} />    <meta property="og:image" content={image} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />

@@ -64,15 +64,35 @@ footer a {
 
 /* The switch is a quieter thing than the invitation to write: it sits at the
    muted weight of the copyright beside it until it is pointed at. */
+.languages {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .language {
   color: var(--muted);
   text-decoration-color: transparent;
   transition: color 0.2s, text-decoration-color 0.2s;
 }
 
-.language:hover {
+a.language:hover {
   color: var(--text);
   text-decoration-color: var(--line);
+}
+
+/* The page's own language is not a destination, so it is not a link: it takes
+   the full text colour to say where the reader is, and the others stay muted. */
+.language[aria-current] {
+  color: var(--text);
+}
+
+/* Wide, the footer has room to name each language. The short code only appears
+   in the compact layouts below. */
+.language-code {
+  display: none;
 }
 
 /* Two groups would hold one line well past this, but the fold point belongs to
@@ -89,13 +109,47 @@ footer a {
 
   /* Stacked, the pair would otherwise clump at the left edge and read as one
      line of small print. Spread across the column it keeps the same left/right
-     axis the wide footer has, and the switch stays a thing you can aim at. */
+     axis the wide footer has. */
   .meta {
+    align-items: center;
     justify-content: space-between;
   }
 
+  /* Three languages named in full do not share this line with the copyright, so
+     it carries their two-letter codes. The names stay in the markup, hidden,
+     for assistive technology. The padding is the target, taken back out of the
+     layout by the negative margins so the row stays as tall as its text and the
+     first code still sits on the column edge. */
+  .languages {
+    gap: 0;
+    margin-left: -10px;
+  }
+
   .language {
-    padding: 4px 0;
-    margin: -4px 0;
+    display: block;
+    padding: 10px;
+    margin: -10px 0;
+  }
+
+  .language[aria-current] {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .language-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .language-code {
+    display: inline;
+  }
+
+  .copyright {
+    white-space: nowrap;
   }
 }

@@ -1,6 +1,6 @@
 import { site } from '../../config/site';
 import type { ProjectDetail } from '../projects/model';
-import { getCopy, type Locale } from '../../i18n';
+import { getCopy, LOCALES, localizedPath, type Locale } from '../../i18n';
 import { absoluteUrl } from './urls';
 
 export function pageStructuredData(
@@ -16,7 +16,7 @@ export function pageStructuredData(
   const websiteId = `${root}#website`;
   const pageId = `${canonical}#webpage`;
   const workId = `${canonical}#project`;
-  const isProfile = canonical === absoluteUrl(locale === 'en' ? '/' : '/es', origin);
+  const isProfile = canonical === absoluteUrl(localizedPath(locale, '/'), origin);
   const pageType = project ? 'WebPage' : isProfile ? 'ProfilePage' : 'CollectionPage';
   return {
     '@context': 'https://schema.org',
@@ -35,7 +35,7 @@ export function pageStructuredData(
         '@id': websiteId,
         url: root,
         name: site.name,
-        inLanguage: ['en', 'es'],
+        inLanguage: [...LOCALES],
         publisher: { '@id': personId },
       },
       {

@@ -1,6 +1,6 @@
 # martinezharo.com ☝🏻👹
 
-Hi! Oli here. This is my site: a portfolio, a stack page, and a services page where you can ask me to build something for you. It speaks English and Spanish.
+Hi! Oli here. This is my site: a portfolio, a stack page, and a services page where you can ask me to build something for you. It speaks English, Spanish and German.
 
 I needed a place to show what I build, so I built it.
 

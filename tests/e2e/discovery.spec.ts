@@ -23,10 +23,10 @@ test('robots advertises a sitemap of every public page and its translations', as
     }));
   }, document);
   const expected = ['/', '/stack', '/services', '/projects/fewya', '/projects/rankmaker', '/projects/kenobismo', '/projects/unsafe'];
-  const paths = expected.flatMap((path) => [path, path === '/' ? '/es' : `/es${path}`]);
+  const paths = expected.flatMap((path) => [path, ...['es', 'de'].map((prefix) => (path === '/' ? `/${prefix}` : `/${prefix}${path}`))]);
   expect(entries.map((entry) => entry.url).sort()).toEqual(paths.map((path) => `${production}${path}`).sort());
   for (const entry of entries) {
-    expect(entry.alternates.map((alternate) => alternate.language)).toEqual(['en', 'es', 'x-default']);
+    expect(entry.alternates.map((alternate) => alternate.language)).toEqual(['en', 'es', 'de', 'x-default']);
     expect(entry.alternates.map((alternate) => alternate.url)).toContain(entry.url);
   }
   expect(new Set(entries.map((entry) => entry.url)).size).toBe(entries.length);
@@ -41,7 +41,7 @@ test('agents can discover and fetch the same profile, stack and project stories'
   expect(body).toContain(`${production}/es/projects/fewya.md`);
   expect(body).not.toContain('/hidden');
   const urls = [...body.matchAll(/\]\(<(https:\/\/martinezharo\.com\/[^>]+\.md)>\)/g)].map((match) => match[1]);
-  expect(urls.length).toBe(14);
+  expect(urls.length).toBe(21);
   for (const url of urls) {
     const response = await request.get(new URL(url).pathname);
     expect(response.status(), url).toBe(200);
@@ -52,6 +52,8 @@ test('agents can discover and fetch the same profile, stack and project stories'
   expect(await english.text()).toContain('Before starting Octopus Control');
   const spanish = await request.get('/es/projects/fewya.md');
   expect(await spanish.text()).toContain('Antes de empezar con Octopus Control');
+  const german = await request.get('/de/projects/fewya.md');
+  expect(await german.text()).toContain('Bevor ich Octopus Control startete');
   const fallback = await request.get('/es/projects/unsafe.md');
   expect(await fallback.text()).toContain('First paragraph.');
   for (const path of ['/projects/hidden.md', '/projects/absent.md', '/fr/index.md', '/anything.md']) {

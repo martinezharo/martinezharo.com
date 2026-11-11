@@ -1,6 +1,6 @@
 # Services page and contact form
 
-`/services` (and `/es/services`) lists the services, their indicative prices, what the
+`/services` (and its `/es` and `/de` versions) lists the services, their indicative prices, what the
 portfolio's own projects would cost, and a contact form. The rail, the mobile
 header and the footer link to it; the email address now lives only on that
 page, in the Markdown documents and in the structured data.

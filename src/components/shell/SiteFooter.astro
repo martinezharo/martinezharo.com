@@ -1,9 +1,9 @@
 ---
 import { site } from '../../config/site';
 import {
+  LOCALES,
   LOCALE_NAMES,
   LOCALE_QUERY,
-  alternateLocale,
   getCopy,
   localizedPath,
   routeFromPath,
@@ -28,9 +28,12 @@ const year = new Date().getFullYear();
 // English link on `/es` lands on the negotiated root, which reads the Spanish
 // browser header and bounces straight back — the switch would do nothing. The
 // middleware records the choice and redirects to the bare address.
-const other = alternateLocale(locale);
 const route = routeFromPath(Astro.url.pathname);
-const otherHref = `${localizedPath(other, route)}?${LOCALE_QUERY}=${other}`;
+const languages = LOCALES.map((code) => ({
+  code,
+  name: LOCALE_NAMES[code],
+  href: `${localizedPath(code, route)}?${LOCALE_QUERY}=${code}`,
+}));
 
 // The invitation leads to the form. On the services page the form is already a
 // scroll away, so the link goes straight to it rather than reloading the page.
@@ -43,9 +46,30 @@ const contactHref = route === '/services' ? '#contact' : `${localizedPath(locale
     <a href={contactHref}>{copy.footer.cta}</a>
   </p>
   <div class="meta">
-    <a class="language" href={otherHref} hreflang={other} lang={other} rel="alternate" aria-label={copy.navigation.language}>
-      {LOCALE_NAMES[other]}
-    </a>
-    <span>© {year} {site.name}</span>
+    {/* Every language is listed, each named in itself, so a reader never has to
+        guess which one a single "other" link would lead to. The code is only
+        shown where there is no room for the name. */}
+    <nav aria-label={copy.navigation.language}>
+      <ul class="languages">
+        {languages.map(({ code, name, href }) => {
+          const label = (
+            <>
+              <span class="language-name">{name}</span>
+              <span class="language-code" aria-hidden="true">{code.toUpperCase()}</span>
+            </>
+          );
+          return (
+            <li>
+              {code === locale ? (
+                <span class="language" lang={code} aria-current="true">{label}</span>
+              ) : (
+                <a class="language" href={href} hreflang={code} lang={code} rel="alternate">{label}</a>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+    <span class="copyright">© {year} {site.name}</span>
   </div>
 </footer>

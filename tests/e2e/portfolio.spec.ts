@@ -318,6 +318,50 @@ test('chooses Spanish for an unprefixed visit when the browser prefers it', asyn
   await context.close();
 });
 
+test('serves translated interface and project data at /de', async ({ page }) => {
+  await page.goto('/de');
+
+  await expect(page).toHaveURL(/\/de$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await expect(page.getByRole('heading', { name: 'Was ich gebaut habe' })).toBeVisible();
+  await expect(page.getByText('Ein Marktplatz für neue Produkte von professionellen Verkäufern.')).toBeVisible();
+
+  await page.locator('[data-item]').filter({ hasText: 'Fewya' }).locator('a.project').click();
+  await expect(page).toHaveURL(/\/de\/projects\/fewya$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await expect(page.getByRole('heading', { name: 'Wie es lief' })).toBeVisible();
+  await expect(page.getByText(/Bevor ich Octopus Control startete/)).toBeVisible();
+});
+
+test('falls back to English for a project with no German text', async ({ page }) => {
+  // The fixture row has an English and a Spanish description and no German one.
+  await page.goto('/de/projects/kenobismo');
+  await expect(page.getByText('A test brand without an interface.')).toBeVisible();
+});
+
+test('chooses German for an unprefixed visit when the browser prefers it', async ({ browser }) => {
+  const context = await browser.newContext({ locale: 'de-DE' });
+  const page = await context.newPage();
+
+  await page.goto('/');
+
+  await expect(page).toHaveURL(/\/de$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await expect(page.getByRole('heading', { name: 'Was ich gebaut habe' })).toBeVisible();
+
+  await context.close();
+});
+
+test('lists every language in the footer and marks the current one', async ({ page }) => {
+  await page.goto('/de/stack');
+  const languages = page.getByRole('navigation', { name: 'Sprache' });
+  await expect(languages.locator('.language-name')).toHaveText(['English', 'Español', 'Deutsch']);
+  await expect(languages.getByRole('link')).toHaveCount(2);
+  await expect(languages.locator('[aria-current] .language-name')).toHaveText('Deutsch');
+  await expect(languages.getByRole('link', { name: 'English' })).toHaveAttribute('href', '/stack?lang=en');
+  await expect(languages.getByRole('link', { name: 'Español' })).toHaveAttribute('href', '/es/stack?lang=es');
+});
+
 test('folds the old /en addresses into their unprefixed twins', async ({ request }) => {
   for (const [from, to] of [
     ['/en', '/'],
@@ -337,6 +381,7 @@ test('names one address per language and points each at the other', async ({ pag
       canonical: await page.locator('link[rel="canonical"]').getAttribute('href'),
       en: await page.locator('link[hreflang="en"]').getAttribute('href'),
       es: await page.locator('link[hreflang="es"]').getAttribute('href'),
+      de: await page.locator('link[hreflang="de"]').getAttribute('href'),
       fallback: await page.locator('link[hreflang="x-default"]').getAttribute('href'),
     };
   };
@@ -350,6 +395,13 @@ test('names one address per language and points each at the other', async ({ pag
   expect(spanish.canonical).toMatch(/\/es\/projects\/fewya$/);
   expect(spanish.en).toBe(english.en);
   expect(spanish.es).toBe(english.es);
+  expect(spanish.de).toBe(english.de);
+
+  const german = await alternates('/de/projects/fewya');
+  expect(german.canonical).toMatch(/\/de\/projects\/fewya$/);
+  expect(german.en).toBe(english.en);
+  expect(german.de).toBe(english.de);
+  expect(german.de).toMatch(/\/de\/projects\/fewya$/);
 });
 
 test('leaves a chosen address in the language it names', async ({ browser }) => {
@@ -363,11 +415,11 @@ test('leaves a chosen address in the language it names', async ({ browser }) => 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 
   // The way across is the footer switch, and it lands on the same project.
-  await page.getByRole('link', { name: 'Language' }).click();
+  await page.getByRole('navigation', { name: 'Language' }).getByRole('link', { name: 'Español' }).click();
   await expect(page).toHaveURL(/\/es\/projects\/fewya$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
 
-  await page.getByRole('link', { name: 'Idioma' }).click();
+  await page.getByRole('navigation', { name: 'Idioma' }).getByRole('link', { name: 'English' }).click();
   await expect(page).toHaveURL(/\/projects\/fewya$/);
 
   await context.close();
@@ -394,7 +446,7 @@ test('honours the switch out of Spanish on the page that negotiates', async ({ b
   // The root is the one address that reads the browser's header, so asking for
   // English there has to outrank it — otherwise the switch bounces straight
   // back and looks broken.
-  await page.getByRole('link', { name: 'Idioma' }).click();
+  await page.getByRole('navigation', { name: 'Idioma' }).getByRole('link', { name: 'English' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 

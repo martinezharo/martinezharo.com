@@ -1,12 +1,14 @@
 ---
-interface Props { locale: string }
+import { getCopy, type Locale } from '../../i18n';
+
+interface Props { locale: Locale }
 const { locale } = Astro.props;
 ---
 
 <div
   class="page-scrollbar"
   role="scrollbar"
-  aria-label={locale === 'es' ? 'Desplazamiento de página' : 'Page scroll'}
+  aria-label={getCopy(locale).navigation.pageScroll}
   aria-controls="site-document"
   aria-orientation="vertical"
   aria-valuemin="0"

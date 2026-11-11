@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers';
-import type { Locale } from '../../i18n';
+import { DEFAULT_LOCALE, LOCALES, type Locale } from '../../i18n';
 import type { Project, ProjectDetail, ProjectKind, ProjectScores } from './model';
 import { DEFAULT_PROJECT_STATE, PROJECT_KINDS, SCORE_META } from './model';
 import { orderProjects } from './ordering';
@@ -8,7 +8,7 @@ import { orderProjects } from './ordering';
 // and everything the portfolio says about it lives on the same row, so the
 // admin panel can put a project on the site without a deploy. The description
 // and history expressions are selected for the requested locale, with the
-// other language as a safe fallback for an incomplete row. The stack is not
+// other languages as a safe fallback for an incomplete row. The stack is not
 // one of them: tool names are the same in either language.
 
 /** The columns of `projects` this site reads. The table holds more. */
@@ -36,10 +36,17 @@ interface ProjectDetailRow extends ProjectRow {
 
 type LocalizedField = 'short_description' | 'history';
 
+/**
+ * The column for a field in the requested language, falling back to English
+ * and then to whatever other language has it: a project written in one language
+ * still shows on every version of the site rather than going blank. Locale
+ * codes come from a closed list, so they are safe to put in the statement.
+ */
 function localizedColumn(locale: Locale, field: LocalizedField): string {
-  const suffix = locale === 'es' ? 'es' : 'en';
-  const fallback = locale === 'es' ? 'en' : 'es';
-  return `COALESCE(NULLIF(${field}_${suffix}, ''), ${field}_${fallback})`;
+  const order = [...new Set([locale, DEFAULT_LOCALE, ...LOCALES])];
+  const columns = order.map((code) => `${field}_${code}`);
+  const last = columns.pop();
+  return `COALESCE(${columns.map((column) => `NULLIF(${column}, '')`).join(', ')}, ${last})`;
 }
 
 /** The columns every query needs, in both the list and the detail shape. */

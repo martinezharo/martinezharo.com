@@ -1,35 +1,40 @@
 ---
 import Icon from '../ui/Icon.astro';
-import { alternateLocale, localizedPath, LOCALE_QUERY, routeFromPath, type Locale } from '../../i18n';
+import { getCopy, LOCALES, localizedPath, LOCALE_QUERY, routeFromPath, type Locale } from '../../i18n';
 import './language-suggestion.css';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
-const other = alternateLocale(locale);
-const target = new URL(Astro.url);
-target.pathname = localizedPath(other, routeFromPath(target.pathname));
-target.searchParams.set(LOCALE_QUERY, other);
-// Written in the language on offer: it is the one the reader is expected to read.
-const copy = other === 'en'
-  ? { label: 'Also available in English', hint: 'This page is also in English', action: 'Switch to English', dismiss: 'Dismiss language suggestion' }
-  : { label: 'También disponible en español', hint: 'Esta página también está en español', action: 'Cambiar a español', dismiss: 'Cerrar sugerencia de idioma' };
+
+// The server cannot know which language the browser asks for: these pages are
+// cached, and the header is not part of the key. So every other language gets
+// its pill, and the script keeps the one the browser prefers and drops the rest.
+const offers = LOCALES.filter((code) => code !== locale).map((code) => {
+  const target = new URL(Astro.url);
+  target.pathname = localizedPath(code, routeFromPath(target.pathname));
+  target.searchParams.set(LOCALE_QUERY, code);
+  // Written in the language on offer: it is the one the reader is expected to read.
+  return { code, copy: getCopy(code).languageSuggestion, href: `${target.pathname}${target.search}` };
+});
 ---
 
 <language-suggestion data-locale={locale} hidden>
-  <aside class="language-pill" lang={other} aria-label={copy.label}>
-    <div class="language-pill-body">
-      {/* The page's language rolls over into the one on offer. */}
-      <span class="language-pill-code" aria-hidden="true">
-        <span>{locale.toUpperCase()}</span>
-        <span>{other.toUpperCase()}</span>
-      </span>
-      <p class="language-pill-hint">{copy.hint}</p>
-      <a class="language-pill-action" href={`${target.pathname}${target.search}`} hreflang={other} data-astro-prefetch="false">
-        {copy.action}
-      </a>
-      <button type="button" class="language-pill-close" aria-label={copy.dismiss}><Icon name="clear" /></button>
-    </div>
-  </aside>
+  {offers.map(({ code, copy, href }) => (
+    <aside class="language-pill" lang={code} data-offer={code} aria-label={copy.label}>
+      <div class="language-pill-body">
+        {/* The page's language rolls over into the one on offer. */}
+        <span class="language-pill-code" aria-hidden="true">
+          <span>{locale.toUpperCase()}</span>
+          <span>{code.toUpperCase()}</span>
+        </span>
+        <p class="language-pill-hint">{copy.hint}</p>
+        <a class="language-pill-action" href={href} hreflang={code} data-astro-prefetch="false">
+          {copy.action}
+        </a>
+        <button type="button" class="language-pill-close" aria-label={copy.dismiss}><Icon name="clear" /></button>
+      </div>
+    </aside>
+  ))}
 </language-suggestion>
 
 <script>
@@ -40,8 +45,16 @@ const copy = other === 'en'
   let dismissed = false;
 
   class LanguageSuggestion extends HTMLElement {
+    private offered: string | undefined;
+
     connectedCallback() {
-      if (!this.wanted()) return;
+      this.offered = this.wanted();
+      if (!this.offered) return;
+
+      // One pill is shown: the language the browser asks for.
+      for (const pill of this.querySelectorAll<HTMLElement>('aside')) {
+        if (pill.dataset.offer !== this.offered) pill.remove();
+      }
 
       const link = this.querySelector('a');
       if (link) link.hash = location.hash;
@@ -51,8 +64,11 @@ const copy = other === 'en'
       this.querySelector('button')?.addEventListener('click', () => this.dismiss(), { once: true });
     }
 
-    /** Only for a reader whose browser prefers the other language and who has not chosen or declined. */
-    private wanted(): boolean {
+    /**
+     * The language to offer, or nothing: only for a reader whose browser prefers
+     * a language other than this page's and who has not chosen or declined.
+     */
+    private wanted(): string | undefined {
       const chosen = document.cookie.split(';').some((part) => {
         const [name, value] = part.trim().split('=');
         return name === LOCALE_COOKIE && isLocale(value);
@@ -61,7 +77,8 @@ const copy = other === 'en'
       try { storedDismissal = localStorage.getItem(DISMISSED_KEY) === '1'; } catch { /* Storage is optional. */ }
       const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
       const preferred = preferredLocale(languages.join(','));
-      return !chosen && !dismissed && !storedDismissal && preferred !== this.dataset.locale;
+      if (chosen || dismissed || storedDismissal || preferred === this.dataset.locale) return undefined;
+      return preferred;
     }
 
     /**
@@ -90,7 +107,8 @@ const copy = other === 'en'
         .filter((animation) => animation instanceof CSSAnimation && animation.animationName.endsWith('-leave'));
       await Promise.all(exits.map((animation) => animation.finished.catch(() => undefined)));
       this.hidden = true;
-      if (returnFocus) document.querySelector<HTMLAnchorElement>('a.language')?.focus({ preventScroll: true });
+      // The footer's own link to the language that was on offer.
+      if (returnFocus) document.querySelector<HTMLAnchorElement>(`a.language[hreflang="${this.offered}"]`)?.focus({ preventScroll: true });
     }
   }
 

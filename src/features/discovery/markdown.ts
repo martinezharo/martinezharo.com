@@ -24,7 +24,7 @@ export function llms(origin: URL | undefined, projects: readonly Project[]): str
   return [
     `# ${site.name}`,
     `> ${copy.site.description}`,
-    'This is Oliver’s personal portfolio. Project pages describe his work, its story, and its technology stack. English lives at the root; Spanish lives under /es. The Markdown pages use the same public content as the HTML pages.',
+    'This is Oliver’s personal portfolio. Project pages describe his work, its story, and its technology stack. English lives at the root; Spanish lives under /es and German under /de. The Markdown pages use the same public content as the HTML pages.',
     'Project ratings are Oliver’s own assessments, not customer reviews. “Active” describes project status, not uptime or current availability. Missing stories are not supplied or inferred.',
     '## Profile and stack',
     ...LOCALES.flatMap((locale) => [
@@ -38,7 +38,7 @@ export function llms(origin: URL | undefined, projects: readonly Project[]): str
     )),
     '## Optional',
     `- ${link('GitHub', site.githubUrl)}: Public repositories.`,
-    `- ${link('Sitemap', absoluteUrl('/sitemap.xml', origin))}: Canonical HTML pages in both languages.`,
+    `- ${link('Sitemap', absoluteUrl('/sitemap.xml', origin))}: Canonical HTML pages in every language.`,
   ].join('\n\n') + '\n';
 }
 
