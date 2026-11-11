@@ -29,18 +29,6 @@ const copy = getCopy(locale);
     </button>
 
     <div class="facet-menu" data-facets-menu hidden>
-      <div class="facet-search">
-        <Icon name="search" />
-        <input
-          type="search"
-          data-facets-search
-          placeholder={copy.projects.filters.searchPlaceholder}
-          aria-label={copy.projects.filters.searchLabel}
-          autocomplete="off"
-          spellcheck="false"
-        />
-      </div>
-
       <ul class="facet-list" role="menu" aria-label={copy.projects.filters.fieldsLabel}>
         {
           fields.map((field) => (
@@ -54,7 +42,6 @@ const copy = getCopy(locale);
                 aria-expanded="false"
               >
                 <span class="facet-name" data-facet-name>{field.label}</span>
-                <span class="facet-hit" data-facet-hit hidden></span>
                 <span class="facet-now" data-echo={field.echo}></span>
                 <Icon name="chevron" class="facet-chevron" />
               </button>
@@ -81,7 +68,6 @@ const copy = getCopy(locale);
         }
       </ul>
 
-      <p class="facet-empty" data-facets-empty hidden>{copy.projects.filters.noField}</p>
     </div>
   </div>
 

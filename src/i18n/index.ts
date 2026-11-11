@@ -162,10 +162,7 @@ export interface LocaleCopy {
     filters: {
       buttonLabel: string;
       buttonTitle: string;
-      searchPlaceholder: string;
-      searchLabel: string;
       fieldsLabel: string;
-      noField: string;
       empty: string;
       fieldLabels: {
         status: string;
@@ -470,10 +467,7 @@ const copies: Record<Locale, LocaleCopy> = {
       filters: {
         buttonLabel: 'Filter and sort',
         buttonTitle: 'Filter and sort',
-        searchPlaceholder: 'Search fields…',
-        searchLabel: 'Search fields',
         fieldsLabel: 'Fields',
-        noField: 'No field by that name.',
         empty: 'Nothing here matches those filters.',
         fieldLabels: { status: 'Status', kind: 'Type', sort: 'Order', dir: 'Direction' },
         clauseLabels: { status: 'Status', kind: 'Type', order: 'Order' },
@@ -764,10 +758,7 @@ const copies: Record<Locale, LocaleCopy> = {
       filters: {
         buttonLabel: 'Filtrar y ordenar',
         buttonTitle: 'Filtrar y ordenar',
-        searchPlaceholder: 'Buscar campos…',
-        searchLabel: 'Buscar campos',
         fieldsLabel: 'Campos',
-        noField: 'Ningún campo con ese nombre.',
         empty: 'Ningún proyecto coincide con esos filtros.',
         fieldLabels: { status: 'Estado', kind: 'Tipo', sort: 'Orden', dir: 'Dirección' },
         clauseLabels: { status: 'Estado', kind: 'Tipo', order: 'Orden' },

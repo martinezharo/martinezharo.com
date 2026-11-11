@@ -28,13 +28,6 @@ export const ICONS = {
     paths: ['M1.5 3.5h11M3.5 7h7M5.5 10.5h3'],
   },
 
-  /** The handle starts inside the ring's stroke so the two read as one shape. */
-  search: {
-    width: 12,
-    height: 12,
-    paths: ['M5.2 1.6a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2', 'M8 8l2.6 2.6'],
-  },
-
   chevron: {
     width: 6,
     height: 10,
