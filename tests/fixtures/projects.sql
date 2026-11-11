@@ -31,7 +31,7 @@ INSERT INTO projects VALUES
  'Ein Marktplatz für neue Produkte von professionellen Verkäufern.',
  'Bevor ich Octopus Control startete, habe ich diesen Marktplatz gebaut. Synthetic test content.'),
 ('rankmaker', 'Rankmaker', 0, '2023-01-01', '2024-01-01', 'https://example.com/rankmaker', '/icon.svg', 'app', 4, 4, 4, 4, '["Astro","Cloudflare Workers"]',
- 'Build and share rankings.', 'Crea y comparte rankings.', 'A synthetic project story.', 'Synthetic translated story.', 'https://github.com/example/rankmaker',
+ 'Build and share rankings.', 'Crea y comparte rankings.', 'A synthetic story with *italic*, **bold**, **IC**aru**S** and 2 * 3 left alone.', 'Synthetic translated story.', 'https://github.com/example/rankmaker',
  'Erstelle und teile Rankings.', 'Synthetische übersetzte Geschichte.'),
 ('kenobismo', 'Kenobismo', 0, '2018-01-01', '2019-01-01', NULL, '/icon.svg', 'brand', NULL, 3, 4, 3, '[]',
  'A test brand without an interface.', 'Synthetic brand description.', NULL, NULL, NULL, NULL, NULL),

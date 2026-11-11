@@ -15,14 +15,22 @@ import type { Project } from './model';
 // keeps restarting, which is what the admin panel's own text does not look like.
 //
 // The text is cut into runs instead of having anchors or markup written into
-// it, so the page renders prose as prose, a name as an element and a list as a
-// list. Nothing here builds markup, which is what keeps a story out of the
-// document's structure however it was typed into the admin panel.
+// it, so the page renders prose as prose, a name as an element, emphasis as
+// emphasis and a list as a list. Nothing here builds markup, which is what
+// keeps a story out of the document's structure however it was typed into the
+// admin panel.
 
-/** A run of a story's text: prose, or the name of the project it points at. */
+/**
+ * A run of a story's text: prose, or the name of the project it points at,
+ * and whether the writer marked it for emphasis.
+ */
 export interface StorySegment {
   text: string;
   slug?: string;
+  /** Written between `*asterisks*`. */
+  em?: true;
+  /** Written between `**double asterisks**`, which can start in the middle of a word. */
+  strong?: true;
 }
 
 /**
@@ -102,6 +110,29 @@ function cutAtNames(text: string, mentions: Mention[], linked: Set<string>): Sto
 }
 
 /**
+ * Emphasis as it is typed into a textarea: `*italic*` and `**bold**`, nothing
+ * else of Markdown. The asterisks must hug the words they mark, so a stray one
+ * — a footnote star, a product of two numbers written `2 * 3` — stays what it
+ * was. The bold branch comes first so `**` is never read as two empty italics.
+ */
+const EMPHASIS = /\*\*(?=\S)(.+?)(?<=\S)\*\*|\*(?=\S)(.+?)(?<=\S)\*/g;
+
+/** One run of text, cut at the emphasis it marks, without the asterisks. */
+function cutEmphasis(text: string): StorySegment[] {
+  const runs: StorySegment[] = [];
+  let cut = 0;
+
+  for (const match of text.matchAll(EMPHASIS)) {
+    if (match.index > cut) runs.push({ text: text.slice(cut, match.index) });
+    runs.push(match[1] !== undefined ? { text: match[1], strong: true } : { text: match[2]!, em: true });
+    cut = match.index + match[0].length;
+  }
+
+  if (cut < text.length) runs.push({ text: text.slice(cut) });
+  return runs;
+}
+
+/**
  * The mark that opens a list item, as a list is typed rather than as a format
  * is specified: a dash, an asterisk or a bullet, or a number. The space after
  * it is what keeps a sentence that opens on a dash — or a year written as
@@ -166,8 +197,12 @@ function readBlock(block: string, cut: (text: string) => StorySegment[]): StoryB
  * The project the story belongs to is left out: a page does not link to
  * itself, and its own name is the one its story says most often. Matching is
  * case-sensitive, because these are names rather than words: the portfolio has
- * projects whose name is an ordinary word in one of the two languages, and
+ * projects whose name is an ordinary word in one of its languages, and
  * lower-cased prose is not a mention of them.
+ *
+ * That protection is thinner in German, which capitalizes every noun: "Blitz"
+ * as the word for lightning would match the project of that name. None of the
+ * stories says it that way today.
  */
 export function readStory(
   history: readonly string[],
@@ -180,6 +215,11 @@ export function readStory(
     .sort((left, right) => right.name.length - left.name.length);
 
   const linked = new Set<string>();
-  const cut = (text: string) => cutAtNames(text, mentions, linked);
+  // Emphasis is read first, and each of its runs is then searched for names, so
+  // a name inside emphasis is still a link and keeps the emphasis around it.
+  const cut = (text: string) =>
+    cutEmphasis(text).flatMap(({ text: run, ...emphasis }) =>
+      cutAtNames(run, mentions, linked).map((segment) => ({ ...segment, ...emphasis })),
+    );
   return history.flatMap((block) => readBlock(block, cut));
 }

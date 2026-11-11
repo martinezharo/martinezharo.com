@@ -333,6 +333,16 @@ test('serves translated interface and project data at /de', async ({ page }) => 
   await expect(page.getByText(/Bevor ich Octopus Control startete/)).toBeVisible();
 });
 
+test('draws the emphasis a story was written with, and leaves stray asterisks alone', async ({ page }) => {
+  await page.goto('/projects/rankmaker');
+
+  const story = page.locator('.story');
+  await expect(story.locator('em')).toHaveText(['italic']);
+  await expect(story.locator('strong')).toHaveText(['bold', 'IC', 'S']);
+  // The marks are gone from the words they marked, and only from those.
+  await expect(story).toContainText('A synthetic story with italic, bold, ICaruS and 2 * 3 left alone.');
+});
+
 test('falls back to English for a project with no German text', async ({ page }) => {
   // The fixture row has an English and a Spanish description and no German one.
   await page.goto('/de/projects/kenobismo');
